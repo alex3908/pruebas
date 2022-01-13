@@ -1,0 +1,163 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Validación de Usuario</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to "Usuarios", users_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Validar Usuario</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <section class="files w-100">
+    <div class="row mb-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-gray">
+      </div>
+      <div class="col-8 pl-0">
+        <hr class="marker-bar-green">
+      </div>
+    </div>
+    <div class="table-container">
+      <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack" id="user_profile">
+        <thead>
+        <tr>
+          <th width="70%"></th>
+          <th width="30%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <%= render partial: "users/validate_file", locals: {
+          file: @user.official_identification,
+          name: "IDENTIFICACIÓN OFICIAL",
+          key: :official_identification,
+        } %>
+        <%= render partial: "users/validate_file", locals: {
+          file: @user.address_proof,
+          name: "COMPROBANTE DOMICILIARIO",
+          key: :address_proof,
+        } %>
+        <%= render partial: "users/validate_file", locals: {
+          file: @user.birth_certificate,
+          name: "ACTA DE NACIMIENTO",
+          key: :birth_certificate,
+        } %>
+        <%= render partial: "users/validate_file", locals: {
+            file: @user.curp,
+            name: "CURP",
+            key: :curp,
+        } %>
+        <%= render partial: "users/validate_file", locals: {
+            file: @user.rfc,
+            name: "RFC",
+            key: :rfc,
+        } %>
+        <%= render partial: "users/validate_file", locals: {
+          file: @user.non_criminal_record,
+          name: "ANTECEDENTES NO PENALES",
+          key: :non_criminal_record,
+        } %>
+        <%= render partial: "users/validate_file", locals: {
+          file: @user.job_reference,
+          name: "RECOMENDACIONES LABORALES",
+          key: :job_reference,
+        } %>
+        <%= render partial: "users/validate_file", locals: {
+          file: @user.recommendation_letter_1,
+          name: "CARTA DE RECOMENDACIÓN 1",
+          key: :recommendation_letter_1,
+        } %>
+        <%= render partial: "users/validate_file", locals: {
+          file: @user.recommendation_letter_2,
+          name: "CARTA DE RECOMENDACIÓN 2",
+          key: :recommendation_letter_2,
+        } %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="row mt-3">
+      <div class="col-md-3 text-center">
+        CURP: <b><%= @user.written_curp.present? ? @user.written_curp : "Sin registro" %></b>
+      </div>
+      <div class="col-md-3 text-center">
+        RFC: <b><%= @user.written_rfc.present? ? @user.written_rfc : "Sin registro" %></b>
+      </div>
+      <div class="col-md-3 text-center">
+        Fecha de nacimiento: <b><%= @user.birthdate.present? ? @user.birthdate.strftime("%d/%m/%Y") : "Sin registro" %></b>
+      </div>
+      <div class="col-md-3 text-center">
+        Sucursal: <b><%= @user.branch.present? ? @user.branch.name : "N/A" %></b>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-5">
+    <div class="d-flex justify-content-between">
+      <h3 class="text-left vertical-align m-0 py-3">Cuentas Bancarias</h3>
+    </div>
+    <div class="row mb-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-gray">
+      </div>
+      <div class="col-8 pl-0">
+        <hr class="marker-bar-green">
+      </div>
+    </div>
+
+    <% if @user.bank_accounts.count < 1 %>
+      <div class="py-5">
+        <p class="text-center h5 leyend mb-5">
+          Aún no hay cuentas bancarias registradas para este usuario.
+        </p>
+      </div>
+    <% else %>
+      <div class="table-container">
+        <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+          <thead>
+            <tr>
+              <th>Titular</th>
+              <th>Banco</th>
+              <th>Número de cuenta</th>
+              <th>Moneda</th>
+              <th>Clabe</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @user.bank_accounts.each do |bank_account| %>
+              <tr>
+                <td class="align-middle"><%= bank_account.holder %></td>
+                <td class="align-middle"><%= bank_account.bank %></td>
+                <td class="align-middle"><%= bank_account.account_number %></td>
+                <td class="align-middle"><%= bank_account.currency %></td>
+                <td class="align-middle">
+                <% if bank_account.principal? %>
+                  <span class="badge badge-light">Principal</span><br>
+                <% end %>
+                <%= bank_account.clabe %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </section>
+</div>
+
+  <div id="modal-window" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>

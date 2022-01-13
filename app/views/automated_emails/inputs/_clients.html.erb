@@ -1,0 +1,49 @@
+
+<%= form_with(model: @automated_email, local: true, url: [@email_template, @automated_email]) do |form| %>
+  <%= form.hidden_field :automated_type, value: :clients %>
+  <%= form.hidden_field :reciever_type, value: :client %>
+
+  <div class="row">
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :execution_type, "Origen", class: "text-capitalize" %>
+      <%= form.select(:execution_type, options_for_select(AutomatedEmail.sources.keys.map { |key| [I18n.t("activerecord.attributes.automated_email.sources.#{key}"), key] }, @automated_email.execution_type), { include_blank: "Selecciona un origen" }, class: "form-control", required: true) %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :emails, "Correos adicionales" %>
+      <%= form.text_field :emails, class: "form-control", value: @automated_email.emails_information&.join(", ") %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-4" id="second_payment_container">
+      <p>Envíar despues de</p>
+      <div class="vertical-align">
+        <div class="input-group">
+          <%= form.number_field :delivery_in, { min: 0, class: "form-control text-right", required: true } %>
+          <div class="input-group-append">
+            <div class="input-group-text input-text-right">días</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="actions py-3">
+      <%= link_to "Cancelar", email_template_automated_emails_path(@email_template), class: "btn btn-secondary" %>
+      <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+
+  </div>
+
+<% end %>
+
+<% if @automated_email.new_record? %>
+  <script>
+    $('select').each(function() {
+      initSelect2(this);
+    });
+  </script>
+<% end %>

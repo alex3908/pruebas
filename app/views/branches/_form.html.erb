@@ -1,0 +1,35 @@
+<%= form_with(model: branch, local: true) do |form| %>
+  <% if branch.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(branch.errors.count, "error") %> errores encontrados:</h2>
+
+      <ul>
+        <% branch.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :name, "Nombre" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :address, "Dirección" %>
+      <%= form.text_field :address, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :phone, "Teléfono" %>
+      <%= form.text_field :phone, class: "form-control", minlength: "10", pattern: "[0-9.]+", title: "Debe contener solo números" %>
+    </div>
+  </div>
+
+  <div class="actions pt-3">
+    <%= link_to "Cancelar", branches_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

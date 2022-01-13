@@ -1,0 +1,9 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Servicio de pago en línea</h1>
+    </div>
+  </div>
+  <hr class="divider">
+  <%= render partial: "form", locals: { online_payment_service: @online_payment_service, creator: @online_payment_service.creator, enterprise: @enterprise } %>
+</div>

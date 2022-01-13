@@ -1,0 +1,22 @@
+test: &default
+
+  # Credentials for REST APIs
+  client_id: <%= Rails.application.secrets.paypal_client_id %>
+  client_secret: <%= Rails.application.secrets.paypal_client_secret %>
+
+  # Mode can be 'live' or 'sandbox'
+  mode: <%= Rails.application.secrets.paypal_mode %>
+
+  # # With Certificate
+  sandbox_email_address: finapeninsular@grupoorve.mx
+
+  # # SSL Connect
+  ssl_options:
+    ca_file: null
+
+development:
+  <<: *default
+
+
+production:
+  <<: *default

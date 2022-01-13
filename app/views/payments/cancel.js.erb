@@ -1,0 +1,32 @@
+const redirectBack = function() {
+    window.location = "<%= folder_payments_path(@folder) %>";
+};
+<% if local_assigns[:message] == 'canceled_payment' %>
+Swal.fire({
+    title: '¡Pago cancelado!',
+    text: 'El pago ha sido cancelado de manera correcta.',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+}).then(redirectBack);
+<% elsif local_assigns[:message] == 'empty_description' %>
+Swal.fire({
+    title: 'Error',
+    text: 'No se ha podido cancelar el pago',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Ingresa la razón por la cual se desea cancelar el pago y vuelve a intentarlo.'
+}).then(redirectBack);
+<% elsif local_assigns[:message] == 'error' %>
+Swal.fire({
+    title: 'Error',
+    text: 'No se ha podido cancelar el pago',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Espera un momento y vuelve a intentarlo. Si el problema persiste, por favor comunícate con tu responsable.'
+});
+<% end %>

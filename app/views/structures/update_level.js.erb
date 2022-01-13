@@ -1,0 +1,23 @@
+<% if @error.present?  %>
+  Swal.fire({
+    title: 'Error',
+    text: 'Hubo un error al intentar eliminar el nivel de la estructura actual, por favor comunícate con tu administrador.',
+    type: 'error',
+    confirmButtonText: 'Continuar'
+  })
+<% else %>
+$('#modal-window').modal('hide');
+  Swal.fire({
+    title: '¡Nivel eliminado con éxito!',
+    text: 'Ahora el rol no estará disponible en los niveles de ventas',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  }).then(function() {
+    Turbolinks.visit("<%= level_settings_structures_path(@structure&.id) %>")
+  });
+<% end %>

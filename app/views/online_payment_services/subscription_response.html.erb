@@ -1,0 +1,36 @@
+<% if local_assigns.has_key?(:error) %>
+  <div class="text-center d-flex align-items-center justify-content-center">
+    <div class="w-50">
+      <i class="fa fa-times-circle fa-5x text-danger"></i>
+      <h5 class="m-0 py-3"></h5>
+      <div class="text-center">
+        Error en la subscripción
+      </div>
+    </div>
+  </div>
+  <% content_for :side do %>
+    <div class="text-center">
+      Error: <%= local_assigns[:message] %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="text-center d-flex align-items-center justify-content-center">
+    <div class="w-50">
+      <%= image_tag "successful-payment.png", class: "mx-auto d-block" %>
+      <h5 class="m-0 py-3">Subscripción exitosa</h5>
+      <div class="text-center">Te has suscrito al plan con éxito
+      </div>
+    </div>
+  </div>
+  <% content_for :side do %>
+    <div class="text-center">
+      <h5>Te has suscrito a un pago de: </h5>
+      <p><%= number_to_currency @subscription.amount %></p>
+      <h5>Por un período de: </h5>
+      <p><%= @subscription.months_to_subscribe %> meses</p>
+    </div>
+  <% end %>
+<% end %>
+
+<div data-controller="netpay" data-netpay-subscription-status="<%= local_assigns[:status] || local_assigns[:error] %>">
+</div>

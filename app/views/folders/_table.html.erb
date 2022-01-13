@@ -1,0 +1,71 @@
+<div class="table-container-without-height">
+  <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+    <thead>
+    <tr>
+      <th><%= sortable "folio", "Folio" %></th>
+      <th><%= sortable "user_id", "Asesor" %></th>
+      <th><%= sortable "client_id", "Cliente" %></th>
+      <th class="text-capitalize"><%= sortable "project_id", @project_singular %></th>
+      <th class="text-capitalize"><%= sortable "phase_id", @phase_singular %></th>
+      <th class="text-capitalize"><%= sortable "stage_id", @stage_singular %></th>
+      <th><%= sortable "lot_id", "Unidad" %></th>
+      <th width="8%"><%= sortable "folder_created", "Fecha" %></th>
+      <th>Plan</th>
+      <th>Precio total</th>
+      <th width="8%"><%= sortable "status", "Estado" %></th>
+      <% if can?(:custom_create, Contract) || can?(:custom_update, Contract) %>
+        <th class="text-center"><%= sortable "contract_id", "Contrato" %></th>
+      <% end %>
+      <%= tag.th("Promesa") if can?(:set_ready_state, Folder) %>
+      <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @folders.each do |folder| %>
+      <tr class="table-row" data-status="<%= folder.status_label %>">
+        <%= tag.td(folder.id) %>
+        <%= tag.td(folder.user.label) %>
+        <%= tag.td(folder.client.label) %>
+        <%= tag.td(folder.project.name) %>
+        <%= tag.td(folder.phase.name) %>
+        <%= tag.td(folder.stage.name) %>
+        <%= tag.td(folder.lot.name) %>
+        <%= tag.td(folder.calc_date.strftime("%F")) %>
+        <%= tag.td(folder.payment_scheme.name) %>
+        <%= tag.td(number_to_currency(folder.total_sale)) %>
+        <%= tag.td do %>
+          <%= folder.status_label %>
+          <%= tag.i("", class: "fa fa-info-circle", "aria-hidden": "true", "data-toggle": "tooltip", "data-placement": "top",
+          "title": time_in_step(folder)) if folder.step.present? && folder.step_logs.present? %>
+        <% end %>
+        <% if can?(:custom_create, Contract) || can?(:custom_update, Contract) %>
+          <td class="text-center">
+            <%= tag.span("Personalizado", class: "badge badge-info") if folder.contract.present? %>
+            <%= tag.span("Plantilla", class: "badge badge-secondary") unless folder.contract.present? %>
+          </td>
+        <% end %>
+        <% if can?(:set_ready_state, Folder) %>
+          <td>
+            <%= tag.span("Promesa activa", class: "badge badge-primary text-white") if folder.ready? %>
+            <%= tag.span("Promesa no activa", class: "badge badge-secondary") unless folder.ready? %>
+          </td>
+        <% end %>
+        <td class="text-right align-middle">
+          <%= link_to("Ingresar", folder_url(folder), class: "btn btn-enter enter-icon") if can?(:read, Folder) %>
+          <% if can?(:reactivate, Folder) && folder.expired? && folder.lot.can_reactivate? %>
+            <%= link_to "Reactivar", reactivate_folder_path(folder), method: :post, class: "btn reactivate-icon", data: { confirm: "¿Estás seguro de reactivar el expediente?" + "#{" El cupón utilizado en este expediente ya alcanzó su límite de uso, este expediente se reactivará sin el cupón." if folder.payment_scheme.has_invalid_coupon?}" } %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
+<%= will_paginate(@folders, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+<div class="text-center mt-3">
+  <div class="d-inline-block" style="max-width: 100px">
+    Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                             onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+  </div>
+</div>

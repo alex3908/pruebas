@@ -1,0 +1,13 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Items") do |sheet|
+  # Create the header row
+  sheet.add_row ["ID", "Nombre", "Apellido", "Teléfono", "Correo", "Sucursal", "Rol", "Fecha de Creación", "Estado" ]
+  # Create entries for each item
+  @users.each_with_index do |user, index|
+
+    status = user.is_active ? 'Activo' : 'Desactivado'
+
+    sheet.add_row [user.id, user.first_name, user.last_name, user.phone, user.email, user.branch&.name, user.role.name, user.created_at.strftime("%F"), status]
+  end
+end

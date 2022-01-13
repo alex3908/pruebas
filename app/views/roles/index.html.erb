@@ -1,0 +1,63 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Roles</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+      <% if can?(:create, Role) %>
+        <%= link_to "Nuevo Rol", new_role_path, class: "btn btn-primary mr-2" %>
+      <% end %>
+      <% if can?(:read, Permission) %>
+        <%= link_to "Permisos", permissions_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @roles.any? %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Nombre</th>
+          <th class="text-center">Usuarios activos</th>
+          <% if can?(:view_hidden, Role) %>
+          <th class="text-center">Visibilidad</th>
+          <% end %>
+          <th class="text-right">Acciones</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @roles.each do |role| %>
+          <tr>
+            <td><%= role.name %></td>
+            <td class="text-center"><%= role.users.active.count %></td>
+            <% if can?(:view_hidden, Role) %>
+              <% if role.hidden? %>
+                <td class="text-center"><%= fa_icon("eye-slash") %></td>
+              <% else %>
+                <td class="text-center"><%= fa_icon("eye") %></td>
+              <% end %>
+            <% end %>
+            <td class="text-right">
+              <%= link_to(fa_icon("eye"), role, class: "table-link") if can?(:show, Role) %>
+              <%= link_to(fa_icon("edit"), edit_role_path(role), class: "table-link") if can?(:edit, Role) %>
+              <%= link_to(fa_icon("trash"), role, method: :delete, data: { confirm: "\u00BFEst\u00E1s seguro de eliminar este rol?" }, class: "table-link") if can?(:destroy, Role) && role.users.count == 0 %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <p>Aún no hay roles.</p>
+  </div>
+<% end %>

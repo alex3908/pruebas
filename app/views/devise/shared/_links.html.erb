@@ -1,0 +1,27 @@
+<ul class="list-inline login-register-container">
+  <%- if controller_name != 'sessions' %>
+    <li class="list-inline-item"><%= link_to "Iniciar sesión", new_session_path(resource_name) %> </li>
+  <% end %>
+
+<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+  <li class="list-inline-item login-register"><%= link_to "Registrarme", new_registration_path(resource_name) %> </li>
+<% end %>
+
+<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+  <li class="list-inline-item login-register"><%= link_to "¿Olvidaste tu contraseña?", new_password_path(resource_name) %> </li>
+<% end %>
+
+<%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+  <li class="list-inline-item"><%= link_to "No recibí las instrucciones para cambio de contraseña", new_confirmation_path(resource_name) %> </li>
+<% end %>
+
+<%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
+  <li class="list-inline-item"><%= link_to "No recibí instrucciones para desbloqueo de cuenta", new_unlock_path(resource_name) %> </li>
+<% end %>
+
+<%- if devise_mapping.omniauthable? %>
+  <%- resource_class.omniauth_providers.each do |provider| %>
+    <li class="list-inline-item"><%= link_to "Iniciar sesión utilizando #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider) %> </li>
+  <% end %>
+<% end %>
+</ul>

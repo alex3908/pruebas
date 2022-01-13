@@ -1,0 +1,70 @@
+<div class="modal fade" id="cancelFolderModal" role="dialog" aria-labelledby="cancelFolderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelFolderModalLabel">Cancelar expediente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <%= form_with(url: cancel_folder_path(@folder.id), method: "patch", local: false) do |form| %>
+        <div class="modal-body">
+          <% if @cancel_questions.present? %>
+            <% @cancel_questions.each do |question| %>
+              <div class="form-check mb-3">
+                <div class="row">
+                  <div class="col-8 vertical-align">
+                    <%= form.label "folder[answer[#{question.id}]]", question.question, class: "form-check-label" %>
+                  </div>
+                  <div class="col-4 d-flex justify-content-center">
+                    <%= form.check_box "folder[answer[#{question.id}]]", { data: {
+                        activate: "toggle",
+                        onstyle: "success",
+                        offstyle: "secondary",
+                        on: "Si",
+                        off: "No",
+                    } }, "Si", "No" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+          <div class="form-group col-md-12 col-lg-12 mb-3">
+            <%= form.label :canceled_description, "Descripción de cancelación" %>
+            <%= form.text_area :canceled_description, class: "form-control", required: !@cancel_questions.present? %>
+            <% form.text_field "total_income", value: @total_income %>
+          </div>
+      <% if @payment_is_income == true %>
+        <div class="form-group col-sm-12 col-md-6">
+          <%= label_tag :credit_balance, "Generará saldo a favor." %>
+          <div class="row">
+            <div class="col-sm-12 col-md-4">
+                      <%= form.check_box :credit_balance,
+                                data: {
+                                    activate: "toggle",
+                                    onstyle: "success",
+                                    offstyle: "secondary",
+                                    on: "Si",
+                                    off: "No",
+                                } %>
+            </div>
+          </div>
+        </div>
+        <div class="is_credit_balance_active" style="<%= "display: none;" unless @folder.credit_balance? %>">
+          <div class="container">
+            <%= render "folders/income", installment: @show_installment %>
+          </div>
+          <div class="container">
+            <%= render "folders/cash_flow", cash_flows: @show_cash_flows %>
+          </div>
+        </div>
+      <% end %>
+        </div>
+        <div class="modal-footer pt-2">
+          <%= form.submit "Guardar", class: "btn btn-primary" %>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">CERRAR</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

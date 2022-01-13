@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align text-capitalize p-0 m-0"><%= @stage_singular %> de <%= @project.name %></h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to @project_singular, project_path(@project), class: "text-capitalize" %></li>
+        <li class="breadcrumb-item text-capitalize active" aria-current="page">Nueva <%= @stage_singular %></li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<div class="container">
+  <%= render "form", phase: @phase %>
+</div>

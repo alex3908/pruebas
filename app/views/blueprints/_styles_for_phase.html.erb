@@ -1,0 +1,38 @@
+<style>
+  <%= sanitize phase.blueprint.styles %>
+
+  .stage {
+    margin: auto;
+    max-width: 800px;
+  }
+
+  .no-outline {
+    outline: none !important;
+  }
+
+  a polygon,
+  a rect,
+  a polyline,
+  a path,
+  a path {
+    cursor: pointer;
+  }
+
+  .set-empty-fill {
+    fill: rgba(0,0,0,0) !important;
+  }
+
+  .set-empty-fill.not-selected-stage {
+    fill: rgba(0,0,0,0.8) !important;
+  }
+
+  .stage-assignable {
+    cursor: pointer;
+  }
+
+  <% if phase.blueprint.background.attached? && !(texts.present? && texts) %>
+  .stage-figure {
+    opacity: 0.6;
+  }
+  <% end %>
+</style>

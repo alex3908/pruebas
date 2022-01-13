@@ -1,0 +1,128 @@
+<div class="container">
+  <%= render partial: "components/breadcrumb", locals: {
+      name: "Cobranza",
+      last: "Pagos",
+      links: [
+          { name: "Dashboard", path: root_path },
+          { name: "Expediente", path: folder_path(@folder) },
+      ],
+  } %>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @folder.active_subscription? %>
+  <div class="container text-center">
+    <h5>Suscripción activa</h5>
+
+    <% if @folder.subscription.present? %>
+      <p>
+        ID Suscripcion Financiamiento: <b><%= @folder.subscription.subscription_id %></b>
+        <%= tag.i("", class: "fa fa-info-circle", "aria-hidden": "true", "data-toggle": "tooltip", "data-placement": "top",
+                  "title": @folder.subscription.status_label) %>
+      </p>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3 text-center">
+      Folio: <b><%= @folder.id %></b>
+    </div>
+    <div class="col-md-3 text-center">
+      <%= @lot_singular %>: <b><%= @folder.lot.name %></b>
+    </div>
+    <div class="col-md-3 text-center">
+      <%= @folder.phase.name %> - <%= @folder.stage.name %>
+    </div>
+
+    <div class="col-md-3 text-center">
+      <span>
+        Estado: <b><%= @folder.status_label %></b>
+        <%= tag.i("", class: "fa fa-info-circle", "aria-hidden": "true", "data-toggle": "tooltip", "data-placement": "top",
+                  "title": time_in_step(@folder)) if @folder.active? && @folder.step.present? && @folder.step_logs.present? %>
+      </span>
+    </div>
+  </div>
+  <% if @step_role&.can_manage_reminders? %>
+    <div class="d-flex flex-row justify-content-center mt-2">
+      <div class="p-2 d-flex align-items-center">
+        Enviar recordatorios:
+      </div>
+      <div class="p-2">
+        <%= form_with(model: @folder, url: toggle_reminders_folder_path(@folder), data: { controller: "forms", action: "click->forms#submitThenToast", toast: "La configuración de recordatorios se actualizó correctamente." }, method: :patch) do |form| %>
+          <%= form.check_box :reminders_enabled,
+            data: {
+              activate: "toggle",
+              onstyle: "success",
+              offstyle: "secondary",
+              on: "Sí",
+              off: "No",
+            } %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if can_pay_on_this_step(@folder, @step_role&.can_make_installments?) %>
+    <div class="d-flex flex-row justify-content-center mt-2">
+      <div class="p-2 d-flex align-items-center">
+        Enviar comprobante:
+      </div>
+      <div class="p-2">
+        <%= form_with(model: @folder, url: toggle_invoice_folder_path(@folder), data: { controller: "forms", action: "click->forms#submitThenToast", toast: "La configuración del comprobante se actualizó correctamente." }, method: :patch) do |form| %>
+          <%= form.check_box :invoice_enabled,
+            data: {
+              activate: "toggle",
+              onstyle: "success",
+              offstyle: "secondary",
+              on: "Sí",
+              off: "No",
+            } %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="container">
+  <br>
+  <%= render partial: "installments/sections/actions", locals: { pending_payment: @next_installment.present? } %>
+</div>
+
+<payments :folder-id="<%= @folder.id %>" :has-pending-installments="<%= @next_installment.present? %>"></payments>
+
+<div id="penalty_modal_container">
+</div>
+<div id="modal-window" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+
+<div class="modal fade" id="cancelSubscriptionModal" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-center" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cancelar domiciliación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <% @folder.subscriptions.currently_active.each do |subscription| %>
+            <div class="col">
+              <%= link_to "Cancelar suscripción", folder_subscription_path(@folder, subscription), method: :delete, data: { remote: true, confirm: "¿Estás seguro que deseas cancelar la suscripción?" }, class: "btn btn-warning quotation-button-size" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="modal-footer">
+      </div>
+    </div>
+  </div>
+</div>

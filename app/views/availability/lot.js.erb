@@ -1,0 +1,114 @@
+$('#payment-table').empty();
+$('#updates-table').empty();
+
+var inject_text = function (id, text) {
+  if ($(id)) {
+    $(id).text(text);
+  }
+}
+var inject_html = function (id, html) {
+  if ($(id)) {
+    $(id).html(html);
+  }
+}
+var inject_val = function (id, val) {
+    if ($(id)) {
+        $(id).val(val);
+    }
+}
+
+  <% if @quotation.present? %>
+  <% if params[:email].present? %>
+    $("<%= escape_javascript render('components/notice', { type: 'success', message: 'Correo enviado con exito.' }) %>").insertBefore("#quote");
+  <% end %>
+
+  <% if @min_last_payment_payment_way == 'percentage' %>
+    $("#last_payment_percentage_sign .input-group-text").text("%");
+  <% else %>
+    $("#last_payment_percentage_sign .input-group-text").text("$");
+  <% end %>
+
+  inject_text('#price', "<%= escape_javascript "#{number_to_currency(@quotation.price)} " %>");
+  inject_val('#down_payment_amount','<%= '%.2f' % @down_payment_amount %>');
+  inject_val('#min_last_payment_amount','<%= '%.2f' % (@min_last_payment_percentage * 100) %>');
+  inject_text('#min_down_payment', '<%= '%.2f' % (@min_downpayment_percentage * 100) %>');
+  inject_text('#max_down_payment', '<%= '%.2f' % (@max_downpayment_percentage * 100) %>');
+  inject_text('#min_last_payment', '<%= '%.2f' % (@min_last_payment_percentage * 100) %>');
+  inject_text('#max_last_payment', '<%= '%.2f' % (@max_downpayment_percentage * 100) %>');
+  inject_text('#down_payment', "<%= escape_javascript "#{number_to_currency(@min_downpayment_price)} (#{@quotation.down_payment_percentage.to_s} %)" %>");
+  inject_text('#down_payment_to_differ', "<%= escape_javascript number_to_currency(@quotation.down_payment_to_differ) %>");
+  inject_text('#initial_payment', "<%= escape_javascript number_to_currency(@quotation.initial_payment) %>");
+  inject_text('#first_payment', "<%= @max_days_for_first_payment %>" + " días");
+  inject_text('#second_payment', "<%= @max_days_for_second_payment %>" + " días");
+  inject_text('#final-price', "<%= escape_javascript number_to_currency(@payment_total) %>");
+  inject_html("#updates-table", "<%= escape_javascript render('availability/updates_table') %>");
+  inject_text('#last_payment', "<%= escape_javascript number_to_currency(@quotation.last_payment) %>");
+
+  $('#total_payments').val(<%= @total_payments %>);
+  const title_content = `Lote <%= @lot.name %> (<%= @lot.area %> m&sup2;)`;
+  const chepina = $('#chepina'),
+        title = $('#lot-title'),
+        chepina_container = $('#chepina-container'),
+        form_container = $('#form-container'),
+        quotation_form = $('#quotation-form'),
+        chepina_modal_size = $('#modal-size'),
+        wrapper_initial_payment = $('#wrapper-initial-payment'),
+        wrapper_first_payment = $('#wrapper-first-payment'),
+        wrapper_second_payment = $('#wrapper-second-payment'),
+        wrapper_final_price = $('#wrapper-final-price'),
+        wrapper_down_payment = $('#wrapper-down-payment'),
+        wrapper_last_payment = $('.wrapper-last-payment');
+
+  title.html(title_content);
+
+  <% if @lot.chepina.attached? %>
+    chepina.attr('src', '<%= rails_blob_path(@lot.chepina) %>');
+    chepina_modal_size.addClass('modal-xl');
+    chepina_container.removeClass('d-none');
+    form_container.addClass('col-lg-6');
+    form_container.removeClass('col-lg-12');
+  <% else %>
+    chepina_container.addClass('d-none');
+    form_container.removeClass('col-lg-6');
+    form_container.addClass('col-lg-12');
+    chepina_modal_size.removeClass('modal-xl');
+    chepina.attr('src', '');
+  <% end %>
+
+  wrapper_initial_payment.hide();
+  wrapper_first_payment.hide();
+  wrapper_second_payment.hide();
+  wrapper_final_price.hide();
+  wrapper_down_payment.hide();
+  wrapper_last_payment.hide();
+  
+  <% if @stage.credit_scheme.initial_payment_active && @quotation.initial_payment > 0 %>
+    wrapper_initial_payment.show();
+
+    <% if @max_days_for_first_payment > 0 %>
+        wrapper_first_payment.show();
+    <% end %>
+  <% end %>
+
+  <% if @max_days_for_second_payment > 0 %>
+    wrapper_second_payment.show();
+  <% end %>
+
+  <% if @payment_total > 0 && @project.show_final_price %>
+    wrapper_final_price.show();
+  <% end %>
+  <% if @min_downpayment_price != @down_payment_amount  %>
+    wrapper_down_payment.show();
+  <% end %>
+
+  <% if @has_min_last_payment %>
+    wrapper_last_payment.show();
+  <% end%>
+  
+  quotation_form.attr('action', `/disponibilidad/${<%= @lot.id %>}/cotizacion`);
+
+  $('#chepina-modal').modal('show');
+
+<% else %>
+  $('#quotation-after').slideUp();
+<% end %>

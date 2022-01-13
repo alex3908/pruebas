@@ -1,0 +1,641 @@
+<%= form_with(model: @credit_scheme, local: true) do |form| %>
+  <% if @credit_scheme.errors.any? %>
+    <div class="alert alert-warning" role="alert">
+      <h6 class="alert-heading">No se pudo guardar
+        por <%= pluralize_without_count(@credit_scheme.errors.count, "la siguiente razón", "las siguientes razones") %>
+        :</h6>
+      <ul class="mb-0">
+        <% @credit_scheme.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <fieldset>
+    <%= form.hidden_field :credit_scheme_id, value: @credit_scheme.id %>
+
+    <legend>Información general</legend>
+    <div class="row">
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :name, "Nombre" %>
+        <%= form.text_field :name, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :quotation_type, "Tipo de cotización" %>
+        <% if @credit_scheme.new_record? %>
+           <%= form.select(:quotation_type, options_for_select(quotation_type_options, @credit_scheme.quotation_type), { include_blank: "Selecciona un tipo de ejecución" }, class: "form-control", required: true) %>
+        <% else %>
+          <div class="font-weight-bold">
+            <%= I18n.t("activerecord.attributes.credit_scheme.quotation.#{@credit_scheme.quotation_type}") %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :surplus_amount_to_capital_time, "Excedente a abono de capital" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para controlar si al hacer pagos, el dinero excedente se tomará como un abono a capital de tiempo"></i>
+        <div>
+          <%= form.check_box :surplus_amount_to_capital_time,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :consider_residue_in_down_payments, "Considerar residuo en las letras de enganche" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Cuando se financia el enganche calcula los residuos en la primera letra si son decimales infinitos"></i>
+        <% if @credit_scheme.new_record? %>
+          <div>
+            <%= form.check_box :consider_residue_in_down_payments,
+                               data: {
+                                   activate: "toggle",
+                                   onstyle: "success",
+                                   offstyle: "secondary",
+                                   on: "Sí",
+                                   off: "No",
+                               } %>
+            <small class="form-text text-muted">Esta opción no se podrá editar una vez creado el esquema de
+              crédito.</small>
+          </div>
+        <% else %>
+          <div class="font-weight-bold">
+            <%= @credit_scheme.consider_residue_in_down_payments ? "Sí" : "No" %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= label_tag :requires_file, "Reservar requiere documento" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Define, si al reservar, se requerirá subir algún documento"></i>
+        <div>
+          <%= form.check_box :requires_file,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Sí",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6 is_required_file_active" style="<%= "display: none;" unless @credit_scheme.requires_file? %>">
+        <%= form.label :document_template_id, "Documento para reservar:" %>
+        <div>
+          <%= form.select :document_template_id, options_for_select(@document_templates.collect { |s| [s.name, s.id] }, @credit_scheme.document_template_id),
+                          {class: "form-control", required: false} %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 is_initial_payment_active">
+        <%= form.label :default_payment, "Financiamento por defecto" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Cantidad de meses de pago por defecto"></i>
+        <div class="input-group">
+          <%= form.number_field :default_payment, step: 1, min: 0, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text">mes(es)</span>
+          </div>
+        </div>
+        <small class="form-text text-muted">Dejar en blanco para utilizar el total de pagos del esquema de pago</small>
+      </div>
+
+      <div class="form-group col-12 col-md-6 ">
+        <%= form.label :is_relative_financing, "Financiamiento relativo" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title=""></i>
+        <div>
+          <% if @credit_scheme.can_edit_attribute? %>
+            <%= form.check_box :is_relative_financing,
+                data: {
+                    activate: "toggle",
+                    onstyle: "success",
+                    offstyle: "secondary",
+                    on: "Sí",
+                    off: "No",
+                } %>
+          <% else %>
+            <b><%= @credit_scheme.is_relative_financing ? "Activo" : "Inactivo" %></b>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="form-group col-12 col-md-6 ">
+        <%= form.label :has_last_payment, "Mínimo de pago al final del financiamiento" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title=""></i>
+        <div>
+
+          <% if @credit_scheme.can_edit_attribute? %>
+
+            <%= form.check_box :has_last_payment,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Sí",
+                                 off: "No",
+                             } %>
+          <% else %>
+            <b><%= @credit_scheme.has_last_payment ? "Activo" : "Inactivo" %></b>
+          <% end %>
+
+        </div>
+      </div>
+
+      <% if @credit_scheme.can_edit_attribute? %>
+        <div class="form-group col-3 col-md-6 is_last_payment_pw" style="<%= "display: none;" unless @credit_scheme.has_last_payment %>">
+            <%= form.label :min_last_payment_payment_way, "Método de calculo de Contra entrega" %>
+            <%= form.select :min_last_payment_payment_way, options_for_select([["Monto", "amount"], ["Porcentaje", "percentage"]], @credit_scheme.min_last_payment_payment_way), {class: "form-control"} %>
+        </div>
+      <% end %>
+
+      <div id="min_last_payment_amount" class="form-group col-3 col-md-6 is_last_payment_amount" style="<%= "display: none;" unless @credit_scheme.has_last_payment %>">
+        <%= form.label :min_last_payment_amount, @credit_scheme.last_payment_label %>
+        <div class="vertical-align">
+          <div class="input-group">
+            <%= form.number_field :min_last_payment_amount, min: 0, step: 0.05, disabled: !@credit_scheme.can_edit_attribute? , class: "form-control" %>
+            <div class="input-group-append" id="last_payment_percentage_sign">
+              <div class="input-group-text input-text-right"><%= @credit_scheme.percentage? ? "%" : "$" %></div>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="row col-12">
+      <div class="form-group col-12 col-md-6 ">
+        <%= form.label :is_opening_commission, "Cuota por apertura" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title=""></i>
+        <div>
+
+          <% if @credit_scheme.can_edit_attribute? %>
+
+            <%= form.check_box :is_opening_commission,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Sí",
+                                 off: "No",
+                             } %>
+          <% else %>
+            <b><%= @credit_scheme.is_opening_commission ? "Activo" : "Inactivo" %></b>
+          <% end %>
+
+        </div>
+      </div>
+
+      <div class="form-group col-3 col-md-6 opening_commission_amount" style="<%= "display: none;" unless @credit_scheme.is_opening_commission %>">
+        <%= form.label :opening_commission, "Monto de cuota de apertura" %>
+        <div class="vertical-align">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$</span>
+            </div>
+            <%= form.number_field :opening_commission, min: 0, step: 0.05, disabled: !@credit_scheme.can_edit_attribute? , class: "form-control" %>
+          </div>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+
+    <legend>Apartado</legend>
+
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= label_tag :initial_payment_active, "Apartado activo" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para controlar si la cotización tendrá un pago inicial"></i>
+        <div>
+          <%= form.check_box :initial_payment_active,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 is_initial_payment_active" style="<%= "display: none;" unless @credit_scheme.initial_payment_active %>">
+        <%= form.label :independent_initial_payment, "Apartado independiente" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para indicar si el pago inicial sera independiente del primer pago del enganche"></i>
+        <div>
+          <%= form.check_box :independent_initial_payment,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 is_initial_payment_active" style="<%= "display: none;" unless @credit_scheme.initial_payment_active %>">
+        <%= form.label :initial_payment_editable, "Apartado editable" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Permite editar el pago inicial en la cotización"></i>
+        <div>
+          <%= form.check_box :initial_payment_editable,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 is_initial_payment_active" style="<%= "display: none;" unless @credit_scheme.initial_payment_active %>">
+        <%= form.label :first_payment, "Primer pago del apartado en" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Días de gracia máximos para el pago inicial desde el día de la reserva"></i>
+        <div class="input-group">
+          <%= form.number_field :first_payment, step: 1, min: 0, class: "form-control text-right", required: true %>
+          <div class="input-group-append">
+            <span class="input-group-text">día(s)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 is_initial_payment_active" style="<%= "display: none;" unless @credit_scheme.initial_payment_active %>">
+        <%= form.label :initial_payment, "Monto de apartado" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Monto mínimo del pago inicial"></i>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= form.number_field :initial_payment, min: 0, step: 0.01, class: "form-control text-left", required: true %>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+
+    <legend>Enganche</legend>
+
+    <div class="row">
+      <div class="form-group col-12 col-md-6">
+        <%= label_tag :relative_down_payment, "Enganche relativo" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para calcular el plazo de enganche con respecto a la fecha de entrega"></i>
+        <div>
+          <% if @credit_scheme.persisted? && @credit_scheme.folders.size.zero? %>
+            <%= form.check_box :relative_down_payment,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+          <% else %>
+            <b><%= @credit_scheme.relative_down_payment ? "Activo" : "Inactivo" %></b>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :down_payment_editable, "Enganche editable" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Permite editar el monto de enganche en la cotización"></i>
+        <div>
+          <%= form.check_box :down_payment_editable,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= label_tag :second_payment, "Primer pago del enganche en" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Días de gracia máximos para el pago de enganche desde el día de la reserva"></i>
+        <div class="vertical-align">
+          <div class="input-group">
+            <%= form.number_field :second_payment, min: 0, step: 1, required: true, class: "form-control" %>
+            <div class="input-group-append">
+              <div class="input-group-text input-text-right">dia(s)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 is_relative_down_payment_for_max_month" style="<%= "display: none;" if @credit_scheme.relative_down_payment %>">
+        <%= label_tag :start_installments, "Meses de gracia del financiamiento" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para activar el enganche diferido"></i>
+        <div class="vertical-align">
+          <div class="input-group">
+            <%= form.number_field :start_installments, step: 1, class: "form-control" %>
+            <div class="input-group-append">
+              <div class="input-group-text input-text-right">mes(es)</div>
+            </div>
+          </div>
+          <small class="form-text text-muted">Dejar en blanco para considerar enganche no diferido.</small>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 is_relative_down_payment_for_max_month" style="<%= "display: none;" if @credit_scheme.relative_down_payment %>">
+        <%= form.label :max_finance, "Meses máximos a financiar el enganche" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Plazo máximo de enganche disponible en la cotización"></i>
+        <div class="input-group">
+          <%= form.number_field :max_finance, step: 1, min: 0, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text">mes(es)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>Cotización</legend>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :lock_payment, "Monto para bloqueo" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para definir un monto menor al pago inicial"></i>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= form.number_field :lock_payment, min: 0, step: 0.01, class: "form-control text-left", required: true %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :min_capital_payment, "Monto mínimo de abono a capital" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para validar el pago de abono a capital"></i>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= form.number_field :min_capital_payment, step: 0.01, min: 1, class: "form-control text-left" %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :min_down_payment_advance, "Monto mínimo de abono a enganche" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para validar el pago de abono a enganche"></i>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= form.number_field :min_down_payment_advance, step: 0.01, min: 1, class: "form-control text-left" %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :max_grace_months, "Meses máximos para cambio de fecha" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para validar los cambios de fecha en cobranza"></i>
+        <div class="input-group">
+          <%= form.number_field :max_grace_months, step: 1, min: 0, class: "form-control text-right", required: true %>
+          <div class="input-group-append">
+            <span class="input-group-text">mes(es)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :max_delay_payments, "Meses máximos para prórroga de pagos" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para validar las prórrogas en cobranza"></i>
+        <div class="input-group">
+          <%= form.number_field :max_delay_payments, step: 1, min: 0, class: "form-control text-right", required: true %>
+          <div class="input-group-append">
+            <span class="input-group-text">mes(es)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :relative_discount, "Descuento relativo" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para aplicar descuentos relativos con respecto a la fecha de salida"></i>
+        <div>
+          <%= form.check_box :relative_discount,
+                            data: {
+                                activate: "toggle",
+                                onstyle: "success",
+                                offstyle: "secondary",
+                                on: "Si",
+                                off: "No",
+                            } %>
+        </div>
+      </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :expire_months, "Meses relativos" %>
+          <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para aplicar expiraciones de meses del primer período con respecto a la fecha de salida"></i>
+          <div>
+            <% if @credit_scheme.new_record? || (@credit_scheme.persisted? && @credit_scheme.folders.size.zero?) %>
+              <%= form.check_box :expire_months,
+                                data: {
+                                    activate: "toggle",
+                                    onstyle: "success",
+                                    offstyle: "secondary",
+                                    on: "Si",
+                                    off: "No",
+                                } %>
+            <% else %>
+              <b><%= @credit_scheme.expire_months ? "Activo" : "Inactivo" %></b>
+            <% end %>
+          </div>
+        </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= label_tag :is_immediate_construction, "Construcción inmediata disponible" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Indica que el objeto en venta será construido inmediatamente"></i>
+        <div class="row">
+          <div class="col-sm-12 col-md-4">
+            <%= check_box_tag "is_immediate_construction", true, @credit_scheme.immediate_extra_months != 0,
+                              data: {
+                                  activate: "toggle",
+                                  onstyle: "success",
+                                  offstyle: "secondary",
+                                  on: "Si",
+                                  off: "No",
+                              } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <fieldset id="immediate_extra_months" style="<%= "display: none;" if @credit_scheme.immediate_extra_months.zero? %>">
+    <legend>Construcción inmediata</legend>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :immediate_extra_months, "Meses extras del primer período" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Agrega la posibilidad de asignarle al cliente meses sin intereses extras"></i>
+        <div class="vertical-align">
+          <div class="input-group">
+            <%= form.number_field :immediate_extra_months, step: 1, min: 0, disabled: @credit_scheme.immediate_extra_months.zero?, required: true, class: "form-control" %>
+            <div class="input-group-append">
+              <div class="input-group-text input-text-right">mes(es)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :max_percent_immediate_lots_sold, "Porcentaje máximo de unidades vendidas en construcción inmediata" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para verificar el máximo de objetos vendidos con esta promoción"></i>
+        <div class="input-group">
+          <%= form.number_field :max_percent_immediate_lots_sold, step: 1, min: 0, max: 100, disabled: @credit_scheme.immediate_extra_months.zero?, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>Clientes referidos</legend>
+    <div class="row">
+      <div id="reffered_client_amount_container" class="form-group col-sm-12 col-md-6">
+        <%= form.label :reffered_client_amount, "Monto de saldo a favor por referido" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title=""></i>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="reffered_client_amount_sing">$</span>
+          </div>
+          <%= form.number_field :reffered_client_amount, min: 0, step: 0.01, class: "form-control text-left", required: false %>
+        </div>
+      </div>
+      <div class="form-group col-3 col-md-6">
+          <%= form.label :reffered_client_payment_way, "Método de cálculo de saldo a favor" %>
+          <%= form.select :reffered_client_payment_way, options_for_select([["Monto", "amount"], ["Porcentaje", "percentage"]], @credit_scheme.reffered_client_payment_way), {class: "form-control"} %>
+      </div>
+      <div class="form-group col-12 col-md-6 is_required_file_active">
+        <%= form.label :payment_method_id, "Método de pago" %>
+        <div>
+          <%= form.select :payment_method_id, options_for_select(@payment_methods.collect { |s| [s.name, s.id] }, @credit_scheme.payment_method_id), {class: "form-control", required: false} %>
+        </div>
+      </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>Saldo</legend>
+      <div class="form-group col-12 col-md-6">
+        <%= label_tag :cancellation_balance, "Hay aplicación de saldo a favor por cancelación" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Define, si hay aplicación de saldo a favor por cancelación."></i>
+        <div>
+          <%= form.check_box :cancellation_balance,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Sí",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-6 is_cancellation_balance_active" style="<%= "display: none;" unless @credit_scheme.cancellation_balance? %>">
+        <%= form.label :down_payment_balance, "Bonificación para saldo de Enganche:" %>
+        <div>
+          <%= form.select :down_payment_balance, options_for_select(@method_down_payment.collect { |s| [s.name, s.id] }, @credit_scheme.down_payment_balance),
+                          {class: "form-control", required: false} %>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-6 is_cancellation_balance_active" style="<%= "display: none;" unless @credit_scheme.cancellation_balance? %>">
+        <%= form.label :principal_balance, "Bonificación para saldo de Capital:" %>
+        <div>
+          <%= form.select :principal_balance, options_for_select(@method_payment_capital.collect { |s| [s.name, s.id] }, @credit_scheme.principal_balance),
+                          {class: "form-control", required: false} %>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6 is_cancellation_balance_active" style="<%= "display: none;" unless @credit_scheme.cancellation_balance? %>">
+        <%= form.label :balance_of_updates, "Bonificación para saldo de Actualizaciones" %>
+        <div>
+          <%= form.select :balance_of_updates, options_for_select(@method_payment_interest.collect { |s| [s.name, s.id] }, @credit_scheme.balance_of_updates),
+                          {class: "form-control", required: false} %>
+        </div>
+      </div>
+ </fieldset>
+  <hr>
+  <fieldset>
+
+    <legend>Periodos</legend>
+    <div id="periods">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th>Mensualidades</th>
+            <th>Interés</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+        <tbody id="periods_table_body">
+          <%= form.fields_for :periods do |period| %>
+            <%= render "period_fields", f: period %>
+          <% end %>
+        </tbody>
+      </table>
+      <% unless @credit_scheme.folders.any? %>
+        <div class="links">
+          <%= link_to_add_association 'Agregar periodo', form, :periods, :"data-association-insertion-node" => "tbody#periods_table_body", :"data-association-insertion-method" => "append", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>Descuentos Base</legend>
+    <div id="discounts">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th>Límite inferior</th>
+            <th>Descuento (%)</th>
+            <th>Límite superior</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+        <tbody id="discounts_table_body">
+          <%= form.fields_for :discounts do |discount| %>
+            <%= render "discount_fields", f: discount %>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="links">
+        <%= link_to_add_association 'Agregar descuento', form, :discounts, :"data-association-insertion-node" => "tbody#discounts_table_body", :"data-association-insertion-method" => "append", class: "btn btn-primary" %>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>Enganches mínimos</legend>
+    <div id="down_payments">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th>Límite inferior</th>
+            <th>Enganche (%)</th>
+            <th>Límite superior</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+        <tbody id="down_payments_table_body">
+          <%= form.fields_for :down_payments do |down_payment| %>
+            <%= render "down_payment_fields", f: down_payment %>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="links">
+        <%= link_to_add_association 'Agregar enganche', form, :down_payments, :"data-association-insertion-node" => "tbody#down_payments_table_body", :"data-association-insertion-method" => "append", class: "btn btn-primary" %>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <div class="actions py-3">
+    <%= link_to "Cancelar", credit_schemes_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

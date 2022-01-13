@@ -1,0 +1,23 @@
+<hr class="accent-line">
+<div class="primary-light-background">Bonificación</div>
+<hr class="accent-line">
+<% if @clients.size > 0 %>
+  <div class="payments-table pt-3">
+  <table class="table">
+    <tbody>
+    <tr>
+      <th class="normal-header">Cliente</th>
+      <th class="normal-header">Email</th>
+      <th class="normal-header">Monto Disponible</th>
+    </tr>
+    <% @clients.each do |client| %>
+      <tr class="no-border">
+        <td class="gray-light-row"><%= client.label %></td>
+        <td class="gray-light-row"><%= client.email %></td>
+        <td class="gray-row"><%= number_to_currency(client.cash_back_available(@folder.id)) %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  </div>
+<% end %>

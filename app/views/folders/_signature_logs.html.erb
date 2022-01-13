@@ -1,0 +1,37 @@
+<div class="container">
+<div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-signature-binnacle">
+  <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-signature-binnacle" aria-expanded="false" aria-controls="collapse-signature-binnacle">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Bitácora de firma digital</p>
+  </div>
+  <div class="collapse" id="collapse-signature-binnacle" data-parent="#accordion-signature-binnacle" v-pre="">
+    <div class="widget-body">
+        <div class="log-container">
+            <% if @digital_signature_logs.size > 0 %>
+                <% @digital_signature_logs.each do |digital_signature_log| %>
+                    <div class="py-2">
+                        <div class="text-center pb-2"><%= tag.b(digital_signature_log.user.present? ? digital_signature_log.user.label : "El servidor") %> realizó cambio el estado
+                        del documento con folio <%= digital_signature_log.digital_signature.id %> al <%= digital_signature_log.date.strftime("%d/%m/%Y") %> a las <%= digital_signature_log.date.strftime("%I:%M%p") %></div>
+                        <div class="table-container-without-height">
+                            <table class="table table-bordered background-white">
+                            <thead>
+                            <tr>
+                                <th>Estatus</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td><%= digital_signature_log.status_label %></td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                <% end %>
+            <% else %>
+                <p class="pb-3 m-0">No se tienen registros en la bitácora</p>
+            <% end %>
+        </div>
+    </div>
+  </div>
+</div>
+</div>

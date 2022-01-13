@@ -1,0 +1,44 @@
+<%= render partial: "components/bar" %>
+
+<div class="text-center devise-container">
+  <div class="form-container">
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+      <%= link_to image_tag("brands/orve-isotype-green.png", class: "img-fluid", style: "max-width: 160px"), root_path %>
+      <h2 class="h4 my-3 font-weight-normal">Recuperar contraseña</h2>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <% if alert %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= alert %>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <% end %>
+
+      <% if notice %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <%= notice %>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :email, class: "sr-only" %><br>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control email-input", placeholder: t("app.auth.email") %>
+      </div>
+
+      <%= f.submit "Envíame instrucciones", class: "btn btn-outline-primary mb-2" %>
+      <ul class="list-inline login-register-container">
+        <li class="list-inline-item login-register mt-3"><%= link_to("Iniciar sesión", new_user_session_url) %> </li>
+      </ul>
+      <p class="mt-5 mb-3 privacy-policy">
+        <%= t("app.auth.copy", brand: @full_company_name) %> | <a href=<%= @privacy_policy %>><%= t("app.auth.privacy_policy") %></a>
+      </p>
+    <% end %>
+
+  </div>
+
+</div>

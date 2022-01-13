@@ -1,0 +1,72 @@
+<div class="modal-header">
+  <div class="modal-title" id="prospectsModalLabel">
+    <p class="m-0">Editar porcentaje de comisión</p>
+    <h3><%= @folder_user.user.label %></h3>
+  </div>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <%= form_with(model: @folder_user, local: false, url: [@folder, @folder_user], method: :patch) do |form| %>
+  <% commissions_paid = @folder_user.commissions.paid.size %>
+  <% if commissions_paid > 0 %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-warning" role="alert">
+          <em>
+              <strong>Para poder modificar el porcentaje de la comisión antes debe cancelar los pagos de comisión.</strong>
+          </em>
+      </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-12">
+      <%= form.label :folder_user_concept_id, "Tipo de Responsabilidad" %>
+      <div class="font-bold"><%= @folder_user.folder_user_concept.name %></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-md-12 col-lg-12 mb-3">
+      <%= form.label :user_id, "Usuario" %>
+      <div class="font-bold"><%= @folder_user.user.label %></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-12">
+      <%= form.label :percentage, "Porcentaje de comisión" %>
+      <%= form.number_field :percentage, min: 0, step: 0.01, class: "form-control", disabled: commissions_paid > 0 %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-12">
+      <%= form.label :visible, "Expediente visible" %>
+      <%= form.check_box :visible,
+                           data: {
+                               activate: "toggle",
+                               onstyle: "success",
+                               offstyle: "secondary",
+                               on: "Si",
+                               off: "No"
+                           } %>
+    </div>
+  </div>
+  <div class="modal-footer pb-0">
+    <div class="actions">
+      <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+  </div>
+  <% end %>
+</div>
+
+<% content_for :scripts do %>
+    <script>
+      document.addEventListener('vue:mounted', () => {
+        initSelect2("#folder_user_folder_user_concept_id");
+        initSelect2("#folder_user_user_id");
+        initFolderUserConceptChange();
+      });
+  </script>
+<% end %>

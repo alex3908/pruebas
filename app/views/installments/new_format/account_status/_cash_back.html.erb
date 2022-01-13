@@ -1,0 +1,30 @@
+
+<table class="mt-2 mb-2" style="width:100%">
+    <tr>
+        <th>
+            <div class="bg-date-green text-center m-0 pt-2 pb-1">
+                <p class="text-bold">BONIFICACIÓN</p>
+            </div>
+        </th>
+    </tr>
+</table>
+<% if @clients.size > 0 %>
+  <div class="payments-table">
+  <table class="table general-info table-striped table-payments">
+    <tbody class="account-status-table">
+    <tr>
+      <td class="green-row w-25">Cliente</td>
+      <td class="green-row w-25">Email</td>
+      <td class="green-row w-25">Monto Disponible</td>
+    </tr>
+    <% @clients.each do |client| %>
+      <tr class="no-border">
+        <td><%= client.label %></td>
+        <td><%= client.email %></td>
+        <td><%= number_to_currency(client.cash_back_available(@folder.id, only_exclusive_cash_backs: true)) %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  </div>
+<% end %>

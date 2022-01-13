@@ -1,0 +1,57 @@
+<table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+    <thead>
+        <tr>
+            <th scope="col">Número de pago</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Capital</th>
+          <% if @folder.show_interest %>
+            <th scope="col">Actualización</th>
+          <% end %>
+          <% if @quotation.is_down_payment_differ %>
+            <th scope="col">Enganche</th>
+          <% end %>
+            <th scope="col">Total a pagar</th>
+          <% if @quotation.have_capital_payment %>
+            <th scope="col">Abono a capital</th>
+          <% end %>
+            <th scope="col">Saldo Capital</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <% @amr_installments.each do |payment| %>
+            <tr>
+              <td class="text-center"><%= payment.number %></td>
+              <td class="text-center"><%= payment.date.strftime("%d/%m/%Y") %></td>
+              <td class="text-right"><%= number_to_currency(payment.capital) %></td>
+              <% if @folder.show_interest %>
+                <td class="text-right"><%= number_to_currency(payment.interest) %></td>
+              <% end %>
+              <% if @quotation.is_down_payment_differ %>
+                <td class="text-right"><%= number_to_currency(payment.down_payment) %></td>
+              <% end %>
+              <td class="text-right"><%= number_to_currency(payment.total) %></td>
+              <% if @quotation.have_capital_payment %>
+                <td class="text-right"><%= number_to_currency(payment.capital_payment) %></td>
+              <% end %>
+              <td class="text-right"><%= number_to_currency(payment.debt) %></td>
+            </tr>
+        <% end %>
+        <tr>
+            <td class="text-center no-text"></td>
+            <td class="text-center no-text"></td>
+            <td class="text-right"><%= number_to_currency(@capital_total) %></td>
+            <% if @folder.show_interest %>
+              <td class="text-right"><%= number_to_currency(@interest_total) %></td>
+            <% end %>
+            <% if @quotation.is_down_payment_differ %>
+              <td class="text-right"><%= number_to_currency(@down_payment_total) %></td>
+            <% end %>
+            <td class="text-right"><%= number_to_currency(@payment_total) %></td>
+          <% if @quotation.have_capital_payment %>
+            <td class="text-right"><%= number_to_currency(@capital_payments_total) %></td>
+          <% end %>
+            <td class="text-center no-text"></td>
+        </tr>
+    </tbody>
+</table>

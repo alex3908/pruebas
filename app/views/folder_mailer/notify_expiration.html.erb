@@ -1,0 +1,38 @@
+<%= render layout: "components/mailer_fluid_block" do %>
+  <p style="text-align: center;">
+    <span>
+      Expiraciones del <%= @date %>
+    </span>
+  </p>
+  <div style="text-align: center;">
+    <table style="max-width:100%; min-width:100%;" class="mcnTextContentContainer" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
+      <thead>
+        <tr>
+          <th>Folio del expediente</th>
+          <th>Proyecto</th>
+          <th>Fase</th>
+          <th>Etapa</th>
+          <th>Lote</th>
+          <th>Fecha de inicio</th>
+          <th>Horas desde inicio</th>
+          <th>Motivo</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @folders.each do |folder| %>
+          <tr>
+            <%= tag.td(folder["folio"]) %>
+            <%= tag.td(folder["project"]) %>
+            <%= tag.td(folder["phase"]) %>
+            <%= tag.td(folder["stage"]) %>
+            <%= tag.td(folder["lot"]) %>
+            <%= tag.td(folder["start_date"]) %>
+            <%= tag.td(folder["hours_from_start"]) %>
+            <%= tag.td(folder["reason"]) %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

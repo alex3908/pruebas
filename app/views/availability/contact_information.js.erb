@@ -1,0 +1,25 @@
+<% if @email_sent %>
+  Swal.fire({
+    title: '¡Información enviada!',
+    text: 'Pronto nos pondremos en contacto con usted',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  });
+<% else %>
+  Swal.fire({
+    title: 'Hubo un error al enviar la Información',
+    text: 'Intente más tarde'
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  });
+<% end %>

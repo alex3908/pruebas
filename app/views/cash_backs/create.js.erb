@@ -1,0 +1,22 @@
+$('#modal-window').modal('hide')
+<% if @cash_back.errors.count == 0 %>
+Swal.fire({
+    title: '¡Bonificación agregada!',
+    text: 'Se agrego <%= number_to_currency(@cash_back.amount) %> a <%= @client.label %>',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+});
+<% else %>
+Swal.fire({
+    title: 'Error',
+    text: 'Hubo un error al intentar guardar la bonificación, por favor corrobora los datos.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu responsable.'
+})
+<% end %>

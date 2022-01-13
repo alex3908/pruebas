@@ -1,0 +1,80 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <h1 class="banner-title vertical-align p-0 m-0">Servicios Adicionales</h1>
+        </div>
+        <div class="col-sm-12 col-md-6 flex-middle-right">
+            <%= link_to "Regresar", additional_concepts_path, class: "btn btn-outline-secondary mr-2" %>
+            <% if can?(:create, AdditionalConcept) %>
+            <%= link_to "Nuevo Servicio", new_additional_concept_path, class: "btn btn-primary" %>
+            <% end %>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <hr class="dividir">
+</div>
+<div class="container">
+    <div class="row">
+
+        <% if @additional_concepts.empty? %>
+        <div class="col-md-12 text-center">
+            <p>No hay servicios adicionales.</p>
+        </div>
+        <% else %>
+        <div class="col-md-12">
+            <div class="table-container">
+                <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @additional_concepts.each do |a_concept| %>
+                        <tr>
+                            <td><%= a_concept.name %></td>
+                            <td><%= amount_type_by_value(a_concept) %></td>
+                            <td class="text-center">
+
+                                <div class="p-2">
+                                    <%= check_box_tag "complete", a_concept.active, a_concept.active,
+                                    disabled: !(can?(:change_status, AdditionalConcept)),
+                                    data: {
+                                        activate: "toggle",
+                                        onstyle: "success",
+                                        offstyle: "secondary",
+                                        on: "Activa",
+                                        off: "Oculta",
+                                        remote: true,
+                                        url: change_status_additional_concept_path(a_concept), method: :patch
+                                    } %>
+                                </div>
+                                <%= link_to(fa_icon("eye"), additional_concept_path(a_concept), class: "table-link", data: { toggle: "tooltip" }, title: "Ver") if can?(:read, AdditionalConcept) %>
+                                <%= link_to(fa_icon("edit"), edit_additional_concept_path(a_concept), class: "table-link", data: { toggle: "tooltip" }, title: "Editar") if can?(:update, AdditionalConcept) %>
+                                <%= link_to(fa_icon("trash"), additional_concept_path(a_concept), class: "table-link", method: :delete, data: { toggle: "tooltip", confirm: "¿Estás seguro?" }, title: "Eliminar") if can?(:destroy, AdditionalConcept) && !a_concept.active %>
+                            </td>
+                        </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <%= will_paginate(@additional_concepts, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+            <div class="text-center">
+                <div class="w-25 d-inline-block">
+                    Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                            onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por
+                    página
+                </div>
+            </div>
+        </div>
+
+        <% end %>
+
+    </div>
+</div>

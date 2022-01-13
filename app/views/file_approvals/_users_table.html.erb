@@ -1,0 +1,41 @@
+<table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Email</th>
+      <th>Fecha de Solicitud</th>
+      <th>Fecha de Aprobación</th>
+      <th>Tipo</th>
+      <th>Estado</th>
+      <th>Archivo</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @file_approvals.each do |user_approval| %>
+      <tr>
+        <td class="align-middle"><%= "#{user_approval.approvable.first_name} #{user_approval.approvable.last_name}" %></td>
+        <td class="align-middle"><%= user_approval.approvable.email %></td>
+        <td class="align-middle"><%= user_approval.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+        <td class="align-middle"><%= user_approval.approved_at.present? ? user_approval.approved_at.strftime("%d/%m/%Y %H:%M") : "N/A" %></td>
+        <td class="align-middle"><%= approval_label_name(user_approval) %></td>
+        <td class="align-middle"><%= approved_label_result(user_approval) %></td>
+        <td class="align-middle">
+          <%= link_to rails_blob_path(user_approval.file), target: "_blank", style: "text-decoration:none" do %>
+            <i class="fa fa-file-text-o" aria-hidden="true"></i>
+          <% end %>
+        </td>
+        <td class="align-middle">
+          <div class="btn-group" role="group">
+            <% if user_approval.unchecked? %>
+              <%= link_to approve_file_approval_path(type: FileApproval::TYPE[:USER], id: user_approval), class: "btn btn-success", method: :patch, style: "text-decoration:none", data: { confirm: "¿Estás seguro de aceptar el #{approval_label_name(user_approval)}?" } do %>
+                <i class="fa fa-check-circle" aria-hidden="true"></i>
+              <% end %>
+              <%= link_to(fa_icon("times-circle"), rejectable_file_approval_path(type: FileApproval::TYPE[:USER], id: user_approval), class: "btn btn-danger", data: { toggle: "modal", target: "#modal-window" }, remote: true) %>
+            <% end %>
+          </div>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

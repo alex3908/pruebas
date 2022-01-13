@@ -1,0 +1,167 @@
+<div class="complementary-header float-right">
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 p-0">
+        <h1 class="text-bold"><%= title %></h1>
+      </div>
+    </div>
+    <% if key != "opening_commission" %>
+      <div class="row">
+        <div class="col-xs-4">
+          <p class="header-text">Método de pago</p>
+        </div>
+        <div class="col-xs-4">
+          <div class="square">
+            <div class="square-content">
+              <div>
+                <% if total_payments > 1 %>
+                  <p>x</p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <p class="header-text">Crédito</p>
+        </div>
+        <div class="col-xs-4">
+          <div class="square">
+            <div class="square-content">
+              <div>
+                <% if total_payments == 1 %>
+                  <p>x</p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <p class="header-text">Contado</p>
+        </div>
+      </div>
+    <% end %>
+    <div class="row">
+      <div class="bg-date m-0 p-0 col-xs-12">
+        <p class="text-bold">Fecha: <%= Time.zone.now.strftime("%d/%m/%Y") %></p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="new-format">
+  <div class="container text-nowrap" style="height: 320px;">
+    <div class="">
+      <p class="h6">Mérida, Yucatán a <span class="underline"><%= Time.zone.now.strftime("%d") %></span> de
+        <span class="underline"><%= Time.zone.now.strftime("%m") %></span>
+        de <span class="underline"><%= Time.zone.now.strftime("%Y") %></span> Bueno por
+        <span class="underline-sm"><%= number_to_currency(amount) %></span></p>
+      <p class="h6 pt-3">Recibí de <span class="underline-xl text-center">
+        <% clients.each_with_index do |client, index| %>
+              <%= index + 1 < clients_count ? "#{client.label}, " : client.label %>
+              <%= tag.br if clients.size > 2 %>
+            <% end %>
+          </span> la cantidad de</p>
+      <p class="h6 pt-3"><span class="underline-sm text-center"><%= number_to_currency(amount) %></span> (Son
+        <span class="text-nowrap underline-xl text-uppercase text-center"><%= number_to_currency_text(amount) %></span>)
+      </p>
+      <p class="purchase_title text-bold" style="padding-top: 40px">Por concepto de:</p>
+      <p class="text-box">
+        <span class=""><%= concept %> de la unidad <%= lot_name %> de <%= phase_name %> - <%= stage_name %> del desarrollo <%= project_name %></span>
+      </p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row mb-5 <%= clients.size > 2 ? "py-5" : "pb-5" %>">
+      <% if  @with_signature %>
+        <div class="col-xs-6 pl-5 pr-5">
+          <hr class="division-bar p-0" id="sign_bar">
+          <p class="h6 text-center">Asesor de Inversión<br> inmobiliaria</p>
+        </div>
+        <div class="col-xs-6 pl-5 pr-5">
+          <hr class="division-bar p-0" id="sign_bar">
+          <p class="h6 text-center">Nombre y Firma <br>de Conformidad</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div>
+    <div class="pt-3">
+      <p>
+        Grupo ORVE pone a su disposición los siguientes métodos de pago<% if key != "opening_commission" %> para sus mensualidades<% end %>:
+      </p>
+      <ol class="down_payment-list">
+        <% if !stp_clabe.blank? %>
+          <li>
+            <span class="d-block text-bold">Transferencia bancaria:</span>
+            <table class="">
+              <thead>
+              <tr>
+                <th class="">BANCO</th>
+                <th class="">TITULAR</th>
+                <th class="">CLABE</th>
+              </tr>
+              </thead>
+              <tr>
+                <td class="">STP</td>
+                <td class="text-dark"><%= enterprise_name %></td>
+                <td class="digits text-dark"><%= stp_clabe %></td>
+              </tr>
+            </table>
+            <span class="my-3 d-block">- Únicamente se aceptan transferencias que salen de cuentas que estén a nombre del cliente.</span>
+          </li>
+        <% elsif bank_accounts != [] %>
+          <li>
+            <span class="d-block text-bold">Transferencia bancaria:</span>
+            <table class="">
+              <thead>
+              <tr>
+                <th class="">BANCO</th>
+                <th class="">TITULAR</th>
+                <th class="">NO. DE CUENTA</th>
+                <th class="">CLABE</th>
+              </tr>
+              </thead>
+              <% bank_accounts.each do |bank_account| %>
+                <tr>
+                  <td class=""><%= bank_account.bank %></td>
+                  <td class="text-dark"><%= bank_account.holder %></td>
+                  <td class="digits text-dark"><%= bank_account.account_number %></td>
+                  <td class="digits text-dark"><%= bank_account.clabe %></td>
+                </tr>
+              <% end %>
+            </table>
+            <span class="my-3 d-block">- Únicamente se aceptan transferencias que salen de cuentas que estén a nombre del cliente.</span>
+          </li>
+        <% end %>
+        <% if key == "opening_commission" %>
+          <li>
+                <span class="d-block">Previo al pago del anticipo y/o enganche, el Promitente Comprador deberá pagar como gasto
+                  administrativo una cuota por apertura de <%= number_to_currency(amount) %>
+                  (<%= number_to_currency_text(amount) %>) por <%= @lot_singular %>.</span>
+          </li>
+          <li>
+            <span class="d-block">La cuota de apertura deberá realizarse en un deposito o transferencia independiente al pago del apartado y/o enganche.</span>
+          </li>
+          <li>
+            <span class="d-block">El dinero de la cuota de apertura no es reembolsable (En caso de no proceder con la venta).</span>
+          </li>
+        <% else %>
+          <li>
+            <span class="d-block first-block">Pago en efectivo en nuestras oficinas.</span>
+            <span class="d-block">Grupo ORVE - Av. Campestre #17B x 11 Esquina en Mérida, Yucatán. Horarios: 9:00 am a 1:00 pm y 2:00 pm a 6:30 pm.</span>
+          </li>
+          <li>
+            <span class="d-block first-block">Los pagos deben realizarse únicamente en los métodos antes descritos y NO a terceros, </span>
+            <span class="d-block">quedando a sus órdenes para cualquier duda o aclaración el Lic. Hernan Cetina Cárdenas al (999) 9442525</span>
+          </li>
+        <% end %>
+      </ol>
+      <% if key == 'initial_payment' %>
+        <p>El dinero del apartado tiene carácter devolutivo durante 8 días naturales (En caso de no proceder con la
+          venta).</p>
+      <% end %>
+      <% if observations.present? %>
+          <p class="footer-text">
+            <span class="header_title">Observaciones:</span><br>
+            <%= sanitize observations %>
+          </p>
+        <% end %>
+    </div>
+  </div>
+</div>

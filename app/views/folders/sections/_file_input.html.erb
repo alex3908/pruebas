@@ -1,0 +1,32 @@
+<tr>
+  <td class="align-middle">
+    <%= name %>
+    <% if can?(:read_files_date, Folder) && file.attached? %>
+      <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Última modificación: <%= file.attachment.created_at.strftime("%d/%m/%Y") %> a las <%= file.attachment.created_at.strftime("%I:%M%p") %>"></i>
+    <% end %>
+  </td>
+  <td class="align-middle text-center">
+  <div class="custom-file d-flex justify-content-center align-items-center">
+    <%= form.file_field key, class: "d-none" %>
+    <% if file.attached? %>
+      <%= link_to rails_blob_path(file), target: "_blank", style: "text-decoration:none" do %>
+        <i class="fa fa-file-text-o fa-folder-size mx-1" aria-hidden="true"></i>
+      <% end %>
+
+      <% if can_edit %>
+        <i class="fa fa-pencil icon-click fa-folder-size <%= key.to_s %> mx-1" aria-hidden="true"></i>
+      <% end %>
+
+      <% if can_delete %>
+        <%= link_to remove_file_folder_path(@folder, key: key), method: :delete, data: { confirm: "¿Estás seguro de eliminar el #{name}?" }, style: "text-decoration:none" do %>
+          <i class="fa fa-trash-o fa-folder-size icon-red mx-1"></i>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% if can_add %>
+        <i class="fa fa-cloud-upload fa-folder-size icon-click <%= key.to_s %> mx-1" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  </div>
+  </td>
+</tr>

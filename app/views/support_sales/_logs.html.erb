@@ -1,0 +1,79 @@
+<div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-binnacle">
+  <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-binnacle" aria-expanded="false" aria-controls="collapse-binnacle">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Bitácora</p>
+  </div>
+  <div class="collapse" id="collapse-binnacle" data-parent="#accordion-binnacle" v-pre="">
+    <div class="widget-body">
+      <div class="mt">
+        <div class="width-200 float-right">
+        </div>
+        <% if @support_sale.versions.empty? %>
+          <p class="pb-3 m-0">No se tienen registros en la bitácora</p>
+        <% end %>
+        <div class="log-container">
+          <% if @support_sale.versions.any? %>
+            <h5>Expediente</h5>
+            <% @support_sale.versions.reverse.each do |log| %>
+              <div class="py-2">
+                <div class="text-center pb-2"><%= tag.b(log.actor.kind_of?(User) ? log.actor.label : "El servidor") %> editó los siguientes campos
+                  el <%= log.created_at.strftime("%d/%m/%Y") %> a las <%= log.created_at.strftime("%I:%M%p") %></div>
+                <div class="table-container-without-height">
+                  <table class="table table-bordered background-white">
+                    <thead>
+                      <tr>
+                        <th width="20%">Campo</th>
+                        <th width="40%">Antiguo valor</th>
+                        <th width="40%">Nuevo valor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% log.changeset.each do |key, values| %>
+                        <tr>
+                          <td><%= I18n.t("activerecord.attributes.support_sale.#{key}") %></td>
+                          <td>
+                            <% if key.include?("_id") %>
+                              <% if values[0].present? %>
+                                <%= eval("log.reify.#{key.split("_id").first}.label") %>
+                              <% else %>
+                                <i>Ninguno</i>
+                              <% end %>
+                            <% elsif key == "status" %>
+                              <%= I18n.t("activerecord.attributes.support_sale.statuses.#{values[0]}") %>
+                            <% elsif values[0].present? %>
+                              <%= values[0] %>
+                            <% else %>
+                              <i>Sin valor</i>
+                            <% end %>
+                          </td>
+                          <td>
+                            <% if key.include?("_id") %>
+                              <% if values[1].present? %>
+                                <% if log.next.nil? %>
+                                  <%= eval("@support_sale.#{key.split("_id").first}.label") %>
+                                <% else %>
+                                  <%= eval("log.next.reify.#{key.split("_id").first}.label") %>
+                                <% end %>
+                              <% else %>
+                                <i>Ninguno</i>
+                              <% end %>
+                            <% elsif key == "status" %>
+                              <%= I18n.t("activerecord.attributes.support_sale.statuses.#{values[1]}") %>
+                            <% elsif values[1].present? %>
+                              <%= values[1] %>
+                            <% else %>
+                              <i>Sin valor</i>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="pdf-new-bg">
+<div class="text-justify" style="padding-top:20%;">
+  <div class="confirm_sign mt-1">
+    <table style="width:<%= @folder.clients.size == 1? "50": "90" %>%;margin:auto;">
+      <% @folder.clients.each_with_index do |client, index| %>
+        <% if index.even? %>
+          <tr>
+        <% end %>
+        <td class="py-4" style="width:50%;">
+          <div class="text-center py-2 signers-height">
+          <div class="text-center sign-tag-color"><%= client.sign_tag %></div>
+          <div class="bar-sign text-bold text-capitalize text-center">
+            <%= client.label %>
+            <br>
+            Firma de conformidad
+          </div>
+        </td>
+        <% if index.odd? %>
+          </tr>
+        <% end %>
+      <% end %>
+
+      <% if @folder.clients.length.even? %>
+        </tr>
+      <% end %>
+
+    </table>
+
+  </div>
+</div>
+
+</div>

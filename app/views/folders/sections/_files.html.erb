@@ -1,0 +1,123 @@
+<div class="container">
+  <section class="files w-100">
+    <div class="d-flex justify-content-between pt-3">
+      <h3 class="text-left vertical-align m-0 py-3">Documentos Requeridos</h3>
+    </div>
+    <div class="row mb-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-gray">
+      </div>
+      <div class="col-8 pl-0">
+        <hr class="marker-bar-green">
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="container">
+  <div class="table-container">
+    <%= form_with(model: @folder, local: true, url: "#{@folder.id}/update_files") do |form| %>
+      <% if @folder.payment_scheme.online_payment_id.present? %>
+        <table class="table table-striped">
+          <tbody>
+            <tr>
+              <td class="align-middle">COMPROBANTE DEL PAGO (APARTADO)</td>
+              <td class="align-middle text-center">
+                <span class="text-uppercase">APARTADO PAGADO CON PAYPAL</span>
+                <br> <%= @folder.payment_scheme.online_payment_id %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      <% end %>
+
+      <% if @folder.payment_scheme.down_payment_paid %>
+        <table class="table table-striped">
+          <tbody>
+            <tr>
+              <td class="align-middle">COMPROBANTE DEL PAGO (ENGANCHE)</td>
+              <td class="align-middle text-center">
+                <span class="text-uppercase">APARTADO PAGADO CON PAYPAL</span>
+                <br> <%= @folder.payment_scheme.online_payment_id %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      <% end %>
+
+      <% @document_sections.each do |section| %>
+        <% if true %>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th width="70%"><%= section.name %></th>
+                <th width="30%"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @folder.documents.includes(:file_approval).on_this_section(section).each do |document| %>
+                <% if show_document_input(document, @folder) && document.document_template.visible? %>
+                  <%= render partial: "folders/sections/document_input", locals: {
+                    form: form,
+                    document: document
+                  } %>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+      <% end %>
+      <table class="table table-striped">
+        <tr class="bg-white">
+          <td width="70%"></td>
+          <td width="30%" class="text-center">
+            <%= form.submit("Guardar", class: "btn btn-primary file-submit", disabled: true) unless @folder.canceled? %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+
+    <%= render partial: "folders/sections/client_files", locals: {
+        folder: @folder,
+        client: @folder.client,
+        label: "Propietario",
+        key: "client"
+      } %>
+
+    <%= render partial: "folders/sections/client_files", locals: {
+        folder: @folder,
+        client: @folder.client_2,
+        label: "Copropietario 2",
+        key: "client_2"
+      } %>
+
+    <%= render partial: "folders/sections/client_files", locals: {
+        folder: @folder,
+        client: @folder.client_3,
+        label: "Copropietario 3",
+        key: "client_3"
+      } %>
+
+    <%= render partial: "folders/sections/client_files", locals: {
+        folder: @folder,
+        client: @folder.client_4,
+        label: "Copropietario 4",
+        key: "client_4"
+      } %>
+
+    <%= render partial: "folders/sections/client_files", locals: {
+        folder: @folder,
+        client: @folder.client_5,
+        label: "Copropietario 5",
+        key: "client_5"
+      } %>
+
+    <%= render partial: "folders/sections/client_files", locals: {
+        folder: @folder,
+        client: @folder.client_6,
+        label: "Copropietario 6",
+        key: "client_6"
+      } %>
+
+  </div>
+</div>

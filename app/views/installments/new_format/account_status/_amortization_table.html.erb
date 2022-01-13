@@ -1,0 +1,64 @@
+<section class="payments-quotation">
+<% @slice_installments.each do |installments| %>
+  <div class="table-content page-break-table mt-5">
+    <table class="mt-5 mb-2" style="width:100%">
+        <tr>
+            <th>
+                <div class="bg-date-green text-center m-0 mt-3 pt-2 pb-1">
+                    <p class="text-bold">TABLA DE AMORTIZACIÓN</p>
+                </div>
+            </th>
+        </tr>
+    </table>
+    <div class="payments-table-green pt-3">
+      <table class="table table-payments table-border">
+        <tbody class="account-status-table">
+        <tr>
+          <th class="normal-header"></th>
+          <th class="normal-header">No.</th>
+          <th class="normal-header">Fecha</th>
+          <th class="normal-header">Pago</th>
+          <th class="normal-header">Saldo</th>
+          <th class="normal-header">Tipo</th>
+          <th class="normal-header">Estatus</th>
+        </tr>
+        <% installments.each do |payment| %>
+            <tr>
+              <td class="new_format align-middle w-1 <%= installment_table_class(overdue: payment[:overdue], next_overdue: payment[:next_overdue]) %>">
+              </td>
+              <td class="new_format align-middle"><%= payment[:number] %></td>
+              <td class="new_format align-middle">
+                <%= payment[:date] %>
+              </td>
+              <td class="new_format align-middle">
+                <%= number_to_currency(payment[:payment]) %>
+                <%= tag.small("#{tag.br}#{number_to_currency(payment[:penalty])}".html_safe, class: "text-danger") if payment[:has_penalty] %>
+              </td>
+              <td class="new_format align-middle">
+                <%= number_to_currency(payment[:residue].present? ? payment[:residue] : payment[:payment]) %>
+              </td>
+              <td class="text-capitalize new_format align-middle">
+                <% if payment[:concept] == Installment::CONCEPT[:INITIAL_PAYMENT] %>
+                  <%= tag.span("Apartado") %>
+                <% else %>
+                  <%= tag.span("Enganche #{payment[:number]}") if payment[:down_payment] != 0 %>
+                <% end %>
+                <%= tag.span("Parcialidad #{payment[:number]}") if payment[:interest].present? %>
+                <%= tag.span(payment[:type_capital_payment]) if payment[:type_capital_payment].present? %>
+                <%= tag.span("Penalización") if payment[:has_penalty] %>
+              </td>
+              <td class="text-capitalize new_format align-middle <%= "text-danger" if payment[:overdue] %>">
+                <% if payment[:residue] != 0 %>
+                  <%= payment[:overdue] ? "Vencido" : "No pagado" %>
+                <% else %>
+                  Pagado
+                <% end %>
+              </td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+</section>

@@ -1,0 +1,58 @@
+tr .primary-row {
+  background-color: lighten($primary, 10%);
+  color: white;
+}
+tr .multiple-row {
+  background-color: lighten($multiple, 10%);
+  color: white;
+}
+
+tr .normal-row {
+  background-color: lighten($primary-gray, 10%);
+  color: white;
+}
+
+tr .danger-row {
+  background-color: $danger;
+  color: white;
+}
+
+tr .warning-row {
+  background-color: $warning;
+  color: white;
+}
+
+#payments-tab {
+  .nav-link.active {
+    border-color: $primary;
+  }
+}
+
+[data-tooltip]:before {
+  content: attr(data-tooltip);
+  position: absolute;
+  opacity: 0;
+  padding: 10px;
+  color: #333;
+  border-radius: 10px;
+}
+
+[data-tooltip]:hover:before {
+  opacity: 1;
+  background: white;
+  margin-top: -10px;
+  margin-left: 20px;
+}
+
+[data-tooltip]:not([data-tooltip-persistent]):before {
+  pointer-events: none;
+}
+
+.tab-elements {
+  a {
+    color: #54d335;
+    &:hover {
+      color: #399a22;
+    }
+  }
+}

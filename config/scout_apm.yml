@@ -1,0 +1,11 @@
+
+development:
+  monitor: false
+
+test:
+  monitor: false
+
+production:
+  key: <%= Rails.application.secrets.scount_key %>
+  monitor: <%= Rails.application.secrets.scount_monitor %>
+  log_level: <%= Rails.application.secrets.scount_log_level %>

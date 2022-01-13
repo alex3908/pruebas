@@ -1,0 +1,68 @@
+<script type="text/javascript" src="https://docs.netpay.mx/cdn/js/dev/netpay.154.js"></script>
+
+<% if subscription %>
+  <% content_for :side do %>
+    <div>
+      <p class="text-justify">
+        Domiciliación del <b><%= @project.lot_entity_name %> <%= @lot.name %></b> de la
+        <span class="text-lowercase"><%= @project.stage_entity_name %></span> <b><%= @stage.name %></b>
+        de la <span class="text-lowercase"><%= @project.phase_entity_name %></span> <b><%= @phase.name %></b> del
+        <span class="text-lowercase"><%= @project.project_entity_name %></span> <b><%= @project.name %></b>
+      </p>
+    </div>
+
+    <div class="py-3 text-justify">
+      “Estimado cliente, le recordamos que es muy importante, por temas fiscales y para su próxima escrituración,
+      realizar su pago desde su cuenta. Así evitaremos algún retraso en el proceso de su escritura definitiva“
+    </div>
+
+    <div class="text-right">
+      <span class="font-weight-bold">Total:</span> <%= "#{number_to_currency(@amount)} MXN (#{@expiry_count})" %>
+    </div>
+  <% end %>
+
+  <div data-controller="netpay" data-netpay-api-key="<%= service.loop_public_key %>" data-netpay-env="<%= @online_payment_service.environment %>">
+    <%= form_with(scope: :subscription, method: "POST", local: true, url: online_payment_services_subscribe_path(@online_payment_service, folder_id: @folder.id), data: { target: "netpay.paymentForm" }, multipart: true) do |form| %>
+      <%= form.hidden_field :token_id, data: { target: "netpay.tokenField" } %>
+      <%= form.hidden_field :client_id, value: @client.id %>
+      <%= form.hidden_field :concept, value: @concept %>
+      <%= form.hidden_field :concept_key, value: @concept_key %>
+      <%= form.hidden_field :amount, value: @amount %>
+      <%= form.hidden_field :expiry_count, value: @expiry_count %>
+      <%= form.hidden_field :start_date, value: @start_date %>
+      <%= form.hidden_field :identifier, value: "down_payment_folder_#{@folder.id}_#{DateTime.now}" %>
+    <% end %>
+    <%= content_tag :div, "", id: "netpay-form" %>
+  </div>
+
+<% else %>
+
+  <div data-controller="netpay" data-netpay-api-key="<%= service.charge_public_key %>" data-netpay-env="<%= @online_payment_service.environment %>">
+
+    <%= form_with(scope: :online_payment_ticket, url: online_payment_tickets_path, local: true, method: "POST", class: "text-center", data: { target: "netpay.paymentForm" }) do |form| %>
+      <%= form.hidden_field :token_id, data: { target: "netpay.tokenField" } %>
+      <% if @online_payment_service.environment == "test" %>
+        <h5>Modo de prueba</h5>
+        <span class="mr-2">
+          <%= form.label :test, "aprobar" %>
+          <%= form.radio_button :test, "accept", checked: true %>
+        </span>
+
+        <span class="mr-2">
+          <%= form.label :test, "review 3ds" %>
+          <%= form.radio_button :test, "review" %>
+        </span>
+
+        <span class="mr-2">
+          <%= form.label :test, "rechazar" %>
+          <%= form.radio_button :test, "reject" %>
+        </span>
+      <% end %>
+
+      <% @online_payment.each do |k, v| %>
+        <%= form.hidden_field k, value: v %>
+      <% end %>
+    <% end %>
+    <%= content_tag :div, "", id: "netpay-form" %>
+  </div>
+<% end %>

@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Identificaciones Oficiales</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Identificaciones Oficiales", identification_types_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Ver Identificación Oficial</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <p>
+        <strong>Nombre:</strong>
+        <%= @identification_type.name %>
+      </p>
+      <p>
+        <strong>Institución expedidora:</strong>
+        <%= @identification_type.name %>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <%= link_to "Regresar", identification_types_path, class: "btn btn-secondary" %>
+  <%= link_to "Editar", edit_identification_type_path(@identification_type), class: "btn btn-primary" %>
+</div>

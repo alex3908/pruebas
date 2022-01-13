@@ -1,0 +1,23 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Cambiar Contraseña</span></h1>
+  &nbsp;
+  <p>
+    <span>Hola <%= @user_client.client.label %>:</span></p>
+  <p>
+    <span>
+      Alguien ha solicitado un enlace para recuperar su contraseña. Puede hacerlo a través del siguiente enlace.
+    </span>
+  </p>
+<% end %>
+
+<%= render partial: "components/mailer_button", locals: { title: "Recuperar contraseña", url: recovery_password_user_clients_url(rpt: @user_client.reset_password_token) } %>
+
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <span>
+      Si no solicitó esto, ignore este correo electrónico.
+      <br>
+      Su contraseña no cambiará hasta que acceda al enlace de arriba y cree una nueva.
+    </span>
+  </p>
+<% end %>

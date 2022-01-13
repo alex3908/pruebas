@@ -1,0 +1,49 @@
+<%= form_with(model: email_template, local: true) do |form| %>
+  <div class="d-flex flex-wrap justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">Datos de plantilla</h3>
+    <div class="clearfix py-2"></div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :title, "Título" %>
+      <%= form.text_field :title, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :subject, "Asunto" %>
+      <%= form.text_field :subject, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-4">
+      <%= form.label :use_system_template, "Usar plantilla general" %>
+      <div>
+        <%= form.check_box :use_system_template,
+                          data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: "Si",
+                              off: "No",
+                          } %>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 col-md-12">
+      <%= form.label :html, "Plantilla" %>
+      <%= form.text_area :html, class: "tinymce", "v-pre": '' %>
+    </div>
+    <div class="form-group col-sm-12 col-md-4">
+      <%= form.label :attachments, "Archivos adjuntos" %>
+      <div class="col-sm-6">
+        <%= form.file_field :attachments, multiple: true %>
+      </div>
+    </div>
+    <% if email_template.persisted? && email_template.attachments.attached? %>
+      <div class="form-group col-sm-12 col-md-8">
+        <%= render "email_templates/sections/attachments", email_template: email_template %>
+      </div>
+    <% end %>
+    <div class="form-group col-sm-12 col-md-12 py-3">
+      <%= link_to "Cancelar", email_templates_path, class: "btn btn-secondary" %>
+      <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,222 @@
+<div class="pdf-new-bg">
+  <% unless original %>
+    <div class="copy-container">
+      <h1 style="font-family: Arial, serif;
+          opacity: 0.5;">COPIA</h1>
+    </div>
+  <% end %>
+  <div class="complementary-header float-right"
+       <% unless original %> style="position:relative;top:-200px;"
+       <% end %>>
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 p-0">
+          <h1 class="no-letter-spacing text-bold">CONDICIONES DE COMPRA</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          <p class="header-text">Método de pago</p>
+        </div>
+        <div class="col-xs-4">
+          <div class="square">
+            <div class="square-content">
+              <div>
+                <% if @folder.payment_scheme.total_payments > 1 %>
+                  <p>x</p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <p class="header-text">Crédito</p>
+        </div>
+        <div class="col-xs-4">
+          <div class="square">
+            <div class="square-content">
+              <div>
+                <% if @folder.payment_scheme.total_payments == 1 %>
+                  <p>x</p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <p class="header-text">Contado</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="bg-date m-0 p-0 col-xs-12">
+          <p class="text-bold">Fecha: <%= Time.zone.now.strftime("%d/%m/%Y") %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conditions-container"
+       <% unless original %> style="position:relative;top:-200px;"
+       <% end %>>
+    <h6 class="text-bold">MEMORIA DESCRIPTIVA DEL PREDIO</h6>
+    <table class="required-data conditions-info text-nowrap">
+      <tr>
+        <th>
+          Nombre del comprador:
+        </th>
+        <td>
+          <%= client.label %>
+        </td>
+      </tr>
+      <% if client.person == 'physical' && client.physical_client %>
+        <tr>
+          <th>
+            R.F.C.:
+          </th>
+          <td>
+            <%= client.physical_client.rfc %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Ocupación:
+          </th>
+          <td>
+            <%= client.physical_client.occupation %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Fecha de nacimiento:
+          </th>
+          <td>
+            <%= client.physical_client.birthdate %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Lugar de nacimiento:
+          </th>
+          <td>
+            <%= client.physical_client.place_birth %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Estado civil:
+          </th>
+          <td>
+            <%= client.physical_client.civil_status %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            Dirección:
+          </th>
+          <td>
+            <span id="pre-wrap"><%= client.physical_client.address_label %></span>
+          </td>
+        </tr>
+      <% elsif client.person == 'moral' && client.moral_client %>
+        <tr>
+          <th>
+            <span id="pre-wrap">Denominación o razón social:</span>
+          </th>
+          <td>
+            <%= client.moral_client.business_name %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            R.F.C.:
+          </th>
+          <td>
+            <%= client.moral_client.rfc_company %>
+          </td>
+        </tr>
+        <tr>
+          <th>
+            <span id="pre-wrap">Objeto social, giro o actividad:</span>
+          </th>
+          <td>
+            <%= client.moral_client.activity %>
+          </td>
+        </tr>
+        <% if client.moral_client.constitution_date.present? %>
+          <tr>
+            <th>
+              Fecha de constitución:
+            </th>
+            <td>
+              <%= client.moral_client.constitution_date.strftime("%d/%m/%Y") %>
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <th>
+            Domicilio Social:
+          </th>
+          <td>
+            <span id="pre-wrap"><%= client.moral_client.address_label %></span>
+          </td>
+        </tr>
+      <% end %>
+      <tr>
+        <th>
+          Teléfono celular:
+        </th>
+        <td>
+          <%= client.formatted_main_phone %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Correo electrónico:
+        </th>
+        <td>
+          <%= client.email %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          <%= @folder.lot.project.lot_entity_name %>:
+        </th>
+        <td>
+          <%= @folder.lot.name %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Área(m<sup>2</sup>):
+        </th>
+        <td>
+          <%= @folder.lot.area %>
+        </td>
+      </tr>
+      <tr>
+        <th></th>
+        <td></td>
+      </tr>
+    </table>
+
+    <div class="conditions-text mt-5">
+      <%= @folder.purchase_conditions_formatted.try(:html_safe) %>
+    </div>
+    <% if @with_signature %>
+      <div style="width:33%;margin-left:34%;margin-top:7%;">
+        <div class="text-center sign-tag-color"><%= client&.sign_tag %></div>
+        <div class="secondary-bar-sign new_format">
+          <p class="h6 text-center">
+            <%= client&.name if client.moral? %>
+            <br>Firma de conformidad <br>
+            <%= client.person == "moral" ? client&.moral_client&.legal_name : client.label %>
+          </p>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="pt-5 conditions-text">
+      <p>
+        *Agregar copia de identificación oficial: Credencial para votar o pasaporte vigentes y legibles, y comprobante
+        de domicilio.
+      </p>
+    </div>
+  </div>
+
+</div>

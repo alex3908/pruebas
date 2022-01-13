@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Reporte de unidades</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to 'Reportes', reports_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Unidades</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<%= form_tag(units_reports_path, method: :post, data: { controller: "export", 'target': "export.form", 'export-url': export_units_projects_url(format: :json) }) do %>
+  <%= hidden_field_tag :direction, params[:direction] %>
+  <%= hidden_field_tag :sort, params[:sort] %>
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-md-4 col-lg-4 mb-3">
+        <%= label_tag :project do %> Buscar por <span class="text-lowercase"><%= @project_singular %>: </span>
+        <% end %>
+        <%= select_tag :project, options_for_select(@projects.map { |project| [project.name, { "data-phases" => project.phases.select(:id, :name).to_json(include: { stages: { only: [:id, :name] } }) }, project.id] }, selected: params["project"].to_s), { class: "form-control", include_blank: ("Todos") } %>
+      </div>
+      <div class="col-md-4 col-lg-4 mb-3">
+        <%= label_tag :phase do %> Buscar por <span class="text-lowercase"><%= @phase_singular %>: </span>
+        <% end %>
+        <%= select_tag :phase, options_for_select([["Todas", ""]]), class: "form-control input-white bg-input-disabled", disabled: true %>
+      </div>
+      <div class="col-md-4 col-lg-4 mb-3">
+        <%= label_tag :stage do %> Buscar por <span class="text-lowercase"><%= @stage_singular %>: </span>
+        <% end %>
+        <%= select_tag :stage, options_for_select([["Todas", ""]]), class: "form-control input-white bg-input-disabled", disabled: true %>
+      </div>
+      <div class="col-md-12 col-lg-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

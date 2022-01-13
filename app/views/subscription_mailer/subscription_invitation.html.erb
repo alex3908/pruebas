@@ -1,0 +1,21 @@
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <span>
+      De acuerdo a su solicitud para domiciliar los pagos de su
+      proyecto <b><%= @stage.name %> <%= @project.lot_entity_name %> <%= @lot.name %></b> con referencia <b><%= @lot.reference %></b>,
+      le hago llegar el enlace para suscribirse al servicio.
+      Es importante llenar todos los datos para que la misma sea exitosa.
+    </span>
+  </p>
+  <p>
+    <span>
+        Le invitamos a realizar su pago desde el siguiente enlace:
+    </span>
+  </p>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <%= link_to new_subscription_url(folder_id: @folder.id,client_id: @client.id) do %>
+    <%= image_tag('domicilie-aqui.jpg', style: "width: 100%") %>
+  <% end %>
+<% end %>

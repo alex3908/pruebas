@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="row">
+
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0"><%= CommissionScheme.model_name.human(count: 2) %></h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to t('buttons.back'), catalogs_path, class: "btn btn-secondary float-right mr-2" %>
+      <%= link_to(t('buttons.new'), new_commission_scheme_path, class: "btn btn-primary") if can?(:create, CreditScheme) %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @commission_schemes.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        <%= t('table.empty', model: CommissionScheme.model_name.human.downcase) %>
+        <% if can?(:create, CommissionScheme) %>
+          <br> <%= t('table.start') %>
+        <% end %>
+      </p>
+      <% if can?(:create, CommissionScheme) %>
+        <div class="text-center mt-3">
+          <%= link_to t('buttons.new'), new_commission_scheme_path, class: "btn btn-primary jumping" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+      <thead>
+        <tr>
+          <th><%= CommissionScheme.human_attribute_name(:name) %></th>
+          <th><%= CommissionScheme.human_attribute_name(:global_commission) %></th>
+          <th></th>
+        </tr>
+      </thead>
+        <% @commission_schemes.each do |commission_scheme| %>
+        <tr>
+          <td><%= commission_scheme.name %></td>
+          <td><%= commission_scheme.global_commission %></td>
+          <td class="text-center">
+            <%= link_to(fa_icon("edit"), edit_commission_scheme_path(commission_scheme), class: "table-link", data: { toggle: "tooltip" }, title: t('buttons.edit')) if can?(:update, CommissionScheme) %>
+            <%= link_to(fa_icon("trash"), commission_scheme_path(commission_scheme), class: "table-link", method: :delete, data: { toggle: "tooltip", confirm: t('confirmations.destroy?') }, title: t('buttons.destroy')) if can?(:destroy, CommissionScheme) && commission_scheme.stages.empty? %>
+          </td>
+        </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,634 @@
+es:
+  true: Si
+  false: No
+  helpers:
+    cash_flow_statuses:
+      active: Activo
+      canceled: Cancelado
+    netpay_billing_attributes:
+      city: Ciudad
+      state: Estado
+      country: País
+      postal_code: Código postal
+      street: Calle
+      interior_number: Número interior
+      street1: Calle
+      street2: Número interior
+  datetime: 
+    dotiw:
+      words_connector: ", "
+      two_words_connector: " con "
+      last_word_connector: " y "
+  time:
+    pm: pm
+    am: am
+    formats:
+      only_date: '%d/%m/%Y'
+      date_hour: '%d/%m/%Y %I:%M %p'
+      only_hour: '%I:%M %p'
+      human_full: '%d de %B de %Y %I:%M %p'
+  date:
+    abbr_day_names:
+    - dom
+    - lun
+    - mar
+    - mié
+    - jue
+    - vie
+    - sáb
+    abbr_month_names:
+    - 
+    - ene
+    - feb
+    - mar
+    - abr
+    - may
+    - jun
+    - jul
+    - ago
+    - sep
+    - oct
+    - nov
+    - dic
+    day_names:
+    - domingo
+    - lunes
+    - martes
+    - miércoles
+    - jueves
+    - viernes
+    - sábado
+    formats:
+      default: "%-d/%-m/%Y"
+      long: "%-d de %B de %Y"
+      short: "%-d de %b"
+      only_date: '%d/%m/%Y'
+    month_names:
+    - 
+    - enero
+    - febrero
+    - marzo
+    - abril
+    - mayo
+    - junio
+    - julio
+    - agosto
+    - septiembre
+    - octubre
+    - noviembre
+    - diciembre
+    order:
+    - :day
+    - :month
+    - :year
+  errors:
+    models:
+      client:
+        main_phone:
+          wrong_format:
+            'Los número telefónicos deben ser a 10 dígitos'
+        optional_phone:
+          wrong_format:
+            'Los número telefónicos deben ser a 10 dígitos'
+      user:
+        phone:
+          wrong_format:
+            'Los número telefónicos deben ser a 10 dígitos'
+      signer: 
+        phone:
+          wrong_format:
+            'Los número telefónicos deben ser a 10 dígitos'
+
+    messages:
+      not_found: 'No encontrado.'
+      taken: 'ya se encuentra en el sistema'
+      already_confirmed: 'ya ha sido confirmada'
+      not_locked: 'no está bloqueada'
+      expired: "ha caducado, por favor pide uno nuevo"
+      error: "Ha ocurrido un error"
+      not_saved:
+        one: "1 error evitó guardar este %{resource}:"
+        other: "%{count} errores evitaron guardar este %{resource}:"
+  app:
+    auth:
+      log_in: "Inicia Sesión"
+      email: "Correo electrónico"
+      password: "Contraseña"
+      remember_me: "Recordar mis datos"
+      copy: "%{brand} © 2019 - 2021"
+      privacy_policy: "Política de Privacidad"
+
+  exception:
+    record_not_found: "Elemento no encontrado."
+
+  settings:
+    project_singular: Entidad Nivel 1
+    phase_singular: Entidad Nivel 2
+    stage_singular: Entidad Nivel 3
+    lot_singular: Entidad Nivel 4
+    slack_subscription_notifs_hook: Slack Webhook
+  activerecord:
+    models:
+      user:
+        one: 'Usuario'
+        other: 'Usuarios'
+      client:
+        one: 'Cliente'
+        other: 'Clientes'
+      physical_client:
+        one: 'Persona física'
+        other: 'Personas físicas'
+      moral_client:
+        one: 'Persona moral'
+        other: 'Personas morales'
+      folder:
+        one: 'Expediente'
+        other: 'Expedientes'
+      payment_scheme:
+        one: 'Esquema de pago'
+        other: 'Esquemas de pago'
+      payment_method:
+        one: 'Método de pago'
+        other: 'Métodos de pago'
+      phase:
+        one: Fase
+        other: Fases
+      project:
+        one: Proyecto
+        other: Proyectos
+      stage:
+        one: Etapa
+        other: Etapas
+      lot:
+        one: Unidad
+        other: Unidades
+      cash_flow:
+        one: 'Flujo de caja'
+        other: 'Flujos de caja'
+    attributes:
+      user:
+        current_password: 'Contraseña actual'
+        branch: 'Sucursal'
+        password_confirmation: 'Confirma tu contraseña'
+        reset_password_token: 'Reiniciar token de recuperar contraseña'
+        password: 'Contraseña'
+        email: 'Correo'
+        gender:
+          male: Masculino
+          female: Femenino
+      client:
+        name: 'Nombre'
+        first_surname: 'Primer apellido'
+        email: 'Correo electrónico'
+        lead_source: "Llave de Origen"
+        main_phone: Teléfono
+        optional_phone: Tel. Adicional
+      credit_scheme:
+        name: Nombre
+        surplus_amount_to_capital_time: Excedente a abono de capital
+        initial_payment_active: Apartado activo
+        independent_initial_payment: Apartado independiente
+        initial_payment_editable: Apartado editable
+        first_payment: Primer pago del apartado en
+        initial_payment: Monto de apartado
+        relative_down_payment: Enganche relativo
+        down_payment_editable: Enganche editable
+        second_payment: Primer pago del enganche en
+        min_down_payment: Porcentaje mínimo de enganche
+        max_down_payment_percentage: Porcentaje máximo de enganche
+        start_installments: Meses de gracia del financiamiento
+        max_finance: Meses máximos a financiar el enganche
+        lock_payment: Monto para bloqueo
+        min_capital_payment: Monto mínimo de abono a capital
+        min_down_payment_advance: Monto mínimo de abono a enganche
+        max_grace_months: Meses máximos para cambio de fecha
+        max_delay_payments: Meses máximos para prórroga de pagos
+        compound_interest: Interés relativo
+        relative_discount: Descuento relativo
+        expire_months: Meses relativos
+        show_rate: Mostrar tasa de interés
+        show_price: Mostrar precio por metro cuadrado
+        immediate_extra_months: Meses extras de construcción inmediata del primer período
+        max_percent_immediate_lots_sold: Porcentaje máximo de unidades vendidas en construcción inmediata
+        quotation_type: Tipo de cotización
+        quotation:
+          multiple_periods: Múltiples períodos de interés
+          one_period: Único período de interés
+          simple_interest: Periodos con interés sobre el precio del m2
+      commissions:
+        statuses:
+          paid: Pagado
+          pending: Pendiente
+          canceled: Cancelado
+      enterprise/netpay_services:
+          service_type: Servicio
+          secret_key: Llave privada
+          public_key: Llave pública
+      lead_source:
+        name: Nombre
+        source_key: Llave de Origen
+      online_payment_ticket:
+        statuses:
+          success: Éxito
+          failed: Rechazado
+          error: Error
+          review: Review 3ds
+        concept_keys:
+          reserve: apartado
+          reserve_fee: cuota de apertura
+          down_payment: apartado con enganche
+          balance_down: enganche
+          additional_concept: Servicios adicionales
+          initial_payment: apartado
+          finance: financiamiento
+          financing: financiamiento
+          balance_down_payment: enganche
+          subscription: suscripción
+      stage:
+        active: Activo
+        active_annexes: Visibilidad en el expediente
+        active_commissions: Generar comisiones por ventas
+        credit_scheme_id: Esquema de crédito
+        down_payment_expiration: Periodo de gracia para enganche
+        first_payment: Primer pago del enganche en
+        formula: Tipo de cotización
+        immediate_extra_months: Meses extras del primer período (construcción inmediata)
+        initial_payment: Monto de apartado
+        initial_payment_expiration: Periodo de gracia para apartado
+        lock_payment: Monto para bloqueo
+        lock_seller_period: Periodo de bloqueo de asesor
+        lot_description: "Anexo 3"
+        max_commission_amount: Mensualidades máximas de comisiones
+        max_delay_payments: Meses máximos para prórroga de pagos
+        max_finance: Meses máximos a financiar el enganche
+        max_grace_months: Meses máximos para cambio de fecha
+        max_percent_immediate_lots_sold: Porcentaje máximo de unidades vendidas en construcción inmediata
+        min_capital_payment: Monto mínimo de abono a capital
+        min_down_payment: Porcentaje mínimo de enganche
+        min_down_payment_advance: Monto mínimo de abono a enganche
+        name: Nombre
+        observations: Observaciones
+        receipt_observations: Observaciones de recibos
+        payment_expiration: Periodo de gracia para considerar cartera vencida
+        payment_receptor_emails: Correos receptores de pagos
+        pdf_annexes: Anexos PDF
+        price: Precio
+        reference: Referencia
+        relative_discount: Descuento relativo
+        expire_months: Meses relativos
+        release_date: Fecha de salida
+        show_full_name: Mostrar nombre completo
+        show_price: Mostrar precio por metro cuadrado
+        show_rate: Mostrar tasa de interés
+        start_date_by: Usar fecha inicial de
+        start_installments: Primer pago de las mensualidades después de
+        stage_type: Tipo
+        sudden_death: Muerte súbita para expedientes
+        purchase_conditions: Condiciones de Compra
+        lot_description_title: Anexo Lote
+        stage_description_title: Anexo Etapa
+        phase_description_title: Anexo Fase
+      subscription_plan:
+        financing: Financiamiento
+        down_payment: Enganche
+        initial_payment: Apartado
+      support_sale:
+        requester_id: Asesor
+        request_coordinator_id: Coordinador
+        request_manager_id: Gerente
+        supporter_id: Asesor soporte
+        support_coordinator_id: Coordinador soporte
+        support_manager_id: Gerente soporte
+        support_vicedirector_id: Subdirección de soporte
+        status: Estado
+        statuses:
+          creation: Creación
+          support_review: Evaluación de soporte
+          rejected: Rechazado
+          canceled: Cancelado
+          approved: Aprobado
+      lot:
+        blocks: Bloques
+        geographic_location: Ubicación geográfica
+        ownership_percent: Porcentaje de propiedad
+        coowners: Copropietarios
+        liquidity: Liquidez
+        pdf_annexes: Anexos PDF
+        label: Clasificador
+        number: Número
+        depth: Fondo
+        front: Frente
+        area: Área
+        price: Precio adicional por m²
+        north: Norte en metros
+        south: Sur en metros
+        east: Este en metros
+        west: Oeste en metros
+        adjoining_north: Colinda al Norte con
+        adjoining_south: Colinda al Sur con
+        adjoining_east: Colinda al Este con
+        adjoining_west: Colinda al Oeste con
+        planking: Tablaje
+        folio: Folio catastral
+        stage: Etapa
+        statuses:
+          for_sale: Disponible
+          reserved: Reservado
+          sold: Vendido
+          locked_sale: Fuera de venta
+      folder:
+        purchase_conditions: Condiciones de Compra
+        lot_id: 'Lote'
+        step_id: 'Paso'
+        status: 'Estado'
+        start_date: 'Fecha de Inicio'
+        buyer: 'Comprador'
+      payment_scheme:
+        down_payment: 'Saldo del Enganche'
+        initial_payment: 'Apartado'
+        lock_payment: 'Complemento'
+        down_payment_finance: 'Financiamiento del Enganche'
+        buy_price: 'Precio por m2'
+        discount: 'Descuento'
+        start_installments: 'Meses para Pago de Financiamiento'
+        zero_rate: 'Meses sin intereses'
+        promotion: 'Porcentaje de la promoción'
+        promotion_name: 'Nombre de la promoción'
+        promotion_operation: 'Operación para calculo de promoción'
+        opening_commission: 'Comisión por apertura'
+        total_payments: 'Total de pagos'
+      subscription:
+        concept_keys:
+          finance: Financiamiento
+          balance_down_payment: Enganche diferido
+      physical_client:
+        identification_type: Nombre de la Identificación
+      job_status:
+        statuses:
+          canceled: Cancelado
+          pending: Pendiente
+          success: Exitoso
+          error: Error
+      folder_user:
+        concept: Concepto
+        concepts:
+          referred: "Referido"
+          sale: "Venta"
+          follow_up: "Seguimiento"
+          marketing: "Marketing"
+          extra: "Administrativo"
+      automated_email:
+        executions:
+          enter_step: "Entrar al paso"
+          exit_step: "Salir del paso"
+          back_step: "Regresar al paso"
+          reject_step: "Rechazar al paso"
+        recievers:
+          client: "Cliente"
+          user: "Usuario"
+          client_users: "Responsables de Clientes"
+        hidden_states:
+          canceled: "Cancelado"
+          expired: "Expirado"
+        types:
+          folders: "Expediente"
+          clients: "Clientes"
+        sources:
+          api: "APi"
+          integration: "Integración"
+          public_quote: "Cotizador Público"
+          web: "CRM"
+          all_sources: "Todos"
+      additional_concept:
+        one: 'Servicio adicional'
+        other: 'Servicios adicionales'
+        name: "Nombre"
+        description: "Descripción"
+        active: "Activo"
+        amount: "Monto"
+        amount_type: "Tipo de monto"
+        amount_types:
+          fixed: "Fijo"
+          variable: "Variable"
+      cash_flow:
+        folder: 'Expediente'
+        client: 'Cliente'
+        branch: 'Sucursal'
+        user: 'Usuario'
+        payment_method: 'Método de pago'
+        bank_account: 'Cuenta bancaria'
+        date: 'Fecha de pago'
+        amount: 'Monto'
+      installment:
+        concept_keys:
+          financing: Financiamiento
+          down_payment: Enganche
+          initial_payment: Apartado
+          restructure: Restructura
+          additional_concept: Concepto adicional
+      document_template:
+        folder: 'Expediente'
+        client: 'Cliente'
+      quote_log:
+        project: 'Proyecto'
+        phase: 'Fase'
+        stage: 'Etapa'
+        lot: 'Lote'
+        user_name: 'Nombre del Usuario'
+        user_email: 'Correo del Usuario'
+        client_name: 'Nombre del Cliente'
+        client_email: 'Correo del Cliente'
+        email_delivered: 'Enviada por Email'
+        downloaded: 'Descargada'
+        folio: 'Folio'
+        status: 'Estado del Expediente'
+        creation_date: 'Fecha de cotización'
+        lead_source: 'Origen'
+      client_user: 
+        user_id: 'Usuario'
+        client_id: 'Cliente'
+        client_user_concept: 'Concepto'
+      promotion:
+        over: Multiplicativo por plazo
+        higher: Mayor
+        addition: Suma
+        amount: Monto
+        percentage: Porcentaje
+        true: Activado
+        false: Desactivado
+    errors:
+      messages:
+        content_type_invalid: "Formato no válido."
+        record_invalid: 'La validación falló: %{errors}'
+        restrict_dependent_destroy:
+          has_one: 'No se puede eliminar el registro porque existe un %{record} dependiente'
+          has_many: 'No se puede eliminar el registro porque existen %{record} dependientes'
+      models:
+        user:
+          attributes:
+            current_password:
+              blank: 'Campo requerido.'
+              invalid: 'La contraseña que ingresaste es incorrecta.'
+            branch:
+              required: 'Usuario sin sucursal asignada.'
+            password_confirmation:
+              confirmation: 'La confirmación no coincide con su contraseña.'
+            reset_password_token:
+              invalid: 'El link de recuperar contraseña ha expirado.'
+            password:
+              blank: 'Campo requerido.'
+              too_short: 'La contraseña es demasiado corta.'
+            email:
+              blank: 'Campo requerido.'
+              invalid: 'No es un correo electrónico válido.'
+        client:
+          attributes:
+            name:
+              blank: 'Campo requerido.'
+            first_surname:
+              blank: 'Campo requerido.'
+            email:
+              blank: 'Campo requerido.'
+              taken: 'Correo existente.'
+              invalid: 'No es un correo electrónico.'
+            main_phone:
+              wrong_format: 'Formato de teléfono incorrecto.'
+            optional_phone:
+              wrong_format: 'Formato de teléfono incorrecto.'
+        netpay_service:
+          attributes:
+            secret_key:
+              blank: 'no debe estar vacío'
+            public_key:
+              blank: 'no debe estar vacío'
+        project:
+          attributes:
+            enterprise:
+              required: 'Campo requerido.'
+            enterprise_id:
+              required: 'Campo requerido.'
+              blank: 'Campo requerido.'
+              not_a_number: 'Se espera un número entero.'
+        stage:
+          attributes:
+            enterprise:
+              required: 'Campo requerido'
+            enterprise_id:
+              blank: 'Campo requerido'
+              not_a_number: 'Se espera un número entero'
+            pdf_annexes:
+              invalid_type: 'al menos un archivo no es del tipo correcto (.pdf)'
+            purchase_conditions:
+              liquid_error: 'tiene un formato es incorrecto, revisa tus variables.'
+        folder:
+          attributes:
+            purchase_conditions:
+              liquid_error: 'tiene un formato es incorrecto, revisa tus variables.'
+        lot:
+          attributes:
+            stage:
+              required: 'Campo requerido'
+            pdf_annexes:
+              invalid_type: 'al menos un archivo no es del tipo correcto (.pdf)'
+            number:
+              not_a_number: 'Se espera un número entero'
+            depth:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            front:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            area:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            price:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            north:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            south:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            east:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            west:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+        payment_scheme:
+          attributes:
+            down_payment:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            initial_payment:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            down_payment_finance:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            buy_price:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            discount:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            start_installments:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+            zero_rate:
+              not_a_number: 'Se espera un número, retire letras o comas.'
+        payment:
+          attributes:
+            payment_method:
+              required: 'Campo requerido'
+        additional_concept:
+          attributes:
+            name:
+              blank: 'Campo requerido.'
+            description:
+              blank: 'Campo requerido.'
+            amount_type:
+              blank: 'Campo requerido.'
+            amount:
+              blank: 'Campo requerido.'
+              not_a_number: 'Se espera un número, retire letras o comas.'
+        digital_signature:
+          attributes:
+            status:
+              cancel_error: 'Error al cancelar el documento'
+              not_cancel_finalized_error: 'No se puede cancelar un documento que ha sido finalizado'
+  payment_services:
+    netpay:
+      properties:
+        charge_secret_key: 'Llave privada (charge)'
+        charge_public_key: 'Llave pública (charge)'
+        loop_secret_key: 'Llave privada (loop)'
+        loop_public_key: 'Llave pública (loop)'
+    paypal:
+      properties:
+        client_id: ClientID
+        client_secret: Client secret
+    stp:
+      properties:
+        key_code: Llave de Integración
+      values:
+        generated_clabe: CLABE con Dígito Verificador
+  digital_signature_services:
+    trato:
+      properties:
+        api_key: 'Api Key'
+        expiration_days: 'Dias de expiración'
+        email: "Correo de usuario de trato"
+        password: "Contraseña de usuario de trato"
+  digital_signatures:
+    statuses:
+        initialized: "Inicializado"
+        sent_to_clients_signature: "Enviado a firma de clientes"
+        sent_for_signature_of_legal_representatives: "Enviado a firma de representantes legales"
+        created: "creado"
+        expired: "Expirado"
+        canceled: "Cancelado"
+        finalized: "Finalizado"
+        failed: "Error de envio"
+  signers:
+    signature_info:
+        name: "Nombre"
+        last_name: "Apellidos"
+        role: "Rol"
+        email: "Correo"
+        representative: "Representante legal"
+  online_payment_response: 
+    statuses: 
+      success: "Cargo exitoso"
+      review: "Revisión"
+      rechazado: "Pago rechazado"
+      payment_error: "Ha ocurrido un error al procesar el pago"
+  will_paginate:
+    page_gap: '...'

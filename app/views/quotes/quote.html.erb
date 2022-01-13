@@ -1,0 +1,655 @@
+<div class="container">
+  <%= render partial: "components/breadcrumb", locals: {
+      name: @project.name,
+      last: "Cotizar",
+      links: [
+          {name: "Dashboard", path: root_path},
+          {name: @phase_plural, path: project_path(@project, client: params["client"])},
+          {name: @stage_plural, path: project_phase_stages_path(@project, @phase, client: params["client"])},
+          {name: @project.lot_entity_plural, path: project_phase_stage_path(@project, @phase, @stage, client: params["client"])},
+      ],
+  } %>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <%= render "clients" %>
+</div>
+
+<% if (can?(:quote, :quote) && cannot?(:reserve, :quote)) || @client.present? || @folder.present? %>
+  <% if params[:email].present? %>
+    <div class="container">
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Correo enviado con exito.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  <% end %>
+
+  <% if can?(:reserve, :quote) && @client.present? && @client.main_phone.present? %>
+    <div class="container">
+      <div class="availability-btn-section">
+        <button class="btn-availability whatsapp-icon" id="send-whatsapp-availability" data-url="https://wa.me/<%= @client.main_phone.gsub(/[^.0-9]+/, "") %>?text=Hola+te+comparto+la+disponibilidad+de+<%= @project.name.sub(" ", "+") %>: <%= "https://#{request.host_with_port}/disponibilidad?etapa=#{encode_base_64(@stage.id)}%26vendedor=#{encode_base_64(current_user.id)}%26cliente=#{encode_base_64(params[:client])}" %>">
+        </button>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="container">
+    <%= form_with(method: "GET", data: {remote: true}, id: "quote", multipart: true) do %>
+      <%= hidden_field_tag :client, @client.id if @client.present? %>
+      <%= hidden_field_tag :folder, @folder.id if @folder.present? %>
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+      <div class="pb-3">
+        <% if can?(:reserve, :quote) && (@unique_folder || @folder.present?) && @client.sales_executive != current_user %>
+          <div class="text-center text-warning">
+            Para poder generar esta venta, es necesario que el cliente <%= @client.label %> sea asignado a tu cuenta.
+          </div>
+        <% end %>
+      </div>
+
+      <div class="text-center">
+        <div class="btn-group">
+          <% if can?(:quote, :quote) %>
+            <%= button_tag "Descargar Cotización", type: :button, id: :download_pdf, class: "btn btn-secondary quotation-button-size text-center", disabled: @quotation.nil? %>
+          <% end %>
+          <% if can?(:reserve, :quote) && (@unique_folder || @folder.present? && @folder.new_record?) && @client.sales_executive == current_user && @lot.for_sale? %>
+            <%= button_tag "Enviar Cotización", type: :button, id: :send_email, class: "btn btn-secondary quotation-button-size text-center", disabled: @quotation.nil? %>
+            <%= button_tag "Reservar", type: :button, id: :reserve, class: "btn btn-primary quotation-button-size text-center action-reserve", disabled: @quotation.nil? if @folder.nil? %>
+          <% end %>
+          <% if @folder.present? && @folder.persisted? %>
+            <%= button_tag "Guardar Cambios", type: :button, id: :save, data: { hasCustomInstallments: @folder.has_custom_installments?, hasCustomPayments: @folder.has_custom_payments? }, class: "btn btn-primary quotation-button-size text-center action-reserve", disabled: true %>
+            <%= link_to "Cancelar", folder_url(@folder), class: "btn btn-warning quotation-button-size text-center" %>
+          <% end %>
+        </div>
+      </div>
+
+      <% if can?(:reserve, :quote) && @stage.credit_scheme.requires_file && (@unique_folder || @folder.present?) && @client.sales_executive == current_user && @lot.for_sale? %>
+        <div class="row">
+          <div class="col-lg-6 col-md-8 mx-auto mt-3">
+            <div class="custom-file">
+              <%= file_field_tag :file, class: "custom-file-input" %>
+              <%= label_tag :file, "#{@stage.credit_scheme.document_template.name}", class: "custom-file-label" %>
+              <small class="form-text text-muted">Es necesario que adjuntes el <%= @stage.credit_scheme.document_template.name %> para completar tu reserva.</small>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @folder.present? && @custom_quote_permissions %>
+        <%= render "quotes/customizable" %>
+      <% end %>
+
+      <% if can?(:reserve, :quote) && @client.present? %>
+        <section class="client">
+          <div class="row">
+            <div class="col-md-1 text-center py-3">
+              <%= image_tag("icons/quotation-client.png", class: "img-fluid") %>
+            </div>
+            <div class="col-md-11">
+              <div class="d-flex flex-wrap justify-content-between">
+                <h3 class="text-left vertical-align m-0 py-3">Cliente</h3>
+              </div>
+              <div class="row mb-3">
+                <div class="col-4 pr-0">
+                  <hr class="marker-bar-green">
+                </div>
+                <div class="col-8 pl-0">
+                  <hr class="marker-bar-gray">
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+            <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Teléfono Principal</th>
+              <% if @client.optional_phone.present? %>
+                <th>Teléfono Secundario</th>
+              <% end %>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td class="align-middle"><%= @client.label %></td>
+              <td class="align-middle"><%= @client.email %></td>
+              <td class="align-middle"><%= @client.formatted_main_phone %></td>
+              <% if @client.optional_phone.present? %>
+                <td class="align-middle"><%= @client.formatted_optional_phone %></td>
+              <% end %>
+            </tr>
+            </tbody>
+          </table>
+        </section>
+      <% end %>
+
+      <section class="info">
+        <div class="row">
+          <div class="col-md-1 text-center py-3">
+            <%= image_tag("icons/quotation-info.png", class: "img-fluid") %>
+          </div>
+          <div class="col-md-11">
+            <div class="d-flex flex-wrap justify-content-between">
+              <h3 class="text-left vertical-align m-0 py-3">Cotizador</h3>
+            </div>
+            <div class="row mb-3">
+              <div class="col-4 pr-0">
+                <hr class="marker-bar-green">
+              </div>
+              <div class="col-8 pl-0">
+                <hr class="marker-bar-gray">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <% if @lot.chepina.attached? %>
+            <div class="col-md-6">
+              <label class="d-block color-primary">Mapa Ilustrativo</label>
+              <%= image_tag(@lot.chepina_attached_path, class: "img-fluid image-bordered w-100") %>
+            </div>
+          <% end %>
+          <div class="col-md-6 vertical-align py-3 small-center mx-auto">
+            <div class="h5">
+              <span class="pr-2 text-capitalize"><%= @project_singular %>:</span>
+              <span class="font-light h5"><%= @project.name %></span>
+            </div>
+            <% if @lot.stage.show_full_name %>
+              <div class="h5">
+                <span class="pr-2 text-capitalize"><%= @phase_singular %>:</span>
+                <span class="font-light"><%= @lot.stage.phase.name %></span>
+              </div>
+            <% end %>
+            <div class="h5">
+              <span class="pr-2 text-capitalize"><%= @stage_singular %>:</span>
+              <span class="font-light"><%= @lot.stage.name %></span>
+            </div>
+            <div class="h5">
+              <span class="pr-2"><%= @lot_singular %>:</span>
+              <span class="font-light "><%= @lot.name %></span>
+            </div>
+            <div class="h5">
+              <span class="pr-2">Superficie:</span>
+              <span class="font-light"><%= "%.2f" % @lot.area %> m<sup>2</sup></span>
+            </div>
+            <% if @stage.project.show_price %>
+              <div class="h5">
+                <span class="pr-2">Precio por m<sup>2</sup>:</span>
+                <span class="font-light"><%= number_to_currency(@lot.price_with_additional) %></span>
+              </div>
+            <% end %>
+            <% if @initial_payment_active %>
+              <div class="h5">
+                <span class="pr-2">Apartado:</span>
+                <span class="font-light" id="initial_payment_label"><%= number_to_currency(@stage.credit_scheme.initial_payment) %></span>
+              </div>
+            <% end %>
+            <% unless @lot.stage.credit_scheme.simple_interest? %>
+              <div class="h5">
+                <span class="pr-2">Meses sin intereses:</span>
+                <span class="font-light" id="first_period_months"><%= @quotation.interest_free_period unless @quotation.nil? %></span>
+              </div>
+            <% end %>
+            <% if @stage.project.show_rate %>
+              <div class="h5">
+                <span class="pr-2">Tasa de interés:</span>
+                <span class="font-light"><%= "%.2f" % (@quotation.interest_payments.first[:rate] * 100) %>%</span>
+              </div>
+            <% end %>
+            <% if @use_quote_select && @total_payments > 1 %>
+              <div class="h5">
+                <%= label_tag :total_payments, "Monto a pagar:", class: "mt-2" %>
+                <%= select_tag :total_payments, options_for_select(@simple_quotations.map { |q| simple_quotation_select(q) }, @folder&.payment_scheme&.total_payments), prompt: "Selecciona una opción", class: "form-control", onchange: "$(this.form).submit();" %>
+              </div>
+            <% else %>
+              <div class="h5">
+                <%= hidden_field_tag :total_periods, @total_periods %>
+                <%= label_tag :total_payments, "Plazo de financiamiento:" %>
+                <div class="vertical-align">
+                  <% if @total_periods > 1 %>
+                    <div class="input-group">
+                      <%= number_field_tag :total_payments, @total_payments, min: 1, max: @total_periods, step: 1, maxlength: "3", class: "form-control text-right", onchange: "if(this.value) {$(this.form).submit();}" %>
+                      <div class="input-group-append">
+                        <div class="input-group-text input-text-right">mes(es)</div>
+                      </div>
+                    </div>
+                  <% else %>
+                    <%= hidden_field_tag(:total_payments, 1) %>
+                    <p>Contado</p>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+            <div class="h5">
+              <div id="down_payment_finance_container">
+                <%= label_tag :down_payment_finance, "Plazo de enganche:" %>
+                <div class="vertical-align">
+                  <% if @max_months_for_deferred_down_payment > 1 %>
+                    <div class="input-group">
+                      <%= number_field_tag :down_payment_finance, @folder.present? ? @folder.payment_scheme.down_payment_finance : 1,
+                                          min: @min_months_for_deferred_down_payment,
+                                          max: @max_months_for_deferred_down_payment,
+                                          step: 1, class: "form-control text-right", onchange: "if(this.value) {$(this.form).submit();}" %>
+                      <div class="input-group-append">
+                        <div class="input-group-text input-text-right">mes(es)</div>
+                      </div>
+                    </div>
+                  <% else %>
+                    <%= hidden_field_tag(:down_payment_finance, 1) %>
+                    <p>Contado</p>
+                  <% end %>
+                  <div class="invalid-feedback">
+                    <span class="<%= "d-none" if @down_payment_deferred_months_error %>">
+                      El plazo del enganche no puede ser mayor al plazo de financiamiento<br>
+                    </span>
+                    <span class="<%= "d-none" unless @down_payment_deferred_months_error %>">
+                      El plazo mínimo para diferir el enganche es de <i id="min_months_for_deferred_down_payment"><%= @min_months_for_deferred_down_payment %></i> meses<br>
+                      <% if @max_months_for_deferred_down_payment != Float::INFINITY %>
+                        El plazo máximo para diferir el enganche es de <i id="max_months_for_deferred_down_payment"><%= @max_months_for_deferred_down_payment %></i> meses
+                      <% end %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <% if @stage.credit_scheme.immediate_construction_enabled? %>
+              <% immediate_construction_limit_reached = @stage.credit_scheme.immediate_lots_limit_reached? %>
+              <%= label_tag "Construcción inmediata:" %>
+              <div class="input-group">
+                <div class="row">
+                  <div class="col-sm-2">
+                    <%= check_box_tag "is_immediate_construction", true, false, data: {
+                        activate: "toggle",
+                        onstyle: "success",
+                        offstyle: immediate_construction_limit_reached ? "dark" : "secondary",
+                        on: "Si",
+                        off: "No",
+                    }, onchange: "$(this.form).submit();", disabled: immediate_construction_limit_reached %>
+                  </div>
+                  <% if immediate_construction_limit_reached %>
+                    <div class="col-sm-10">
+                      <small><%= label_tag "Límite de #{@lot_plural} vendidos en construcción inmediata para ésta etapa alcanzado" %></small>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @promotions_to_select.size > 0 && (@folder.nil? || (cannot?(:custom_promotion, :quote) && @folder.present?)) %>
+              <div class="h5">
+                <%= label_tag :promotion, "Promoción:", class: "mt-2" %>
+                <div class="vertical-align">
+                  <%= select_tag :promotion, options_for_select(promotion_select_label(@promotions_to_select)), prompt: "Sin promoción", class: "form-control", onchange: "$(this.form).submit();" %>
+                </div>
+              </div>
+              <div id="promotions-warning" class="text-center text-warning mt-3" style='display:none;'></div>
+            <% end %>
+
+            <% if @promotions_with_active_coupons.any? && (@folder.nil? || (cannot?(:custom_promotion, :quote) && @folder.present?)) %>
+              <div class="h5">
+                  <%= label_tag :promotion_code, "Cupón de descuento:", class: "mt-2" %>
+                  <div class="vertical-align">
+                    <%= text_field_tag :promotion_code, nil, class: "form-control", onblur: "$(this.form).submit();" %>
+                  </div>
+              </div>
+              <div id="coupons-warning" class="text-center text-warning mt-3" style='display:none;'></div>
+            <% end %>
+          </div>
+        </div>
+      </section>
+
+      <div id="quotation-after" style="<%= "display:none;" if @quotation.nil? %>">
+        <section class="discount">
+          <div class="row">
+            <div class="col-md-1 text-center py-3">
+              <%= image_tag("icons/quotation-discounts.png", class: "img-fluid") %>
+            </div>
+            <div class="col-md-11">
+              <div class="d-flex flex-wrap justify-content-between">
+                <h3 class="text-left vertical-align m-0 py-3">Descuentos</h3>
+              </div>
+              <div class="row mb-3">
+                <div class="col-4 pr-0">
+                  <hr class="marker-bar-green">
+                </div>
+                <div class="col-8 pl-0">
+                  <hr class="marker-bar-gray">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <%= render "quotes/discounts_table" if @relative_plans.present? && @relative_plans.count > 1 %>
+
+          <div class='dashboard-flex-counters text-center'>
+            <div class="dashboard-card vertical-align">
+              <div class="dashboard-counter" id="discount">
+                <%= "%.2f" % @quotation.discount unless @quotation.nil? %>%
+              </div>
+              <div class="dashboard-title">
+                Descuento aplicado
+              </div>
+            </div>
+            <div class="dashboard-card vertical-align">
+              <div class="dashboard-counter" id="price">
+                <%= number_to_currency(@quotation.price) unless @quotation.nil? %>
+              </div>
+              <div class="dashboard-title">
+                Precio de Lista
+              </div>
+            </div>
+            <div class="dashboard-card vertical-align">
+              <div class="dashboard-counter" id="saving">
+                <%= number_to_currency(@quotation.saving) unless @quotation.nil? %>
+              </div>
+              <div class="dashboard-title">
+                Ahorro
+              </div>
+            </div>
+            <div class="dashboard-card vertical-align">
+              <div class="dashboard-counter" id="total_price">
+                <%= number_to_currency(@project.show_final_price ? @payment_total : @quotation.total_price) unless @quotation.nil? %>
+              </div>
+              <div class="dashboard-title">
+                Precio Final
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="down-payment">
+          <div class="row">
+            <div class="col-md-1 text-center py-3">
+              <%= image_tag("icons/quotation-down-payment.png", class: "img-fluid") %>
+            </div>
+            <div class="col-md-11">
+              <div class="d-flex flex-wrap justify-content-between">
+                <h3 class="text-left vertical-align m-0 py-3">Enganche</h3>
+              </div>
+              <div class="row mb-3">
+                <div class="col-4 pr-0">
+                  <hr class="marker-bar-green">
+                </div>
+                <div class="col-8 pl-0">
+                  <hr class="marker-bar-gray">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group col-sm-12 col-md-4">
+              <%= label_tag :payment_way, "Método de calculo de enganche" %>
+              <div class="vertical-align">
+                <%= select_tag :payment_way, options_for_select([["Porcentaje", "percentage"], ["Monto", "amount"]], @payment_way), prompt: "Seleccione un método", class: "form-control" %>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12 col-md-4" id="down_payment_amount_container">
+              <%= label_tag :down_payment_amount, "Cantidad de enganche" %>
+              <div class="vertical-align">
+                <div class="input-group">
+                  <%= number_field_tag :down_payment_amount, "%.2f" % @down_payment_amount, step: 0.5, class: "form-control text-right", disabled: !@stage.credit_scheme.down_payment_editable && !@custom_quote_permissions, onchange: "if(this.value) {$(this.form).submit();}" %>
+                  <div class="input-group-append" id="down_payment_percentage_sign">
+                    <div class="input-group-text input-text-right">$</div>
+                  </div>
+                  <div class="invalid-feedback">
+                    Puede ser del <i id="min_down_payment"><%= "%.2f" % (@min_downpayment_percentage * 100) %></i>%
+                    hasta el <i id="max_down_payment"><%= "%.2f" % (@max_downpayment_percentage * 100) %></i>% del
+                    precio del <%= @lot_singular %>.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12 col-md-4">
+              <p>Enganche</p>
+              <div class="vertical-align">
+                <b id="down_payment"><%= @quotation.down_payment_percentage unless @quotation.nil? %> %</b>
+              </div>
+            </div>
+
+            <% if @initial_payment_active %>
+              <div class="form-group col-sm-12 col-md-4" id="initial_payment_amount_container">
+                <p>Apartado</p>
+                <div class="vertical-align">
+                  <div class="input-group">
+                    <%= number_field_tag :initial_payment, @initial_payment, step: 0.5, class: "form-control text-right", disabled: !@stage.credit_scheme.initial_payment_editable && !@custom_quote_permissions, onchange: "if(this.value) {$(this.form).submit();}" %>
+                    <div class="input-group-append" id="initial_payment_sign">
+                      <div class="input-group-text input-text-right">$</div>
+                    </div>
+                    <div class="invalid-feedback">
+                      <i id="min_initial_payment"><%= number_to_currency("%.2f" % @min_initialpayment_price) %></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @initial_payment_active %>
+              <div class="form-group col-sm-12 col-md-4<%= " d-none" if @quotation.complement_payment == 0 %>" id="complement_payment_amount_container">
+                <p>Complemento de apartado</p>
+                <div class="vertical-align">
+                  <b id="complement_payment_amount"><%= number_to_currency(@quotation.complement_payment) unless @quotation.nil? %></b>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @initial_payment_active && @independent_initial_payment %>
+              <div class="form-group col-sm-12 col-md-4" id="down_payment_balance_container">
+                <p>Saldo de enganche</p>
+                <div class="vertical-align">
+                  <b id="down_payment_to_differ"><%= number_to_currency(@quotation.down_payment_to_differ) unless @quotation.nil? %></b>
+                  <div class="invalid-feedback">
+                    El apartado no puede ser mayor al enganche total
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @initial_payment_active && (@min_days_for_first_payment > 0 || @max_days_for_first_payment > 0) %>
+              <div class="form-group col-sm-12 col-md-4" id="first_payment_container">
+                <p>Fecha límite para el pago de apartado <%= help_tooltip("La fecha se calcula en días naturales a partir de la fecha de reserva.") %></p>
+                <div class="vertical-align">
+                  <div class="input-group">
+                    <%= number_field_tag :first_payment, @folder.nil? ? @max_days_for_first_payment : @folder.payment_scheme.first_payment,
+                                         min: @min_days_for_first_payment,
+                                         max: @max_days_for_first_payment,
+                                         class: "form-control text-right", onchange: "if(this.value) {$(this.form).submit();}" %>
+                    <div class="input-group-append">
+                      <div class="input-group-text input-text-right">días</div>
+                    </div>
+                    <div class="invalid-feedback text-left">
+                      El plazo mínimo para pago de apartado es de
+                      <i id="min_days_for_first_payment"><%= @min_days_for_first_payment %></i> días<br>
+                      <% if @max_days_for_first_payment.present? %>
+                        El plazo máximo para pago de apartado es de
+                        <i id="max_days_for_first_payment"><%= @max_days_for_first_payment %></i> días
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <div class="form-group col-sm-12 col-md-4" id="second_payment_container">
+              <p>Fecha límite para el pago de enganche <%= help_tooltip("La fecha se calcula en días naturales a partir de la fecha de reserva.") %></p>
+              <div class="vertical-align">
+                <div class="input-group">
+                  <%= number_field_tag :second_payment, @folder.nil? ? @max_days_for_second_payment : @folder.payment_scheme.second_payment,
+                                       min: @min_days_for_second_payment,
+                                       max: @max_days_for_second_payment,
+                                       class: "form-control text-right", onchange: "if(this.value) {$(this.form).submit();}" %>
+                  <div class="input-group-append">
+                    <div class="input-group-text input-text-right">días</div>
+                  </div>
+                  <div class="invalid-feedback text-left">
+                    El plazo mínimo para pago de enganche es de
+                    <i id="min_days_for_second_payment"><%= @min_days_for_second_payment %></i> días<br>
+                    <% if @max_days_for_second_payment.present? %>
+                      El plazo máximo para pago de enganche es de
+                      <i id="max_days_for_second_payment"><%= @max_days_for_second_payment %></i> días
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12 col-md-4 <%= "d-none " if @quotation.down_payment_finance == 1 %>down_payment_extra">
+              <p>Mensualidades de enganche</p>
+              <div class="vertical-align">
+                <b id="down_payment_first_pay_amount"><%= number_to_currency(@quotation.down_payment_monthly_payment) unless @quotation.nil? %></b>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-12 col-md-4 <%= "d-none " if @quotation.down_payment_finance == 1 %>down_payment_extra">
+              <p>1era mensualidad de enganche</p>
+              <div class="vertical-align">
+                <b id="down_payment_first_pay_date"><%= @quotation.down_payment_first_pay_date unless @quotation.nil? %></b>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <% if @has_min_last_payment %>
+          <section class="last-payment">
+            <div class="row">
+              <div class="col-md-1 text-center py-3">
+                <%= image_tag("icons/quotation-down-payment.png", class: "img-fluid") %>
+              </div>
+              <div class="col-md-11">
+                <div class="d-flex flex-wrap justify-content-between">
+                  <h3 class="text-left vertical-align m-0 py-3">Contra entrega</h3>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-4 pr-0">
+                    <hr class="marker-bar-green">
+                  </div>
+                  <div class="col-8 pl-0">
+                    <hr class="marker-bar-gray">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group col-sm-12 col-md-4">
+                <%= label_tag :min_last_payment_payment_way, "Método de calculo de Contra entrega" %>
+                <div class="vertical-align">
+                  <%= select_tag :min_last_payment_payment_way, options_for_select([["Porcentaje", "percentage"], ["Monto", "amount"]], @min_last_payment_payment_way), prompt: "Seleccione un método", class: "form-control", onchange: "if(this.value) {$(this.form).submit();}" %>
+                </div>
+              </div>
+
+              <div class="form-group col-sm-12 col-md-4" id="quote_min_last_payment_amount">
+                <%= label_tag :min_last_payment_amount, "Cantidad de Contra entrega" %>
+                <div class="vertical-align">
+                  <div class="input-group">
+                    <%= number_field_tag :min_last_payment_amount, "%.2f" % @min_last_payment_amount, step: 0.5, class: "form-control text-right", onchange: "if(this.value) {$(this.form).submit();}" %>
+                    <div class="input-group-append" id="last_payment_percentage_sign">
+                      <div class="input-group-text input-text-right"><%= @min_last_payment_payment_way == "percentage" ? "%" : "$" %></div>
+                    </div>
+                    <div id="last_payment_error" class="invalid-feedback">
+                        Puede ser del <i id="min_last_payment"><%= "%.2f" % (@min_last_payment_percentage * 100) %></i>%
+                        hasta el <i id="max_last_payment"><%= "%.2f" % (@max_last_payment_percentage * 100) %></i>% del
+                        precio del <%= @lot_singular %>.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group col-sm-12 col-md-4">
+                <p>Contra entrega</p>
+                <div class="vertical-align">
+                  <b id="last_payment"><%= @min_last_payment_payment_way == "percentage" ? "$#{@quotation.last_payment}" : "#{@quotation.last_payment_percentage} %" unless @quotation.nil? %></b>
+                </div>
+              </div>
+
+            </div>
+          </section>
+        <% end %>
+
+        <section class="payments w-100">
+          <div class="row">
+            <div class="col-md-1 text-center py-3">
+              <%= image_tag("icons/quotation-payments.png", class: "img-fluid") %>
+            </div>
+            <div class="col-md-11">
+              <div class="d-flex flex-wrap justify-content-between">
+                <h3 class="text-left vertical-align m-0 py-3">Pagos</h3>
+              </div>
+              <div class="row mb-3">
+                <div class="col-4 pr-0">
+                  <hr class="marker-bar-green">
+                </div>
+                <div class="col-8 pl-0">
+                  <hr class="marker-bar-gray">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap justify-content-between">
+            <p class="text-left vertical-align m-0 py-3 color-primary">Esquema de pagos</p>
+          </div>
+          <div id="updates-table">
+            <%= render "quotes/updates_table" if @quotation.present? %>
+          </div>
+
+          <section id="down_payments_section">
+            <div class="d-flex flex-wrap justify-content-between">
+              <p class="text-left vertical-align m-0 py-3 color-primary">Enganche</p>
+            </div>
+            <div id="down-payments-table">
+              <%= render "quotes/down_payments_table" if @quotation.present? %>
+            </div>
+          </section>
+
+          <div class="row mb-3">
+            <div class="col-4 pr-0">
+              <hr class="marker-bar-green">
+            </div>
+            <div class="col-8 pl-0">
+              <hr class="marker-bar-gray">
+            </div>
+          </div>
+
+          <div class="accordion collapse-elements px-4 py-2" id="accordion-payments">
+            <div class="d-flex flex-wrap justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="true" aria-controls="collapse-section">
+              <p class="text-left vertical-align m-0 py-3 color-primary">Mensualidades</p>
+            </div>
+            <div class="table-container collapse" id="collapse-section" data-parent="#accordion-payments">
+              <div id="payment-table">
+                <%= render "quotes/amortization_table" if @quotation.present? %>
+              </div>
+            </div>
+          </div>
+
+          <% if @simple_quotations.present? && @simple_quotations.count > 1 %>
+            <div class="accordion collapse-elements px-4 py-2 mt-3">
+              <div class="d-flex flex-wrap justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-simple-quotations" aria-expanded="false" aria-controls="collapse-simple-quotations">
+                <p class="text-left vertical-align m-0 py-3 color-primary">Cotizaciones Simples</p>
+              </div>
+              <div class="table-container collapse" id="collapse-simple-quotations">
+                <div id="simple-quotation-table">
+                  <%= render "quotes/simple_quotation_table" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+        </section>
+
+      </div>
+    <% end %>
+  </div>
+<% end %>

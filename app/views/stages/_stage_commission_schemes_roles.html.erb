@@ -1,0 +1,35 @@
+<%= form_for( @stage, local: true, url: [@project, @phase, @stage]) do |form| %>
+  <% if stage_commission_schemes_roles[:commission_scheme_selected].any? %>
+    <%= t('.info_table_commission_not_evo') %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= CommissionSchemesRole.human_attribute_name(:role_id) %></th>
+          <th><%= StagesCommissionSchemesRole.human_attribute_name(:users) %></th>
+          <th><%= CommissionSchemesRole.human_attribute_name(:folder_user_concept_id) %></th>
+          <th><%= CommissionSchemesRole.human_attribute_name(:commission) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= form.fields_for :stages_commission_schemes_roles, stage_commission_schemes_roles[:commission_scheme_selected] do |csr| %>
+          <tr>
+            <td>
+              <%= csr.hidden_field :id %>
+              <%= csr.hidden_field :commission_schemes_role_id %>
+              <%= csr.object.commission_schemes_role.role.name %>
+            </td>
+            <td><%= csr.select :users, User.where(role_id: csr.object.commission_schemes_role.role_id).collect { |s| [s.label, s[:id]] }, {}, multiple: true %></td>
+            <td><%= csr.object&.commission_schemes_role&.folder_user_concept&.name %></td>
+            <td><%= csr.object&.commission_schemes_role&.commission %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <%= form.fields_for :stages_commission_schemes_roles, stage_commission_schemes_roles[:commission_scheme_not_selected] do |csr| %>
+    <%= csr.hidden_field :id %>
+    <%= csr.hidden_field :_destroy, value: true %>
+  <% end %>
+
+<% end %>

@@ -1,0 +1,51 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0 text-capitalize"><%= @project_plural %></h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <% if can?(:import, Project) %>
+        <div class="btn btn-dark mr-1" data-controller="import" data-import-url="<%= import_projects_path(format: :json) %>">
+          <%= file_field_tag :file, accept: ".xls, .xlsx", class: "d-none", data: { 'target': "import.input", 'action': "import#upload" } %>
+          <label class="m-0" for="file"><%= t('buttons.import') %></label>
+        </div>
+      <% end %>
+      <% if can?(:export, Project) %>
+        <%= form_tag(export_projects_path, method: :get, class: "", data: { 'controller': "export", 'target': "export.form", 'export-url': export_projects_path(format: :json) }) do %>
+          <%= button_tag(t('buttons.export'), type: "button", class: "btn btn-dark mr-1", data: { action: "export#generate" }) %>
+        <% end %>
+      <% end %>
+      <% if can?(:create, Project) %>
+        <%= link_to "#{t('buttons.new')} #{@project_singular}", new_project_path, class: "btn btn-primary text-capitalize" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @projects.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">No se ha encontrado ningún <%= @project_singular %>. </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="row <%= "sortable" if can?(:sort, Project) %>">
+      <% @projects.each_with_sortable_id do |project, sortable_id| %>
+        <div id="<%= sortable_id if can?(:sort, Project) %>" class="col-lg-3 col-md-4 col-xs-6 vertical-align">
+          <%= link_to image_tag(project.logo.attached? ? project.logo.variant(resize: "255x255") : "no-image.png", class: "zoom img-fluid", alt: project.name), project_path(project, client: params["client"]), rel: "tooltip", title: project.name %>
+        </div>
+      <% end %>
+    </div>
+    <%= will_paginate(@projects, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([8, 12, 24, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

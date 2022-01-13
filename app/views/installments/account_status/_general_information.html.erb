@@ -1,0 +1,57 @@
+<hr class="accent-line">
+<div class="primary-light-background">Estado de Cuenta</div>
+<hr class="accent-line">
+<div class="payments-table pt-3">
+  <table class="table">
+    <tbody>
+    <tr class="no-border">
+      <td class="gray-row">Cliente</td>
+      <td class="gray-row">Email</td>
+      <td class="gray-row">Teléfono</td>
+      <td class="gray-row"><%= @project_singular %></td>
+    </tr>
+    <tr class="no-border">
+      <td class="gray-light-row"><%= @folder.client.label %></td>
+      <td class="gray-light-row"><%= @folder.client.email %></td>
+      <td class="gray-light-row"><%= @folder.client.formatted_main_phone %></td>
+      <td class="gray-light-row"><%= @folder.project.name %></td>
+    </tr>
+    <tr class="no-border">
+      <td class="gray-row"><%= @phase_singular %></td>
+      <td class="gray-row"><%= @stage_singular %></td>
+      <td class="gray-row">Unidad</td>
+      <td class="gray-row">Plazo</td>
+    </tr>
+    <tr class="no-border">
+      <td class="gray-light-row"><%= @folder.phase.name %></td>
+      <td class="gray-light-row"><%= @folder.stage.name %></td>
+      <td class="gray-light-row"><%= @folder.lot.name %></td>
+      <td class="gray-light-row"><%= @folder.payment_scheme.name %></td>
+    </tr>
+    <tr class="no-border">
+      <td class="gray-row">Referencia</td>
+      <td class="gray-row">Precio de Lista</td>
+      <td class="gray-row">Precio Final</td>
+      <td class="gray-row">Importe Pagado</td>
+    </tr>
+    <tr class="no-border">
+      <td class="gray-light-row"><%= @lot.reference %></td>
+      <td class="gray-light-row"><%= number_to_currency(@payment_total_default) %></td>
+      <td class="gray-light-row"><%= number_to_currency(@folder.total_sale) %></td>
+      <td class="gray-light-row"><%= number_to_currency(@paid_capital_amount) %></td>
+    </tr>
+    <tr class="no-border">
+      <td class="gray-row">Saldo Total</td>
+      <td class="gray-row">Saldo Vencido
+      <td class="gray-row">Pagos Proximos a Vencer</td>
+      <td class="gray-row"></td>
+    </tr>
+    <tr class="no-border">
+      <td class="gray-light-row"><%= number_to_currency(@pending_capital_amount) %></td>
+      <td class="gray-light-row text-danger"><%= number_to_currency(@capital_amount_overdue) %></td>
+      <td class="gray-light-row"><%= number_to_currency(@capital_next_overdue) %></td>
+      <td class="gray-light-row"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>

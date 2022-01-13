@@ -1,0 +1,28 @@
+$('#commentModal').modal('hide')
+
+<% if @comment.errors.empty? %>
+  Swal.fire({
+    title: '¡Comentario agregado!',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  });
+<% else %>
+  Swal.fire({
+    title: 'Hubo un error al intentar agregar el comentario',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  });
+<% end %>
+
+$("#comments-table").html("<%= escape_javascript(render partial: 'folders/sections/comments') %>");
+

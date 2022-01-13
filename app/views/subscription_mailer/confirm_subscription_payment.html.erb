@@ -1,0 +1,16 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Cargo exitoso</span></h1>
+  &nbsp;
+
+  <p>
+    <span>
+      ¡El cargo de su pago domiciliado ha sido exitoso!
+      <br>
+      Se ha cargado a su cuenta <b><%= @subscription.last_four_digits %></b> el monto de <b><%= number_to_currency(@amount) %></b> por el proyecto adquirido en <b><%= @project.name %> <%= @stage.name %> <%= @project.lot_entity_name %> <%= @lot.name %></b>.
+    </span>
+  </p>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <%= image_tag("successful-payment.png") %>
+<% end %>

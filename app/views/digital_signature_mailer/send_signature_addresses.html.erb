@@ -1,0 +1,11 @@
+ <%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">¡HOLA <%= @participant_name %>!</span></h1>
+  &nbsp;
+  <div style="text-align: center;">
+    <p>
+        <span>AHORA QUE ERES INVERSIONISTA DE <%= @company_name %> EN EL <%= @folder.project.project_entity_name.upcase %> <%= @folder.project.name %> <%= @folder.project.stage_entity_name.upcase %> <%= @folder.lot.stage.name %> <%= @folder.project.lot_entity_name.upcase %> <%= @folder.lot.name %> TE COMPARTO TU LINK PARA VISUALIZAR TU PROMESA DE COMPRAVENTA Y QUE JUNTOS
+        FIRMEMOS DIGITALMENTE PARA ASEGURAR TU PATRIMONIO CON NOSOTROS, <a href="<%= @sign_link %>">HAZ CLICK AQUÍ</a>.</span>
+    </p>
+    <p>MUCHAS GRACIAS POR LA CONFIANZA DE INVERTIR CON NOSOTROS.</p>
+  </div>
+ <% end %>

@@ -1,0 +1,32 @@
+<div class="modal fade" id="sellerModal" role="dialog" aria-labelledby="sellerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sellerModalLabel">Agregar Responsable</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <%= form_with(url: folder_folder_users_path(@folder), model: FolderUser.new, local: false) do |form| %>
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group col-sm-12 col-md-12">
+              <%= form.label :folder_user_concept_id, "Tipo de Responsabilidad" %>
+              <%= form.select :folder_user_concept_id, @folder_user_concepts.collect { |s| [s.name, s.id] }, {}, required: true %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12 col-lg-12 mb-3">
+              <%= form.label :user_id, "Seleccionar usuario:" %>
+              <%= form.select :user_id, [], {}, { class: "form-control" } %>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer pt-2">
+          <%= form.submit "Guardar", class: "btn btn-primary" %>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

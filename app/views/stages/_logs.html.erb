@@ -1,0 +1,50 @@
+<div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-binnacle" v-pre="">
+  <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-binnacle" aria-expanded="false" aria-controls="collapse-binnacle">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Bitácora</p>
+  </div>
+  <div class="collapse" id="collapse-binnacle" data-parent="#accordion-binnacle" v-pre="">
+    <div class="widget-body">
+      <div class="mt">
+        <div class="width-200 float-right">
+        </div>
+        <% if @stage.versions.empty? %>
+          <p class="pb-3 m-0">No se tienen registros en la bitácora</p>
+        <% else %>
+          <div class="log-container">
+            <h5>Expediente</h5>
+            <% @stage.versions.each do |log| %>
+              <div class="py-2">
+                <div class="text-center pb-2"><%= tag.b(log.actor.kind_of?(User) ? log.actor.label : "El servidor") %> editó los siguientes campos
+                  el <%= log.created_at.strftime("%d/%m/%Y") %> a las <%= log.created_at.strftime("%I:%M%p") %></div>
+                <div class="table-container-without-height">
+                  <table class="table table-bordered background-white">
+                    <thead>
+                      <tr>
+                        <th width="20%">Campo</th>
+                        <th width="40%">Antiguo valor</th>
+                        <th width="40%">Nuevo valor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% log.changeset.each do |key, values| %>
+                        <tr>
+                          <td><%= I18n.t("activerecord.attributes.stage.#{key}") %></td>
+                          <td>
+                            <%= tag.i(values[0].presence || tag.i("Sin valor").html_safe) %>
+                          </td>
+                          <td>
+                            <%= tag.i(values[1].presence || tag.i("Sin valor").html_safe) %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

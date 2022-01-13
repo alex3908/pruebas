@@ -1,0 +1,71 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <h1 class="banner-title vertical-align p-0 m-0">Expedientes</h1>
+        </div>
+        <div class="col-sm-12 col-md-6 flex-middle-right">
+            <%= link_to "Regresar", referrals_users_path, class: "btn btn-outline-secondary mr-2" %>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <hr class="dividir">
+</div>
+
+<div class="container">
+    <%= render "folders/filters" %>
+</div>
+
+<div class="container">
+    <div class="row">
+        <% if @folders.empty? %>
+        <div class="col-md-12 text-center">
+            <p>No hay información de expedientes.</p>
+        </div>
+        <% else %>
+        <div class="col-md-12">
+            <div class="table-container">
+                <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+                    <thead>
+                        <tr>
+                            <th>Folio</th>
+                            <th>Proyecto</th>
+                            <th>Fase</th>
+                            <th>Etapa</th>
+                            <th>Lote</th>
+                            <th>Estado</th>
+                            <th>Fecha de inicio</th>
+                            <th>Monto de venta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @folders.each do |folder| %>
+                        <tr>
+                            <%= tag.td(folder.id) %>
+                            <%= tag.td(folder.project.name) %>
+                            <%= tag.td(folder.phase.name) %>
+                            <%= tag.td(folder.stage.name) %>
+                            <%= tag.td(folder.lot.name) %>
+                            <%= tag.td do %>
+                                <%= folder.status_label %>
+                                <%= tag.i("", class: "fa fa-info-circle", "aria-hidden": "true", "data-toggle": "tooltip", "data-placement": "top",
+                                  "title": time_in_step(folder)) if folder.step.present? && folder.step_logs.present? %>
+                            <% end %>
+                            <%= tag.td(only_date(folder.calc_date)) %>
+                            <%= tag.td(number_to_currency(folder.total_amount)) %>
+                        </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            </div>
+            <%= will_paginate(@folders, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+            <div class="text-center mt-3">
+                <div class="d-inline-block" style="max-width: 100px">
+                    Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                             onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+                </div>
+            </div>
+        </div>
+        <% end %>
+    </div>
+</div>

@@ -1,0 +1,318 @@
+<%= form_with(model: contract, local: true) do |form| %>
+<%= form.hidden_field :folder_id, value: params[:folder] if params[:folder] %>
+<%= form.hidden_field :contract_template, value: params[:contract] if params[:contract] %>
+  <div class="d-flex flex-wrap justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">Generales</h3>
+    <div class="clearfix py-2"></div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :label, "Etiqueta" %>
+      <%= form.text_field :label, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :signer_ids, "Firmantes" %>
+      <%= form.select :signer_ids, @signers.collect { |s| [s.label, s.id] }, {}, multiple: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :non_signer_ids, "Observadores" %>
+      <%= form.select :non_signer_ids, @non_signers.collect { |s| [s.label, s.id] }, {}, multiple: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :buyer_definition, "Definición Comprador" %>
+      <%= form.text_field :buyer_definition, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :coowner_1_definition, "Definición Copropietario 1" %>
+      <%= form.text_field :coowner_1_definition, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :coowner_2_definition, "Definición Copropietario 2" %>
+      <%= form.text_field :coowner_2_definition, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :coowner_3_definition, "Definición Copropietario 3" %>
+      <%= form.text_field :coowner_3_definition, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :coowner_4_definition, "Definición Copropietario 4" %>
+      <%= form.text_field :coowner_4_definition, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :coowner_5_definition, "Definición Copropietario 5" %>
+      <%= form.text_field :coowner_5_definition, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-4">
+      <%= form.label :paginated, "Habilitar paginado" %>
+      <div>
+        <%= form.check_box :paginated,
+                      data: {
+                        activate: "toggle",
+                        onstyle: "success",
+                        offstyle: "secondary",
+                        on: "Si",
+                        off: "No",
+                      } %>
+      </div>
+    </div>
+    <div class="form-group col-sm-12 col-md-4">
+      <%= form.label :fit_signature, "Habilitar firma de calce" %>
+      <div>
+        <%= form.check_box :fit_signature,
+                      data: {
+                        activate: "toggle",
+                        onstyle: "success",
+                        offstyle: "secondary",
+                        on: "Si",
+                        off: "No",
+                      } %>
+      </div>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-4">
+      <%= form.label :two_columns, "Contrato a dos columnas" %>
+      <div>
+        <%= form.check_box :two_columns,
+                      data: {
+                        activate: "toggle",
+                        onstyle: "success",
+                        offstyle: "secondary",
+                        on: "Si",
+                        off: "No",
+                      } %>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="d-flex flex-wrap justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">Documentos para Anexos</h3>
+    <div class="clearfix py-2"></div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :document_template_ids, "Documentos de expedientes" %>
+      <%= form.select :document_template_ids,  @folders_documents.collect { |s| [s.name, s.id] }, {}, multiple: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= label_tag :document_template_ids, "Documentos de clientes" %>
+      <%= form.select :document_template_ids, @client_documents.collect { |s| [s.name, s.id] }, {}, multiple: true %>
+    </div>
+    <div class="form-group col-sm-12">
+      <small>*Si el expediente no cuenta con el documento, se podrá descargar el anexo, pero no contará con el documento.</small>
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">Anexos adicionales</h3>
+    <div class="clearfix py-2"></div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.file_field :annexes, multiple: true, accept: "application/pdf", class: "custom-file-input" %>
+      <%= form.label :annexes, "Elegir Archivo", class: "custom-file-label" %>
+    </div>
+  </div>
+
+  <% if @contract.annexes.attached? %>
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th class="align-middle">Elemento</th>
+        <th class="text-right">Opciones</th>
+      </tr>
+      </thead>
+      <tbody>
+        <% @contract.annexes.each do |annexe| %>
+          <tr>
+            <td class="align-middle">Anexo: <b><%= annexe.filename %></b></td>
+            <td class="text-right">
+              <%= link_to("Eliminar", contract_remove_file_path(@contract, file_id: annexe.id), class: "btn btn-outline-danger float-right", method: :delete, data: { confirm: "¿Estás seguro de eliminar la plantilla?" }) if can?(:remove_file, Contract) %>
+              <%= link_to("Descargar", rails_blob_path(annexe, disposition: :attachment), class: "btn btn-outline-primary float-right mr-1") %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <div class="d-flex flex-wrap justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">
+      <p>
+        Anexos
+        <%= link_to(fa_icon("repeat"), restore_annexe_order_contract_path(@contract), data: { toggle: "tooltip", confirm: "Esto reestablecerá el orden predeterminado, ¿estás seguro?" }, title: "Restaurar") if @contract.persisted? && @contract.contract_annexes.any? %>
+      </p>
+    </h3>
+    <div class="clearfix py-2"></div>
+  </div>
+  <% if @contract.new_record? %>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= label_tag :contract_annexes_msg, "Para acceder a esta sección, el contrato primero debe ser guardado." %>
+    </div>
+  <% else %>
+    <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+      <thead>
+          <tr>
+            <th width="90%">Anexo a incluir</th>
+            <th width="10%">Copias</th>
+          </tr>
+        </thead>
+      <tbody class="sortable">
+        <% @contract.contract_annexes.order(:order).each do |contract_annexe| %>
+          <tr id="<%= contract_annexe.sortable_id %>" class="<%= contract_annexe.amount %>">
+            <td class="align-middle">
+              <%= tag.i(class: "fa fa-bars mr-2 text-secondary", aria: { hidden: "true" }) %>
+              <%= label_tag(ContractAnnexe::ANNEXES_NAMES.to_a[contract_annexe.annexe_id].second, nil, class: "my-auto") %>
+            </td>
+            <td>
+              <%= ajax_number_input(@contract, contract_annexe) %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <% if params[:folder].nil? && contract.folder.nil? %>
+  <div class="d-flex flex-wrap justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">Reglas</h3>
+    <div class="clearfix py-2"></div>
+  </div>
+
+  <div class="row">
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :max_owners, "Cantidad máxima de propietarios" %>
+      <%= form.select :max_owners, [["Selecciona una cantidad", nil], ["1", 1], ["2", 2], ["3", 3], ["4", 4], ["5", 5], ["6", 6]], { include_blank: true }, { required: true, class: "form-control" } %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :lot_type, "Tipo de Unidad" %>
+      <%= form.select :lot_type, Contract::LOT_TYPE.collect { |key, value| [key, value] }, { include_blank: true }, { required: true, class: "form-control" } %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :client_nationality, "Nacionalidad del cliente" %>
+      <%= form.select :client_nationality, Contract::CLIENT_NATIONALITY.collect { |key, value| [key, value] }, { include_blank: true }, { required: true, class: "form-control" } %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :client_type, "Tipo de persona" %>
+      <%= form.select :client_type, Contract::CLIENT_TYPE.collect { |key, value| [key, value] }, { include_blank: true }, { required: true, class: "form-control" } %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :financing_type, "Tipo de financiamiento" %>
+      <%= form.select :financing_type, Contract::FINANCING_TYPE.collect { |key, value| [key, value] }, { include_blank: true }, { required: true, class: "form-control" } %>
+    </div>
+
+  </div>
+
+    <div class="accordion collapse-elements px-4 mb-4" id="accordion-optional">
+      <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+        <p class="text-left vertical-align m-0 py-3 color-primary">Opcionales</p>
+      </div>
+      <div class="row collapse" id="collapse-section" data-parent="#accordion-optional">
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :min_amount, "Monto mínimo" %>
+          <div class="input-group">
+            <%= form.number_field :min_amount, min: 0, class: "form-control" %>
+            <div class="input-group-append">
+              <span class="input-group-text">$</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :max_amount, "Monto máximo" %>
+          <div class="input-group">
+            <%= form.number_field :max_amount, class: "form-control" %>
+            <div class="input-group-append">
+              <span class="input-group-text">$</span>
+            </div>
+          </div>
+          <small class="form-text text-muted">Dejar en blanco para considerar sin limite.</small>
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :min_metrics, "Metraje mínimo" %>
+          <div class="input-group">
+            <%= form.number_field :min_metrics, min: 0, class: "form-control" %>
+            <div class="input-group-append">
+              <span class="input-group-text">m&sup2;</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :max_metrics, "Metraje máximo" %>
+          <div class="input-group">
+            <%= form.number_field :max_metrics, class: "form-control" %>
+            <div class="input-group-append">
+              <span class="input-group-text">m&sup2;</span>
+            </div>
+          </div>
+          <small class="form-text text-muted">Dejar en blanco para considerar sin limite.</small>
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :client_gender, "Género" %>
+          <%= form.select :client_gender, Contract::CLIENT_GENDER.collect { |key, value| [key, value] }, { include_blank: true }, { class: "form-control" } %>
+          <small class="form-text text-muted">Dejar en blanco para no considerar género.</small>
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :differed_downpayment, "Enganche Diferido" %>
+          <%= form.select :differed_downpayment, Contract::DIFFERED_DOWNPAYMENT.collect { |key, value| [key, value] }, { include_blank: true }, { class: "form-control" } %>
+          <small class="form-text text-muted">Dejar en blanco para no considerar enganche diferido.</small>
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :periods_amount, "Cantidad de periodos" %>
+          <%= form.number_field :periods_amount, class: "form-control" %>
+          <small class="form-text text-muted">Dejar en blanco para no considerar periodos.</small>
+        </div>
+      </div>
+    </div>
+
+  <% end %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-12">
+      <%= form.label :value, "Contenido" %>
+      <%= form.text_area :value, class: "tinymce", "v-pre": '' %>
+
+      <div class="label-container pt-3">
+        <% @tags.each do |tag| %>
+          <div class="square-label" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','{{<%= tag.key %>}}')"><%= tag.name %></div>
+        <% end %>
+      </div>
+    </div>
+
+     <div class="form-group col-sm-12 col-md-12">
+      <%= form.label :footer, "Pie de firma" %>
+      <%= form.text_area :footer, class: "tinymce", "v-pre": '' %>
+    </div>
+
+    <div class="actions py-3">
+      <%= link_to "Cancelar", contracts_path, class: "btn btn-secondary" %>
+      <%= form.button "Guardar y Cerrar", name: :save_action, value: :save_and_close, class: "btn btn-info" %>
+      <%= form.button "Guardar y continuar", name: :save_action, value: :save_and_continue, class: "btn btn-primary" %>
+
+    </div>
+
+  </div>
+<% end %>

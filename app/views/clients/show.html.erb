@@ -1,0 +1,72 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Clientes</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to "Clientes", clients_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Ver cliente</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <%= render "options" %>
+</div>
+<div class="container">
+  <%= render partial: "clients/info", locals: { client: @client} %>
+</div>
+<div class="container">
+  <%= render "users/structure" if @client.sales_executive.structure.present? %>
+</div>
+<div class="container">
+  <%= render "logs" if can?(:see_binnacle, Client) %>
+</div>
+
+<div class="container">
+  <div class="d-flex flex-wrap justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">Expedientes</h3>
+    <div class="clearfix py-2"></div>
+  </div>
+</div>
+<div class="container">
+  <%= render "folders/filters" %>
+</div>
+<% if @folders.empty? %>
+<div class="container">
+  <div class="py-5">
+    <p class="text-center h5 leyend mb-5">
+      No se ha encontrado ningún expediente.
+      <% if can?(:reserve, :quote) %>
+      <br> Comienza generando una cotización.
+      <% end %>
+    </p>
+    <% if can?(:reserve, :quote) %>
+    <div class="text-center mt-3">
+      <%= link_to @project_plural, projects_path, class: "btn btn-primary jumping" %>
+    </div>
+    <% end %>
+  </div>
+</div>
+<% else %>
+<div class="container">
+  <%= render "folders/table", folders:  @folders %>
+</div>
+<% end %>
+
+<div class="container">
+  <%= render "quote_logs", quote_logs: @quote_logs %>
+</div>
+
+<%= render partial: "cash_backs/log", locals: { cash_backs: @cash_backs, can_cancel_cashbacks: can?(:cancel, CashBack) } %>
+
+<div class="container">
+  <%= render "client_logs", client_logs: @client_logs %>
+</div>

@@ -1,0 +1,65 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Documentos</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+      <%= link_to("Nuevo Documento", new_document_template_path, class: "btn btn-primary") if can?(:create, DocumentTemplate) %>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div>
+    <%= render "document_templates/filters" %>
+  </div>
+
+  <% if @document_templates.empty? %>
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado documentos.
+      </p>
+    </div>
+  <% else %>
+    <div class="table-container-without-height">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Tipo</th>
+          <th>Sección</th>
+          <th>Requiere Aprobación</th>
+          <th>Visible</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody class="<%= "sortable" if can?(:sort, DocumentTemplate) %>">
+        <% @document_templates.each do |document_template| %>
+          <%= tag.tr("", id: "#{document_template.sortable_id if can?(:sort, DocumentTemplate)}") do %>
+            <td>
+              <%= tag.i("", class: "fa fa-bars mr-2 text-secondary", aria: { hidden: "true" }) if can?(:sort, DocumentTemplate) %>
+              <%= document_template.name %>
+            </td>
+            <td><%= document_template.get_doc_type %> <%= "(#{document_template.get_client_type})" if document_template.client? %></td>
+            <td><%= document_template.document_section.try(:name) %></td>
+            <td><%= document_template.requires_approval? ? "Si" : "No" %></td>
+            <td><%= document_template.visible? ? "Si" : "No" %></td>
+            <td class="text-center">
+              <%= link_to(fa_icon("edit"), edit_document_template_path(document_template), class: "table-link", data: { toggle: "tooltip" }, title: "Editar") if can?(:update, DocumentTemplate) %>
+            </td>
+          <% end %>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@document_templates, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  <% end %>
+</div>

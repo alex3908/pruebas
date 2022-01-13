@@ -1,0 +1,52 @@
+<div class="modal fade" id="acceptFolderModal" role="dialog" aria-labelledby="acceptFolderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="acceptFolderModalLabel">Aprobar Expediente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <%= form_with(model: @folder, local: true, url: accept_folder_path) do |form| %>
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="container">
+                <table class="table tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+                    <thead>
+                        <tr>
+                            <th>Pregunta</th>
+                            <th>Malo</th>
+                            <th>Regular</th>
+                            <th>Bueno</th>
+                            <th>Excelente</th>
+                            <th>N/A</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                      <% @approve_questions.each_with_index do |question, index| %>
+                        <tr>
+
+                            <td><%= form.label "folder[answer[#{question.id}]]", question.question %></td>
+                            <td><%= radio_button_tag "folder[answer[#{question.id}]]", "1" %></td>
+                            <td><%= radio_button_tag "folder[answer[#{question.id}]]", "2" %></td>
+                            <td><%= radio_button_tag "folder[answer[#{question.id}]]", "3" %></td>
+                            <td><%= radio_button_tag "folder[answer[#{question.id}]]", "4" %></td>
+                            <td><%= radio_button_tag "folder[answer[#{question.id}]]", " " %></td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                </table>
+            </div>
+          </div>
+          <div class="modal-footer pt-2">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <%= form.submit "Guardar", class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

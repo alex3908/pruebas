@@ -1,0 +1,85 @@
+<div class="modal-header">
+    <h5 class="modal-title">Nuevo <%= @structure_label %></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <%= form_with(model: User.new, local: true, url: create_user_structures_path(@ancestry&.id), method: :post, data: { remote: true }) do |form| %>
+    <div class="row">
+        <% disabled = !@can_create_structures %>
+        <% if disabled %>
+            <div class="col-md-12">
+                <div class="alert alert-warning" role="alert">
+                    <em>
+                        <strong>No es posible crear un nuevo usuario debido a que el nivel ha alcanzado su capacidad máxima.</strong>
+                        Si tienes alguna duda comunícate con tu responsable.
+                    </em>
+                </div>
+            </div>
+        <% end %>
+
+        <% if @ancestry.present? %>
+            <div class="form-group col-sm-12 col-md-12">
+                <%= form.label :direct_boss, "Jefe directo", class: "" %>
+                <%= form.text_field :direct_boss, class: "form-control font-weight-bold", value: @ancestry.user&.label.presence || "Sin responsable", required: true, disabled: true %>
+            </div>
+        <% end %>
+
+        <div class="form-group col-sm-12 col-md-6">
+            <%= form.label :first_name, "Nombre(s)" %>
+            <%= form.text_field :first_name, class: "form-control", required: true, disabled: disabled %>
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+            <%= form.label :last_name, "Apellidos" %>
+            <%= form.text_field :last_name, class: "form-control", required: true, disabled: disabled %>
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+            <%= form.label :email, "Correo" %>
+            <%= form.email_field :email, class: "form-control", required: true, disabled: disabled %>
+        </div>
+
+        <div class="form-group col-sm-12 col-md-6">
+            <%= form.label :phone, "Teléfono" %>
+            <%= form.text_field :phone, class: "form-control", title: "Debe contener solo números", disabled: disabled %>
+        </div>
+
+        <% if @ancestry.present? %>
+          <div class="form-group col-sm-12 col-md-6">
+            <%= form.label :classifier_ids, "Clasificador" %>
+            <%= form.select :classifier_ids, options_from_collection_for_select(@ancestry.role.next.classifiers, :id, :name, []), {}, multiple: true %>
+          </div>
+        <% end %>
+
+        <div class="form-group col-sm-12 col-md-12">
+          <%= form.label :branch_id, "Sucursal" %>
+          <%= form.select :branch_id, @branches.collect { |branch| [branch.name, branch.id] }, { include_blank: "Selecciona una sucursal" }, required: true, disabled: disabled %>
+        </div>
+
+        <% if can?(:select_referrer, User) %>
+          <%= form.fields_for :referent do |referent| %>
+            <div class="form-group col-sm-12 col-md-12">
+              <%= referent.label :referrer, "Referente" %>
+              <%= referent.select :referrer, @referents&.collect { |referrer| ["#{referrer.label} (#{referrer.email})", referrer.id] } || [], { include_blank: "Selecciona un Referente" } %>
+            </div>
+          <% end %>
+        <% end %>
+    </div>
+    <div class="modal-footer pt-2">
+
+      <div class="actions py-3">
+        <%= form.submit "Guardar", class: "btn btn-primary", disabled: disabled %>
+      </div>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  initPhoneMask('#user_phone');
+  initSelect2('#user_branch_id');
+  initSelect2('#user_referent_referrer');
+  initSelect2('#user_classifier_ids');
+</script>

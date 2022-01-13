@@ -1,0 +1,76 @@
+<% if can?(:reserve, :quote) && @client.nil? && @folder.nil? %>
+  <p class="alert alert-warning">Selecciona un cliente para crear tu cotización.</p>
+  <div class="accordion collapse-elements px-4 mb-4" id="accordion-additional">
+    <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+      <p class="text-left vertical-align m-0 py-3 color-primary">Filtros</p>
+    </div>
+    <div class="collapse show" id="collapse-section" data-parent="#accordion-additional">
+      <%= form_tag quote_project_phase_stage_lot_path(@project, @phase, @stage, @lot), method: :get do %>
+        <div class="container py-3">
+          <div class="row">
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :email_seller, "Buscar por correo del agente:" %>
+              <%= text_field_tag :email_seller, params[:email_seller], class: "form-control" %>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :name_seller, "Buscar por nombre del agente:" %>
+              <%= text_field_tag :name_seller, params[:name_seller], class: "form-control" %>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :search_email, "Buscar por correo:" %>
+              <%= text_field_tag :search_email, params[:search_email], class: "form-control" %>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :search_name, "Buscar por nombre:" %>
+              <%= text_field_tag :search_name, params[:search_name], class: "form-control" %>
+            </div>
+            <div class="col-md-12 col-lg-12 text-right pt-3">
+              <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                <i class="fa fa-search" aria-hidden="true"></i> Buscar
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <% if @clients.empty? %>
+    <p>No hay clientes.</p>
+  <% else %>
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Asesor</th>
+          <th colspan="3"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @clients.each do |client| %>
+          <tr>
+            <td><%= client.label %></td>
+            <td><%= client.formatted_main_phone %></td>
+            <td><%= client.email %></td>
+            <td><%= client&.sales_executive&.label %></td>
+            <td class="text-right">
+              <%= link_to("Cotizar", quote_project_phase_stage_lot_path(@project, @phase, @stage, @lot, client: client.id), class: "btn btn-enter enter-icon") if can? :quote, :quote %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= will_paginate(@clients, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                 onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  <% end %>
+<% end %>

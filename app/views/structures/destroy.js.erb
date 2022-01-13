@@ -1,0 +1,23 @@
+<% if @structure.errors.count == 0 %>
+Swal.fire({
+    title: '¡El nivel fue eliminado!',
+    text: 'El usuario ya no tendrá acceso al sistema',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+}).then(function() {
+    Turbolinks.visit("<%= subordinates_structures_path(@structure.parent_id) %>")
+});
+<% else %>
+Swal.fire({
+    title: 'Error',
+    text: 'Hubo un error al intentar eliminar el nivel, por favor corrobora los datos.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu responsable.'
+})
+<% end %>

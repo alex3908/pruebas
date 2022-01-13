@@ -1,0 +1,75 @@
+#test:
+#  image: prograils/ruby-node-chrome:2.6.6
+#  stage: test
+#  only:
+#    - merge_request
+#  cache:
+#    untracked: true
+#    key: "$CI_BUILD_REF_NAME"
+#    paths:
+#      - vendor/bundle
+#      - node_modules
+#  services:
+#    - postgres:10.1
+#    - selenium/standalone-chrome:latest
+#  variables:
+#    POSTGRES_DB: test_db
+#    POSTGRES_USER: runner
+#    POSTGRES_PASSWORD: ""
+#    BUNDLE_PATH: vendor/bundle
+#    DATABASE_NAME: test_db
+#    DATABASE_USERNAME: runner
+#    DATABASE_PASSWORD: ""
+#    DATABASE_HOST: postgres
+#    TZ: America/Merida
+#    DEBIAN_FRONTEND: noninteractive
+
+#  before_script:
+#    - apt-get update -y && apt-get install -y cmake tzdata curl
+#    - gem install bundler
+#    - bundle check || bundle install --jobs $(nproc) --path vendor/ruby
+#    - yarn install
+#    - RAILS_ENV=test bundle exec rake db:create db:schema:load db:seed
+
+#  script:
+#    - RAILS_ENV=test bundle exec rspec
+#  artifacts:
+#    paths:
+#    - /tmp/screenshots/
+#    expire_in: 24 hours
+
+#review:
+#  stage: test
+#  only:
+#    - merge_request
+#  script:
+#    - apt-get update -y && apt-get install -y cmake
+#    - gem install pronto
+#    - pronto run -f gitlab -c "origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"
+
+app-staging:
+  image: ruby:2.6
+  stage: deploy
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=orve-crm-app --api-key=$HEROKU_STAGING_API_KEY
+  only:
+  - feature/orve-app
+
+staging:
+  image: ruby:2.6
+  stage: deploy
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=orve-crm-stage --api-key=$HEROKU_STAGING_API_KEY
+  only:
+  - develop
+
+production:
+  image: ruby:2.6
+  stage: deploy
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=orve-crm --api-key=$HEROKU_PRODUCTION_API_KEY
+  only:
+  - master

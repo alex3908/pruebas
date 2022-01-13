@@ -1,0 +1,12 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">¡HOLA <%= @participant_name %>!</span></h1>
+  <div style="text-align: center;">
+    <p>
+      Se ha concretado la venta de <%= @folder.project.stage_entity_name %> <%= @folder.stage.name %> <%= @folder.project.lot_entity_name %>
+      <%= @folder.lot.name %> del proyecto <%= @folder.project.name %> y los clientes han firmado el contrato. Le invitamos a realizar la firma del
+      contrato a la brevedad para formalizar el trámite y concluir con el proceso de cierre.
+    </p>
+    <p>Para iniciar el proceso de firma digital, <a title="¡haz clic aquí!" href="<%= @sign_link %>">¡haz clic aquí!</a>
+    </p>
+  </div>
+<% end %>

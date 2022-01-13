@@ -1,0 +1,22 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="prospectsModalLabel">Agregar rol</h5>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" data-controller="role-level">
+  <%= form_with(local: true, url: set_child_node_structures_path(@structure&.id), method: :post, data: { remote: true }) do |form| %>
+    <div class="row">
+      <div class="col-md-12">
+        <%= form.label :role_id, "Rol" %>
+        <%= form.select(:role_id, @roles.collect { |role| [role.name, role.id] }, { include_blank: true }, data: { target: "role-level.role"}, required: true) %>
+      </div>
+    </div>
+    <div class="modal-footer pt-2">
+      <div class="actions py-3">
+        <%= form.submit "Guardar", class: "btn btn-primary" %>
+      </div>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    </div>
+  <% end %>
+</div>

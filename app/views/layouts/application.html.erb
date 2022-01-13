@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CRM Inmobiliario - <%= @company_name %></title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="<%= image_path("brands/apple-touch-icon.png?v=1") %>">
+  <link rel="icon" type="image/png" sizes="32x32" href="<%= image_path("brands/favicon-32x32.png?v=1") %>">
+  <link rel="icon" type="image/png" sizes="16x16" href="<%= image_path("brands/favicon-16x16.png?v=1") %>">
+  <link rel="manifest" href="<%= image_path("site.webmanifest?v=1") %>">
+  <link rel="shortcut icon" href="<%= image_path("brands/favicon.ico?v=1") %>">
+
+  <meta name="apple-mobile-web-app-title" content="CRM Inmobiliario - <%= @company_name %>">
+  <meta name="application-name" content="CRM Inmobiliario - <%= @company_name %>">
+  <meta name="msapplication-TileColor" content="#2d89ef">
+  <meta name="theme-color" content="#ffffff">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <%= stylesheet_link_tag "application", media: "all", 'data-turbolinks-track': "reload" %>
+  <%= javascript_include_tag "application", 'data-turbolinks-track': "reload" %>
+  <%= javascript_pack_tag "application", 'data-turbolinks-track': "reload" %>
+
+  <%= javascript_pack_tag "vue_application", 'data-turbolinks-track': "reload" %>
+  <%#= stylesheet_pack_tag "vue_application", 'data-turbolinks-track': "reload" %>
+
+  <% if Rails.application.secrets.hotjar_id.present? %>
+    <script>
+        (function (h, o, t, j, a, r) {
+            h.hj = h.hj || function () {
+                (h.hj.q = h.hj.q || []).push(arguments)
+            };
+            h._hjSettings = {hjid:<%= Rails.application.secrets.hotjar_id %>, hjsv: 6};
+            a = o.getElementsByTagName('head')[0];
+            r = o.createElement('script');
+            r.async = 1;
+            r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+    </script>
+  <% end %>
+
+  <% if Rails.application.secrets.tinymce_type == "premium" %>
+    <script src="https://cdn.tiny.cloud/1/<%= Rails.application.secrets.tinymce_key %>/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        $(document).on('vue:mounted', function () {
+            tinymce.remove();
+            tinymce.init({
+                selector: '.tinymce',
+                height: 470,
+                menubar: true,
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor',
+                    'searchreplace visualblocks advcode fullscreen',
+                    'insertdatetime media table contextmenu powerpaste mediaembed',
+                    'wordcount formatpainter permanentpen pageembed checklist casechange'
+                ],
+                images_upload_url: '/tiny_uploads',
+                relative_urls : false,
+                remove_script_host : false,
+                convert_urls : true,
+                toolbar: 'undo redo | insert | styleselect | bold italic formatpainter permanentpen pageembed | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | advcode spellchecker a11ycheck | code | checklist | casechange',
+                toolbar_drawer: 'sliding',
+                permanentpen_properties: {
+                    fontname: 'arial,helvetica,sans-serif',
+                    forecolor: '#FF0000',
+                    fontsize: '18pt',
+                    hilitecolor: '',
+                    bold: true,
+                    italic: false,
+                    strikethrough: false,
+                    underline: false
+                },
+                table_toolbar: "tableprops cellprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol",
+                powerpaste_allow_local_images: true,
+                powerpaste_word_import: 'prompt',
+                powerpaste_html_import: 'prompt',
+                spellchecker_language: 'en',
+                spellchecker_dialog: true,
+                content_css: [
+                    '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+                ],
+                file_picker_callback: function (cb, value, meta) {
+                const input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+
+                input.onchange = function () {
+                  const file = this.files[0];
+                  const reader = new FileReader();
+                  reader.onload = function () {
+                    const id = 'blobid' + (new Date()).getTime();
+                    const blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                    const base64 = reader.result.split(',')[1];
+                    const blobInfo = blobCache.create(id, file, base64);
+                    blobCache.add(blobInfo);
+                    cb(blobInfo.blobUri(), { title: file.name });
+                  };
+                  reader.readAsDataURL(file);
+                };
+
+                input.click();
+                }
+            });
+        });
+    </script>
+  <% else %>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        $(document).on('vue:mounted', function () {
+            tinymce.remove();
+            tinymce.init({
+                selector: '.tinymce',
+                menubar: true,
+                height: 500,
+                toolbar: "insertfile undo redo | fontselect styleselect fontsizeselect | undo bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pagebreak",
+                fontsize_formats: '11px 12px 14px 16px 18px 24px 36px 48px',
+                plugins: [
+                    'image lists advlist pagebreak'
+                ],
+                pagebreak_split_block: true,
+            });
+        });
+    </script>
+  <% end %>
+
+  <%= yield :head %>
+</head>
+
+<body class="orve">
+  <div data-behavior='vue'>
+    <%= render partial: "/components/bar" %>
+    <% if current_user %>
+      <nav class="navbar navbar-light">
+        <div class="container">
+          <%= link_to image_tag("brands/orve-logo-white-green.png", class: "img-fluid navbar-brand"), root_path, class: "header-image" %>
+          <button class="navbar-toggler ml-auto d-md-none" type="button" id="show-sidebar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <!--<notifications :announcements="<%= @announcements.to_json %>"></notifications>-->
+          <div class="user-info ml-auto d-none d-md-flex">
+            <div class="avatar-image mr-2">
+              <avatar class="h-100 img-thumbnail img-responsive custom-avatar" username="<%= current_user.label %>" :rounded="false" :size="50" src="<%= url_for(current_user.avatar) if current_user.avatar.attached? %>"></avatar>
+            </div>
+
+            <div class="dropdown vertical-align">
+              <!--Trigger-->
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <%= "#{current_user.first_name} #{current_user.last_name}" %>
+              </button>
+              <!--Menu-->
+              <div class="dropdown-menu profile-dropdown">
+                <%= link_to "Editar perfil", edit_user_registration_path, class: "dropdown-item" %>
+                <%= link_to "Descargas de Archivos", job_statuses_path, class: "dropdown-item" if can?(:read, JobStatus) %>
+                <% if true_user != current_user %>
+                  <%= link_to "Regresar a mi usuario", exit_pretender_users_path, class: "dropdown-item sign-out", data: { turbolinks: false } %>
+                <% else %>
+                  <%= link_to "Cerrar sesión", destroy_user_session_path, method: :delete, class: "dropdown-item sign-out" %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="page-wrapper chiller-theme">
+          <nav id="sidebar" class="sidebar-wrapper">
+            <div class="sidebar-header">
+              <span id="close-sidebar" class="close" aria-label="Close"></span>
+            </div>
+            <div class="sidebar-content">
+              <div class="sidebar-menu">
+                <div class="sidebar-profile">
+                  <div class="text-center mt-sidebar"><%= image_tag current_user.image_nil, class: "img-fluid sidebar-image" %></div>
+                  <%= link_to "Editar perfil", edit_user_registration_path, class: "profile-sidebar-item pt-3" %>
+
+                  <% if true_user != current_user %>
+                    <%= link_to "Regresar a mi usuario", exit_pretender_users_path, class: "profile-sidebar-item py-2", data: { turbolinks: false } %>
+                  <% else %>
+                    <%= link_to "Cerrar sesión", destroy_user_session_path, method: :delete, class: "profile-sidebar-item py-2" %>
+                  <% end %>
+                  <div class="dropdown-divider m-4"></div>
+                </div>
+                <ul>
+                  <li><%= link_to "Dashboard", root_path, class: "sidebar-item dashboard-sidebar" %></li>
+                  <% if can?(:read, Client) %>
+                    <li><%= link_to "Clientes", clients_path, class: "sidebar-item users-sidebar" %></li>
+                  <% end %>
+                  <% if can?(:read, Folder) %>
+                    <li><%= link_to "Expedientes", folders_path, class: "sidebar-item folders-sidebar" %></li>
+                  <% end %>
+                  <% if can?(:read, :sale) %>
+                    <li><%= link_to @evo_string, sales_path, class: "sidebar-item commissions-sidebar" %></li>
+                  <% end %>
+                  <% if can?(:read, Project) %>
+                    <li><%= link_to @project_plural, projects_path, class: "sidebar-item projects-sidebar text-capitalize" %></li>
+                  <% end %>
+                  <% if can?(:read, FileApproval) %>
+                    <li><%= link_to "Verificaciones", file_approvals_path, class: "sidebar-item approvals-sidebar" %></li>
+                  <% end %>
+                  <% if can?(:read, :catalog) %>
+                    <li><%= link_to "Catálogos", catalogs_path, class: "sidebar-item catalogs-sidebar" %></li>
+                  <% end %>
+                  <% if can?(:read, :report) %>
+                    <li><%= link_to "Reportes", reports_path, class: "sidebar-item folders-sidebar" %></li>
+                  <% end %>
+                  <% if can?(:read, User) %>
+                    <li><%= link_to "Usuarios", users_path, class: "sidebar-item users-sidebar" %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+            <!-- sidebar-content  -->
+          </nav>
+        </div>
+      </nav>
+
+      <%= render partial: "/components/toolbar" %>
+
+      <div class="py-5 application-layout">
+
+        <div class="container">
+          <% flash.each do |key, value| %>
+            <%= content_tag :div, class: "alert alert-#{key}" do %>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
+              <%= value %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <%= yield %>
+
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <p class="mt-5 mb-3 privacy-policy text-center color-gray d-block"><%= t("app.auth.copy", brand: @full_company_name) %>
+              | <%= link_to t("app.auth.privacy_policy"), @privacy_policy %></p>
+          </div>
+        </div>
+      </div>
+
+    <% else %>
+      <%= yield %>
+    <% end %>
+    <%= content_for :modal %>
+  </div>
+
+  <%= yield :scripts %>
+</body>
+</html>

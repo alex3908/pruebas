@@ -1,0 +1,52 @@
+<div class="modal-header">
+  <div class="modal-title" id="prospectsModalLabel">
+    <p class="m-0">Agregar bonificación</p>
+    <h3><%= @client.label %></h3>
+  </div>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <%= form_with(local: true, url: client_cash_backs_path(@client), model: CashBack.new, method: :post, data: { remote: true }) do |form| %>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-12">
+        <%= form.label :amount, "Monto" %>
+        <%= form.number_field :amount, min: 0.01, step: 0.01, class: "form-control" %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :payment_method_id, "Método de pago" %>
+        <%= form.collection_select :payment_method_id, @payment_methods, :id, :select_label, { prompt: true }, { required: true } %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-12">
+        <%= form.hidden_field :exclusive_folder_id, value: @folder.id %>
+      </div>
+    </div>
+    <div class="modal-footer pb-0">
+      <div class="actions">
+        <%= form.submit "Guardar", class: "btn btn-primary" %>
+      </div>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    </div>
+  <% end %>
+</div>
+
+<% content_for :scripts do %>
+  <script>
+    document.addEventListener('vue:mounted', () => {
+      $('#cash_back_payment_method_id').each(function() {
+          const parent = $(this).parent();
+          $(this).select2({
+              placeholder: 'Seleccione un elemento',
+              allowClear: true,
+              width: '100%',
+              dropdownParent: parent,
+          });
+      });
+    });
+  </script>
+<% end %>

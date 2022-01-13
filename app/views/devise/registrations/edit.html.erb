@@ -1,0 +1,112 @@
+<div class="container">
+  <p id="notice"><%= notice %></p>
+
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Mi Perfil</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Editar mi perfil</li>
+      </ol>
+    </div>
+  </div>
+  <hr class="divider">
+
+  <%= form_with(model: resource, local: true, url: registration_path(resource_name), method: :put) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+
+    <div class="row pt-3 pb-3">
+      <div class="form-group profile-container col-xs-12 col-sm-12 col-md-4 col-lg-3 content-center">
+        <%= f.file_field :avatar, class: "inputfile" %>
+        <%= f.label :avatar, "Foto de perfil", class: "avatar_preview", style: "background-image:url('#{current_user.image_nil}')" do %>
+          <div class="child-image" style="background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url('<%= current_user.image_nil %>')"></div>
+          <div class="child-icon"></div>
+        <% end %>
+      </div>
+      <div class="row col-xs-12 col-sm-12 col-md-8 col-lg-9">
+        <div class="form-group col-md-6">
+          <%= f.label :first_name, "Nombres" %>
+          <%= f.text_field :first_name, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-6">
+          <%= f.label :last_name, "Apellidos" %>
+          <%= f.text_field :last_name, class: "form-control" %>
+        </div>
+
+        <div class="form-group col-md-12">
+          <%= f.label :email, "Correo" %>
+          <div class="vertical-align col-xs-12 col-md-12 col-lg-12">
+            <b><%= resource.email %></b>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+      <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+    <% end %>
+
+    <h5 class="pt-5">
+      Cambiar contraseña (Dejar en blanco si no quieres cambiarla).
+    </h5>
+
+    <div class="row py-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-gray">
+      </div>
+      <div class="col-8 pl-0">
+        <hr class="marker-bar-green">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-6">
+        <%= f.label :password, "Contraseña nueva" %>
+        <div class="col-sm-12">
+          <%= f.password_field :password, autocomplete: "new-password", class: "form-control" %>
+        </div>
+        <% if @minimum_password_length %>
+          <br>
+          <em><%= @minimum_password_length %> caracteres mínimos</em>
+        <% end %>
+      </div>
+
+      <div class="form-group col-6">
+        <%= f.label :password_confirmation, "Confirmar contraseña" %>
+        <div class="col-sm-12">
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <h5 class="pt-5">
+      Seguridad
+    </h5>
+    <div class="row py-3">
+        <div class="col-4 pr-0">
+          <hr class="marker-bar-gray">
+        </div>
+        <div class="col-8 pl-0">
+          <hr class="marker-bar-green">
+        </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-12">
+        <%= f.label :current_password, "Contraseña actual" %>
+        <i>(Necesitamos su contraseña actual para confirmar sus cambios.)</i>
+        <div class="col-sm-6">
+          <%= f.password_field :current_password, autocomplete: "contraseña-actual", class: "form-control", required: true %>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <%= f.submit "Actualizar", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+  <%= render file: "users/edit_documentation", locals: { current_user: resource, branches: @branches } %>
+</div>

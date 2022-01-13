@@ -1,0 +1,170 @@
+<div class="pdf-new-bg px-5">
+  <div class="complementary-header float-right">
+    <table style="width:100%">
+      <tr>
+        <td>
+          <h1 class="no-letter-spacing text-bold" style="font-size: 30px"><%= @name %></h1>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="conditions-container">
+    <hr class="outer-separator new_format mt-3 p-0">
+    <div class="margin-20" align="center">
+      <table class="table-infor new_format">
+        <colgroup>
+          <col span="1" class="table-left-column new_format">
+          <col>
+        </colgroup>
+        <% if @cash_flow.present? %>
+          <tr>
+            <td>Folio:</td>
+            <td><%= @cash_flow.folio %></td>
+          </tr>
+          <tr>
+            <td>Fecha:</td>
+            <td><%= @cash_flow.date.strftime("%d/%m/%Y") %></td>
+          </tr>
+          <tr>
+            <td>Recibí del (A) Sr. (A)</td>
+            <td><%= @cash_flow.client.label %></td>
+          </tr>
+          <tr>
+            <td>La cantidad de:</td>
+            <td><%= number_to_currency(@cash_flow.amount) %></td>
+          </tr>
+          <tr>
+            <td>Por concepto de:</td>
+            <td>
+              <%= concept_with_percentage(@cash_flow) %>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @project_singular %>:</td>
+            <td><%= @cash_flow.folder.project.name %></td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @phase_singular %>:</td>
+            <td><%= @cash_flow.folder.phase.name %></td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @stage_singular %>:</td>
+            <td><%= @cash_flow.folder.stage.name %></td>
+          </tr>
+          <tr>
+            <td>Unidad / <%= @lot_singular %>:</td>
+            <td><%= @cash_flow.folder.lot.name %></td>
+          </tr>
+        <% else %>
+          <tr>
+            <td>Fecha:</td>
+            <td><%= @payment.created_at.strftime("%d/%m/%Y") %></td>
+          </tr>
+          <tr>
+            <td>Sr. (A)</td>
+            <td><%= @payment.client.label %></td>
+          </tr>
+          <tr>
+            <td>Concepto de:</td>
+            <td>
+              <%= @payment.installment.label %>
+              <br>
+              <%= @payment.restructure&.concept_label %>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @project_singular %>:</td>
+            <td><%= @payment.installment.folder.project.name %></td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @phase_singular %>:</td>
+            <td><%= @payment.installment.folder.phase.name %></td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @stage_singular %>:</td>
+            <td><%= @payment.installment.folder.stage.name %></td>
+          </tr>
+          <tr>
+            <td>Unidad / <%= @lot_singular %>:</td>
+            <td><%= @payment.installment.folder.lot.name %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+  <table class="mt-5 mb-4" style="width:100%">
+    <tr>
+      <th>
+        <div class="bg-date text-center m-0 pt-2 pb-1">
+          <p class="text-bold"><%= @cash_flow.present? ? "DETALLE DE PAGO" : "DETALLE DEL MOVIMIENTO" %></p>
+        </div>
+      </th>
+    </tr>
+  </table>
+  <div class="margin-20" align=center>
+    <table class="table-infor new_format">
+      <colgroup>
+        <col span="1" class="table-left-column new_format">
+        <col>
+      </colgroup>
+      <% if @cash_flow.present? %>
+        <% if @cash_flow.bank_account.present? %>
+          <tr>
+            <td>Banco receptor:</td>
+            <td><%= @cash_flow.bank_account.bank %></td>
+          </tr>
+          <tr>
+            <td>Titular:</td>
+            <td><%= @cash_flow.bank_account.holder %></td>
+          </tr>
+          <tr>
+            <td>Cuenta:</td>
+            <td><%= @cash_flow.bank_account.account_number %></td>
+          </tr>
+        <% end %>
+        <tr>
+          <td>Forma De pago:</td>
+          <td><%= @cash_flow.payment_method_label %></td>
+        </tr>
+        <tr>
+          <td>Información de pago:</td>
+          <td><%= @cash_flow.branch.name %></td>
+        </tr>
+      <% else %>
+        <tr>
+          <td>Sucursal:</td>
+          <td><%= @payment.branch.name %></td>
+        </tr>
+      <% end %>
+    </table>
+    <% if @with_signature && @user.present? %>
+      <div style="width:33%;margin-left:34%;margin-top:7%;">
+        <div class="secondary-bar-sign new_format">
+          <p><%= @user.label %><br><%= @user.role.name %></p>
+        </div>
+      </div>
+    <% end %>
+    <div class="branches-list">
+      <div class="col-xs-12">
+        <p class="text-center">
+          <i>El presente recibo no sirve para efectos fiscales.</i>
+        </p>
+      </div>
+      <% @branches.each do |branch| %>
+        <div class="col-xs-4 branch-element">
+          <div class="branch-name"><%= branch.name %></div>
+          <div class="branch-address">
+            <%= branch.address %> <%= branch.phone %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="branches-list">
+      <div class="col-xs-12">
+        <p class="text-center">
+          <i>Comprobante válido salvo buen cobro</i>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

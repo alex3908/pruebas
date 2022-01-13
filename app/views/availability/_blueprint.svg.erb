@@ -1,0 +1,16 @@
+<%= render("blueprints/#{@stage.present? ? "blueprint_for_stage" : "blueprint_for_phase" }.html",
+           project: @project,
+           phase: @phase,
+           stage: @stage,
+           extras: @extras,
+           selected_lot: nil,
+           sale_map: true,
+           show_tooltip: true,
+           assignable: false,
+           link: false,
+           texts: false,
+           availability: true,
+           selected_stage: nil,
+           with_styles: true
+           )
+%>

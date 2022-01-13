@@ -1,0 +1,43 @@
+<div class="container mt-5 pt-5">
+<%= form_with(scope: :online_payment, url: online_payment_services_form_path(folder_id: @folder.id), local: true) do |form| %>
+  <% if @clients.length > 1 %>
+    <div class="form-group col-md-12 col-lg-12 mb-3">
+      <%= form.label :client_id, "Seleccionar cliente:" %>
+      <%= form.select :client_id, @clients.map { |c| [encrypt_string(c.name), c.id] }, { selected: @folder.client }, { class: "form-control" } %>
+    </div>
+  <% else %>
+    <%= form.hidden_field :client_id, value: @folder.client.id %>
+  <% end %>
+
+  <% if @online_payment_services.empty? %>
+    <div class="form-group col-md-12 col-lg-12 mb-3 text-center">
+      <h5>Seleccionar plataforma de pago</h5>
+      <p class="text-danger">Error: no se encontraron servicios de pago</p>
+    </div>
+  <% else %>
+    <div class="form-group col-md-12 col-lg-12 mb-3 text-center">
+      <h5>Seleccionar plataforma de pago</h5>
+      <% @online_payment_services.each do |service| %>
+        <div class="form-check form-check-inline">
+          <%= form.radio_button :online_payment_service_id, service.id, class: "form-check-input pb-2" %>
+          <%= form.label :online_payment_service_id, value: service.id, class: "form-check-label pl-1" do %>
+            <%= image_tag "#{service.provider}.png", class: "mx-auto d-block" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <div class="text-center">
+      <%= form.submit "Proceder al pago", class: "mt-3 btn btn-danger" %>
+    </div>
+  <% end %>
+  <%= form.hidden_field :folder_id, value: @folder.id %>
+  <%= form.hidden_field :sku, value: "#{@lot_singular} #{@folder.lot.name}" %>
+  <%= form.hidden_field :concept, value: @payment_details.concept %>
+  <%= form.hidden_field :amount, value: @payment_details.amount %>
+  <%= form.hidden_field :concept_key, value: @payment_details.key %>
+  <% if @payment_details.additional_concept_id.present? %>
+    <%= form.hidden_field :additional_concept_id, value: @payment_details.additional_concept_id %>
+  <% end %>
+
+<% end %>
+</div>

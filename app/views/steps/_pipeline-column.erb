@@ -1,0 +1,17 @@
+<div class="step-column">
+  <% folder_paginated = step.filtered_folders(params).paginate(page: params[:page], per_page: @max_rows) %>
+  <div class="mx-1 py-3 text-light font-weight-bold rounded-top bg-dark">
+    <%= tag.div(step.name) %>
+  </div>
+  <div class="mx-1 d-flex align-content-start font-weight-bold bg-secondary">
+    <div class="bg-light py-1 px-3">
+      <%= step.count_folders(params) %>
+    </div>
+    <div class="py-1 mx-2 text-light">
+      <small><%= number_to_currency(step.pipeline_amount(params)) + " MXN" %></small>
+    </div>
+  </div>
+  <div class="column-content mx-1 mb-1 p-2 rounded-bottom">
+    <pipeline-column class="cards pipeline-step" :step_id="<%= step.id %>"></pipeline-column>
+  </div>
+</div>

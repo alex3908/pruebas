@@ -1,0 +1,40 @@
+<div class="accordion collapse-elements px-4 py-2 my-4" id="accordion-comment">
+  <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse"
+       data-target="#collapse-comment" aria-expanded="false" aria-controls="collapse-comment">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Comentarios</p>
+  </div>
+  <div class="collapse" id="collapse-comment" data-parent="#accordion-comment">
+    <div class="widget-body">
+      <% if @step_role&.can_comment? %>
+        <%= link_to "Agregar", "#commentModal", 'data-toggle': "modal", 'data-folder_id': @folder.id, class: "btn btn-primary float-right" %>
+      <% end %>
+      <% if @folder.comments.empty? %>
+        <p class="pb-3 m-0">No se tienen comentarios</p>
+      <% else %>
+        <div class="log-container">
+          <div class="container">
+            <% @folder.comments.each do |comment| %>
+              <div class="my-3 mr-5">
+                <div class="row">
+                  <div class="col-1 text-secondary text-right">
+                    <i class="fa fa-comments fa-2x" aria-hidden="true"></i>
+                  </div>
+                  <div class="col p-0 text-justify">
+                    <%= comment_header(comment) %>
+                    <%= comment_timestamp(comment) %>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-1"></div>
+                  <div>
+                    <%= comment.message %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

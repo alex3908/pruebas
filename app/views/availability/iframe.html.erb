@@ -1,0 +1,5 @@
+<% if params[:slug_phase].present? && params[:etapa].nil? %>
+  <%= render partial: "blueprint_with_stages", locals: { project: @project, phase: @phase, stages: @stages, extras: @extras, user: @user } %>
+<% elsif params[:etapa].present? %>
+  <%= render partial: "blueprint_with_quote.html.erb", locals: { stage: @stage, project: @project,  phase: @phase, extras: @extras, user: @user, client: @client, folder: @folder, total_payments: @total_payments, quotation: @quotation } %>
+<% end %>

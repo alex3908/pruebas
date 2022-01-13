@@ -1,0 +1,32 @@
+<div class="text-center mb-4 section-buttons">
+  <div class="btn-group">
+    <%= link_to "Regresar", folder_path(@folder), class: "btn btn-secondary" %>
+    <%= link_to "Flujo de Caja", folder_payments_path(@folder), class: "btn btn-secondary custom-button-size vertical-align" if can?(:read, CashFlow) %>
+    <%= link_to "Enviar recordatorio de pago", mail_payment_due_soon_folder_installments_path(@folder), class: "btn btn-secondary custom-button-size vertical-align",  remote: true  if can?(:mail_payment_due_soon, Installment) %>
+    <% if can?(:account_status, Installment) %>
+      <div class="btn-group" role="group">
+        <button id="btnGroupDropActions" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Estado de Cuenta
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDropActions">
+          <%= link_to "Descargar PDF", account_status_folder_installments_path(@folder, format: :pdf), class: "dropdown-item", target: "_blank" %>
+          <%= link_to "Enviar por correo electrónico", mail_account_status_folder_installments_path(@folder), class: "dropdown-item", remote: true %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= button_tag "Guardar",type: "button",class: "btn btn-primary", disabled: true, id: :save if can?(:create, Installment) %>
+    <% if can?(:create, CashBack) %>
+      <div class="btn-group" role="group">
+        <button id="sendSubscription" type="button" class="btn btn-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Bonificación
+        </button>
+        <div class="dropdown-menu" aria-labelledby="sendSubscription">
+          <% @folder.clients.each do |client| %>
+            <%= link_to client.label, new_client_cash_back_path(client.id, folder_id: @folder.id), class: "dropdown-item", data: { toggle: "modal", target: "#modal-window" }, remote: true %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

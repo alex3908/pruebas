@@ -1,0 +1,164 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title">Comisión</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Comisiones", commissions_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Ver Comisión</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <section class="files w-100">
+    <div class="d-flex flex-wrap justify-content-between pt-3">
+      <h3 class="text-left vertical-align m-0 py-3">Datos generales</h3>
+    </div>
+    <div class="row mb-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-green">
+      </div>
+      <div class="col-8 pl-0">
+        <hr class="marker-bar-gray">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-6">
+        <p>
+          <strong>Folio del expediente:</strong>
+          <%= @commission.installment.folder.id %>
+        </p>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <p>
+          <strong class="text-capitalize"><%= @project.project_entity_name %>:</strong>
+          <%= @project.name %>
+        </p>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <p>
+          <strong class="text-capitalize"><%= @project.phase_entity_name %>:</strong>
+          <%= @phase.name %>
+        </p>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <p>
+          <strong class="text-capitalize"><%= @project.stage_entity_name %>:</strong>
+          <%= @stage.name %>
+        </p>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <p>
+          <strong><%= @project.lot_entity_name %>:</strong>
+          <%= @lot.name %>
+        </p>
+      </div>
+      <% unless can? :reserve, :quote %>
+        <div class="col-sm-12 col-md-6">
+          <p>
+            <strong>Usuario:</strong>
+            <%= link_to @commission.folder_user.user.label, @commission.folder_user.user %>
+          </p>
+        </div>
+      <% end %>
+      <div class="col-sm-12 col-md-6">
+        <p>
+          <strong>Cantidad:</strong>
+          <%= number_to_currency(@commission.amount) %>
+        </p>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <p>
+          <strong>Estado:</strong>
+          <%= @commission.status_label %>
+        </p>
+      </div>
+      <% if @commission.date_payment_receipt.present? %>
+      <div class="col-sm-12 col-md-6">
+        <p>
+          <strong>Fecha de comprobante del pago de comisión:</strong>
+          <%= @commission.date_payment_receipt.strftime("%d/%m/%y") %>
+        </p>
+      </div>
+      <% end %>
+
+    </div>
+  </section>
+
+  <section class="files w-100">
+    <div class="d-flex flex-wrap justify-content-between pt-3">
+      <h3 class="text-left vertical-align m-0 py-3">Documentos</h3>
+    </div>
+    <div class="row mb-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-green">
+      </div>
+      <div class="col-8 pl-0">
+        <hr class="marker-bar-gray">
+      </div>
+    </div>
+    <div class="table-container">
+      <%= form_with(model: @commission, local: true, url: [@commission]) do |form| %>
+        <div class="text-center pb-4">
+          <span>COMPROBANTE DE PAGO</span>
+          <span class="px-3">
+              <%= form.file_field :voucher, class: "d-none" %>
+            <% if @commission.voucher.attached? %>
+              <%= link_to rails_blob_path(@commission.voucher), target: "_blank", style: "text-decoration:none" do %>
+                <i class="fa fa-file-text-o fa-folder-size" aria-hidden="true"></i>
+              <% end %>
+              <% if can?(:remove_file, Commission) %>
+                <%= link_to remove_file_commission_path(@commission, file_id: @commission.voucher.id), method: :delete, data: { confirm: "¿Estás seguro de eliminar el COMPROBANTE DE PAGO?" } do %>
+                  <i class="fa fa-trash-o fa-folder-size icon-red"></i>
+                <% end %>
+              <% end %>
+            <% else %>
+              <% if can?(:update, Commission) %>
+                <i class="fa fa-cloud-upload fa-folder-size icon-click voucher" aria-hidden="true"></i>
+              <% else %>
+                <i>Sin archivo</i>
+              <% end %>
+            <% end %>
+            </span>
+        </div>
+        <div class="text-center pb-4">
+          <span>FACTURA</span>
+          <span class="px-3">
+              <%= form.file_field :invoice, class: "d-none" %>
+            <% if @commission.invoice.attached? %>
+              <%= link_to rails_blob_path(@commission.invoice), target: "_blank", style: "text-decoration:none" do %>
+                <i class="fa fa-file-text-o fa-folder-size" aria-hidden="true"></i>
+              <% end %>
+              <% if can?(:remove_file, Commission) %>
+                <%= link_to remove_file_commission_path(@commission, file_id: @commission.invoice.id), method: :delete, data: { confirm: "¿Estás seguro de eliminar la FACTURA?" } do %>
+                  <i class="fa fa-trash-o fa-folder-size icon-red"></i>
+                <% end %>
+              <% end %>
+            <% else %>
+              <% if can?(:update, Commission) %>
+                <i class="fa fa-cloud-upload fa-folder-size icon-click invoice" aria-hidden="true"></i>
+              <% else %>
+                <i>Sin archivo</i>
+              <% end %>
+            <% end %>
+            </span>
+        </div>
+        <% if can?(:update, Commission) %>
+          <div class="text-center">
+            <%= form.submit "Guardar", class: "btn btn-primary file-submit" %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+</div>
+
+<div class="container">
+  <%= render "logs" if can?(:see_binnacle, Commission) %>
+</div>

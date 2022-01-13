@@ -1,0 +1,6 @@
+<div class="text-center">
+  <%= image_tag "stp.png", class: "mx-auto d-block" %>
+  <p class="mt-5">Realiza la transferencia a la siguiente CLABE interbancaria: </p>
+  <br>
+  <strong><%= @folder.stp_clabe.blank? ? service.generate_clabe_for_client(@folder.id) : @folder.stp_clabe %></strong>
+</div>

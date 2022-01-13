@@ -1,0 +1,9 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Cotización</span></h1>
+  &nbsp;
+  <p>
+    <span>
+      Se solicitó una cotización del <%= @lot_singular %> <b><%= @lot.name %></b> de la <%= @stage_singular %> <b><%= @stage.name %></b> de la <%= @phase_singular %> <b><%= @phase.name %></b>.
+    </span>
+  </p>
+<% end %>

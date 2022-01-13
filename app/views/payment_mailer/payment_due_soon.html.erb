@@ -1,0 +1,18 @@
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <b>¡Hola <%= @client.name %>!</b>
+  </p>
+
+  <p>
+    Te recordamos que tu fecha de pago para el <%= @project.lot_entity_name %> que adquiriste en el <%= @project.project_entity_name %> <b><%= @project.name %> es <%= @due_today ? "hoy" : "el día #{@day} de cada mes" %></b>.
+  </p>
+
+  <p>
+    <%= "Si no has realizado tu pago y deseas hacerlo, haz clic #{link_to "aquí", new_online_payment_url(@folder)}.".html_safe if @online_payment_service.present? %>
+    En caso de que ya hayas realizado tu pago, favor de hacer caso omiso a este mensaje.
+  </p>
+
+  <p>
+    <b>¡Gracias por la confianza que nos brindas, que tengas un excelente día!</b>
+  </p>
+<% end %>

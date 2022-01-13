@@ -1,0 +1,34 @@
+<div class="modal fade file_manager" id="manageDownloadable<%= step_role.id %>" role="dialog"
+  aria-labelledby="manageDownloadable<%= step_role.id %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="manageDownloadable<%= step_role.id %>Label">Permisos de descarga de archivos (<%= step_role.role.name %>)</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <% DownloadableFile::FILE_NAMES.each_with_index do |file_name, index| %>
+              <div class="col-3 text-center d-flex flex-column justify-content-between mt-4">
+                  <div class="my-auto">
+                    <small>
+                      <%= label_tag(:document, file_name.second, class: "m-auto") %>
+                    </small>
+                  </div>
+                  <div>
+                  <%= ajax_checkbox(step_role, index) %>
+                  </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

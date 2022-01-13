@@ -1,0 +1,8 @@
+¡Se ha recibido un pago por la pasarela!
+- <%= @project_singular %>: <%= @project.name %>
+- <%= @phase_singular %>: <%= @phase.name %>
+- <%= @stage_singular %>: <%= @stage.name %>
+- <%= @lot_singular %>: <%= @lot.name %>
+- Monto: <%= number_to_currency(@payment.amount) %>
+- Fecha: <%= I18n.l(@cash_flow.date , format: "%l:%M %P %d/%b/%y") %>
+

@@ -1,0 +1,19 @@
+<% content_for :preview do %>
+  Comprobante del pago realizado en tu <%= @cash_flow.folder.project.lot_entity_name %> <%= @cash_flow.folder.lot.name %> de <%= @cash_flow.folder.project.name %>.
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <p style="text-align: center;">
+    <span>
+      Estimado <%= @cash_flow.client.label %>:
+    </span>
+  </p>
+  <div style="text-align: center;">
+    <div>
+      Se ha realizado un movimiento con pago a tu <b>
+      <%= @cash_flow.folder.project.lot_entity_name %> <%= @cash_flow.folder.lot.name %> de la <%= @stage_singular %> <%= @cash_flow.folder.stage.name %> de la <%= @phase_singular %> <%= @cash_flow.folder.phase.name %> del <%= @project_singular %> <%= @cash_flow.folder.project.name %></b>.
+    </div>
+  </div>
+<% end %>
+
+<%= render partial: "components/mailer_button", locals: { title: "Descarga tu estado de cuenta", url: download_account_status_url(@cash_flow.folder) } %>

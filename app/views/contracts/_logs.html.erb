@@ -1,0 +1,24 @@
+<div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-binnacle">
+  <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-binnacle" aria-expanded="false" aria-controls="collapse-binnacle">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Bitácora</p>
+  </div>
+  <div class="collapse" id="collapse-binnacle" data-parent="#accordion-binnacle" v-pre="">
+    <div class="widget-body">
+      <div class="mt">
+        <div class="width-200 float-right">
+        </div>
+        <p></p>
+      </div>
+      <% if @logs.count == 0 %>
+        <p class="p-3">No se tienen registros en la bitácora</p>
+      <% end %>
+      <div class="log-container">
+        <% @logs.each do |log| %>
+          <div class="py-2">
+            <div class="text-center pb-2"><b><%= log.user.label %></b> editó el contrato el <%= log.date.strftime("%d/%m/%Y") %> a las <%= log.date.strftime("%I:%M%p") %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

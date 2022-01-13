@@ -1,0 +1,110 @@
+<%= form_with(model: @document_template, local: true) do |form| %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :name, "Nombre" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :doc_type, "Tipo" %>
+      <%= form.select :doc_type, options_for_select([
+          [ "Expediente", { "data-sections" => @document_section.to_json() }, DocumentTemplate::TYPE[:Folder] ],
+          ["Cliente", DocumentTemplate::TYPE[:Client]]
+        ], selected: @document_template.doc_type), {},
+        class: "form-control", required: true, disabled: @document_template.persisted? %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6 client-document <%= "d-none" if @document_template.folder? %>">
+      <%= form.label :client_type, "Tipo de persona" %>
+      <%= form.select :client_type, options_for_select(
+        [["Para cualquiera", DocumentTemplate::GENERAL], ["Persona física", Client::PHYSICAL], ["Persona moral", Client::MORAL]], selected: @document_template.client_type), {},
+        class: "form-control client-required", required: document_template.new_record? || document_template.folder? ? false : true, disabled: @document_template.persisted? %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6 folder-document <%= "d-none" if @document_template.client? %>">
+      <%= form.label :document_section_id, "Sección" %>
+      <%= form.collection_select(:document_section_id, @document_section, :id, :name, { include_blank: true },
+      { class: "form-control folder-required", required: @document_template.new_record? ? true : @document_template.folder? ? true : false }) %>
+    </div>
+     <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :formats, "Formatos soportados" %>
+      <%= form.select :formats,@formats.collect { |s| [s[:label], s[:file_type]] }, {}, multiple: true %>
+    </div>
+    <% if @document_template.new_record? %>
+      <div class="form-group col-sm-12 col-md-6 vertical-align folder-document">
+        <%= form.label :requires_approval, "Requiere Aprobación" %>
+        <%= form.check_box :requires_approval, { data: {
+          activate: "toggle",
+          onstyle: "success",
+          offstyle: "secondary",
+          on: "Si",
+          off: "No"
+        } }, class: "form-control" %>
+      </div>
+    <% end %>
+
+    <div class="form-group col-sm-12 col-md-6 vertical-align folder-document <%= "d-none" if @document_template.client? %>">
+      <%= form.label :visible, "¿Visible?" %>
+      <%= form.check_box :visible, { data: {
+        activate: "toggle",
+        onstyle: "success",
+        offstyle: "secondary",
+        on: "Si",
+        off: "No"
+      } }, class: "form-control" %>
+    </div>
+
+    <% if @document_template.new_record? %>
+      <div class="form-group col-sm-12 col-md-6 vertical-align folder-document">
+        <%= form.label :copy_to_all, "¿Añadirlo a expedientes antiguos?" %>
+        <%= form.check_box :copy_to_all, { data: {
+          activate: "toggle",
+          onstyle: "success",
+          offstyle: "secondary",
+          on: "Si",
+          off: "No"
+        } }, class: "form-control" %>
+      </div>
+    <% end %>
+
+  </div>
+
+  <% if @document_template.persisted? %>
+     <div class="d-flex flex-wrap justify-content-between pt-3">
+      <h3 class="text-left vertical-align m-0 py-3">Requerido en</h3>
+      <div class="clearfix py-2"></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-green">
+      </div>
+      <div class="col-8 pl-0">
+        <hr class="marker-bar-gray">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <% @step_documents.each do |step_document| %>
+        <%= form.fields_for :step_documents, step_document do |step_document_form| %>
+          <%= step_document_form.hidden_field :id %>
+          <div class="form-group col-sm-12 col-md-4">
+            <%= step_document_form.label :required, "#{step_document.step.order + 1}.- #{step_document.step.name}", class: "mr-3" %>
+            <%= step_document_form.check_box :required, { data: {
+              activate: "toggle",
+              onstyle: "success",
+              offstyle: "secondary",
+              on: "Si",
+              off: "No"
+            } } %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="actions pt-3">
+    <%= link_to "Cancelar", document_templates_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

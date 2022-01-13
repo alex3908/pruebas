@@ -1,0 +1,24 @@
+$('#modal-window').modal('hide')
+<% if @user.errors.count == 0 %>
+Swal.fire({
+    title: '¡Archivo rechazado satisfactoriamente!',
+    text: 'El archivo deberá ser reemplazado para una nueva revisión.',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+}).then(function() {
+    Turbolinks.visit("<%= validate_user_path(@user) %>")
+});
+<% else %>
+Swal.fire({
+    title: 'Error',
+    text: 'Hubo un error al intentar guardar tu comentario, por favor corrobora los datos.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu responsable.'
+})
+<% end %>

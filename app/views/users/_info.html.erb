@@ -1,0 +1,121 @@
+<% if @user.structure.present? && @user.role.key != 'director' %>
+  <div class="container">
+    <div class="row">
+      <% if @user.role.level.present? %>
+        <div class="col-md-3 text-center">
+          Subordinados permitidos: <b><%= @user.structure.max_branches %></b>
+        </div>
+      <% end %>
+      <div class="col-md-3 text-center">
+        Estado de la estructura:
+        <b><span class="badge badge-<%= @user.structure.active ? "success" : "secondary" %>"><%= structure_status(@user.structure.active) %></span></b>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <hr class="divider">
+  </div>
+<% end %>
+
+<div class="container">
+  <section class="user">
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-group flex-wrap" role="group">
+        <%= link_to "Editar Usuario", edit_user_path(@user), class: "btn btn-dark" if can?(:update, User) %>
+        <%= link_to "Iniciar Usuario", pretender_user_path(@user), class: "btn btn-secondary", data: { turbolinks: false } if (true_user != @user) && can?(:become, User) %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1 text-center py-3">
+        <%= image_tag("icons/quotation-client.png", class: "img-fluid") %>
+      </div>
+      <div class="col-md-11">
+        <div class="d-flex flex-wrap justify-content-between">
+          <h3 class="text-left vertical-align m-0 py-3">Datos del Usuario <strong><%= @user.role.name %><%= " / " + @user.classifiers.map(&:name).join(" / ") if @user.classifiers.any? %></strong></h3>
+          <% if @user.branch.present? %>
+            <h3 class="text-right vertical-align m-0 py-3">Sucursal <strong><%= @user.branch.name %></strong></h3>
+          <% end %>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-green">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-gray">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6 col-lg-3">
+        <p><strong>Nombre:</strong> <br><%= @user.first_name %></p>
+      </div>
+      <div class="form-group col-sm-12 col-md-6 col-lg-3">
+        <p><strong>Apellido:</strong> <br><%= @user.last_name %></p>
+      </div>
+      <div class="form-group col-sm-12 col-md-6 col-lg-3">
+        <p><strong>Teléfono:</strong> <br><%= @user.phone %></p>
+      </div>
+      <div class="form-group col-sm-12 col-md-6 col-lg-3">
+        <p><strong>Correo Electrónico:</strong> <br><%= @user.email %>
+        <% if can?(:delete_suppression, User) && @user.suppresed_email? %>
+          <%= link_to "Eliminar bloqueo", delete_suppression_user_path(@user), method: :delete, class: "btn btn-danger", title: "Correo con bloqueo con proveedor", data: { hidden: :true, toggle: :tooltip, placement: :top } %>
+          <% end %>
+        </p>
+      </div>
+      <div class="form-group col-sm-12 col-md-6 col-lg-3">
+        <p>
+          <strong>Fecha de creación:</strong><br>
+          <span class="color-edit"><%= @user.created_at.strftime("%d/%m/%Y") %>
+            a las <%= @user.created_at.strftime("%I:%M%p") %></span>
+        </p>
+      </div>
+
+      <% unless @user.referrer?.nil? %>
+        <div class="form-group col-sm-12 col-md-6 col-lg-3">
+          <p>
+            <strong>Referente:</strong>
+            <br>
+            <%= link_to user_path(@user.referrer?&.referrer_id) do %>
+              <%= @user.referrer?&.referrer.label %>
+            <% end %>
+          </p>
+        </div>
+      <% end %>
+
+      <% if can?(:activate_user, @user) %>
+        <div class="form-group col-sm-12 col-md-6 col-lg-3">
+          <p><strong>Creado por:</strong> <br><%= @user.created_by.present? ? User.find(@user.created_by).label : "N/A" %>
+          </p>
+        </div>
+      <% end %>
+
+      <div class="form-group col-sm-12 col-md-6 col-lg-3">
+        <strong>
+          <% if @user.structure.present? && can?(:activate_user, @user) %>
+            <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Para cambiar el estado de esta cuenta es necesario retirar al usuario de su estructura"></i>
+          <% end %>
+          Estado de la cuenta:
+        </strong>
+        <br>
+        <% if @user.structure.nil? && can?(:activate_user, @user) %>
+          <%= check_box_tag "complete", @user.is_active, @user.is_active,
+                            data: {
+                                activate: "toggle", onstyle: "success", offstyle: "secondary", on: "Activa", off: "Inactiva",
+                                remote: true, url: "/users/#{@user.id}/activate_user", method: :patch
+                            } %>
+        <% else %>
+          <span class="badge badge-<%= @user.is_active ? "success" : "secondary" %>"><%= user_status(@user.is_active) %></span>
+        <% end %>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<div class="container">
+  <%= render "users/structure" if @user.structure.present? %>
+  <%= render "users/projects" if can?(:assignment, User) %>
+  <%= render "users/clients" if @user.can?(:reserve, :quote) %>
+  <%= render "users/logs" if can?(:see_binnacle, User) %>
+</div>

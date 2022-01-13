@@ -1,0 +1,20 @@
+$(document).on('ready', function() {
+  <% if @confirmation == :success %>
+    Swal.fire({
+      title: '¡Pago realizado correctamente!',
+      type: 'success',
+      confirmButtonText: 'Continuar',
+    }).then( function() {
+      window.location = "<%= new_online_payment_path(@reference) %>";
+    });
+  <% elsif @confirmation == :error %>
+    Swal.fire({
+      title: 'No fue posible verificar tus datos',
+      text: 'Verifica con tu banco la información proporcionada',
+      type: 'error',
+      confirmButtonText: 'Continuar',
+    }).then( function() {
+      window.location = "<%= new_online_payment_path(@reference) %>";
+    });
+  <% end %>
+});

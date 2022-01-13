@@ -1,0 +1,49 @@
+<style>
+  <%= sanitize stage.blueprint.styles %>
+
+  .lot {
+    margin: auto;
+    max-width: 800px;
+  }
+
+  .no-outline {
+    outline: none !important;
+  }
+
+  .for_sale {
+    fill: <%= sanitize stage.blueprint.available_color %> !important;
+  }
+
+  .reserved {
+    fill: <%= sanitize stage.blueprint.reserved_color %> !important;
+  }
+
+  .sold {
+    fill: <%= sanitize stage.blueprint.sold_color %> !important;
+  }
+
+  .locked_sale {
+    fill: <%= sanitize(stage.blueprint.locked_color || stage.blueprint.sold_color) %> !important;
+  }
+
+  .assigned {
+    fill: #0080FF !important;
+  }
+
+  .locked {
+    fill: #252525 !important;
+  }
+
+  .selected-lot {
+    fill: #000000 !important;
+  }
+
+  .assignable {
+    cursor: pointer;
+  }
+  <% if stage.blueprint.background.attached? && !(texts.present? && texts) %>
+  .lot-figure {
+    opacity: 0.6;
+  }
+  <% end %>
+</style>

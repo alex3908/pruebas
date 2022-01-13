@@ -1,0 +1,72 @@
+<div class="container">
+  <section class="payments w-100">
+    <div class="row">
+      <div class="col-md-1 text-center py-3">
+        <%= image_tag("icons/quotation-payments.png", class: "img-fluid") %>
+      </div>
+      <div class="col-md-11">
+        <div class="d-flex justify-content-between">
+          <h3 class="text-left vertical-align m-0 py-3">Pagos</h3>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-green">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-gray">
+          </div>
+        </div>
+      </div>
+    </div>
+    <% unless @folder.has_custom_installments? %>
+      <div class="d-flex justify-content-between">
+        <p class="text-left vertical-align m-0 py-3 color-primary">Esquema de pagos</p>
+      </div>
+      <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack" id="interest-payments">
+        <thead>
+        <tr>
+          <th class="text-center"></th>
+          <th class="text-center">Monto</th>
+          <th class="text-center">Pagos</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @quotation.interest_payments.each do |payment| %>
+          <tr>
+            <td class="align-middle text-center"><%= payment[:interest] %></td>
+            <td class="align-middle text-center"><%= number_to_currency(payment[:amount]) %></td>
+            <td class="align-middle text-center"><%= payment[:payments] %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <% end %>
+    <% unless @folder.canceled? %>
+      <div class="d-flex justify-content-between">
+        <p class="text-left vertical-align m-0 py-3 color-primary">Enganche</p>
+      </div>
+
+      <%= render "folders/sections/down_payments_table" %>
+
+      <div class="row mb-3">
+        <div class="col-4 pr-0">
+          <hr class="marker-bar-green">
+        </div>
+        <div class="col-8 pl-0">
+          <hr class="marker-bar-gray">
+        </div>
+      </div>
+
+      <div class="accordion collapse-elements px-4 py-2" id="accordion-payments">
+        <div class="d-flex justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="true" aria-controls="collapse-section">
+          <p class="text-left vertical-align m-0 py-3 color-primary">Mensualidades</p>
+        </div>
+        <div class="table-container collapse" id="collapse-section" data-parent="#accordion-payments">
+          <%= render "folders/sections/amortization_table" %>
+        </div>
+      </div>
+    <% end %>
+
+  </section>
+</div>

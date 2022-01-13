@@ -1,0 +1,54 @@
+<%= form_with(model: folder_user_concept, local: true) do |form| %>
+
+  <div class="d-flex flex-wrap justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">Datos de concepto</h3>
+    <div class="clearfix py-2"></div>
+  </div>
+
+  <div class="row">
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :name, "Nombre del concepto" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :role_ids, "Roles" %>
+      <%= form.select :role_ids, @roles.collect { |s| [s.name, s.id] }, {}, multiple: true, required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :commission, "Porcentaje de comisión" %>
+      <div class="input-group">
+        <%= form.number_field :commission, min: 0, step: 0.01, max: 100, class: "form-control text-right", required: true %>
+        <div class="input-group-append">
+          <span class="input-group-text">%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :visible, "Expediente visible" %>
+      <div>
+        <%= form.check_box :visible,
+                           data: {
+                               activate: "toggle",
+                               onstyle: "success",
+                               offstyle: "secondary",
+                               on: "Si",
+                               off: "No",
+                           } %>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="actions py-3">
+      <%= link_to "Cancelar", folder_user_concepts_path, class: "btn btn-secondary" %>
+      <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+
+  </div>
+
+<% end %>

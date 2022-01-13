@@ -1,0 +1,85 @@
+<div class="container p-5">
+  <h1 class="w-50 ml-auto text-right">PANEL DE COMISIONES CONSOLIDADO</h1>
+
+  <hr style="height:4px;border:none;color:#333;background-color:#333; margin: 3px;">
+  <div class="px-2">
+    <span>Nombre: <%= current_user.label %></span>
+    <span class="float-right"><%= "Sucursal: #{current_user.branch.name}" if current_user.branch.present? %> </span>
+  </div>
+  <hr style="height:4px;border:none;color:#333;background-color:#333; margin: 3px;">
+  <div class="px-2">
+    <span>Puesto: <strong><%= current_user.role.name %></strong></span>
+    <span class="text-right float-right w-25"><strong><%= "Periodo: #{@period_from} - #{@period_to}"  if @period_from.present? && @period_to.present? %></strong></span>
+  </div>
+
+  <table class="table table-sm table-striped table-bordered">
+    <thead>
+      <tr>
+        <th class="text-center h2" colspan="18">TABLA DE PAGOS</th>
+      </tr>
+      <tr>
+        <th class="align-middle"><small>#</small></th>
+        <th class="align-middle"><small><%= @project_singular %></small></th>
+        <th class="align-middle"><small><%= @phase_singular %></small></th>
+        <th class="align-middle"><small><%= @stage_singular %></small></th>
+        <th class="align-middle"><small><%= @lot_singular %></small></th>
+        <th class="align-middle"><small>Folio Expediente</small></th>
+        <th class="align-middle"><small>Modo de pago</small></th>
+        <th class="align-middle"><small>Tipo</small></th>
+        <th class="align-middle"><small>Nombre asesor estructura</small></th>
+        <th class="align-middle"><small>Monto de venta</small></th>
+        <th class="align-middle"><small>Fecha de pago programado cliente</small></th>
+        <th class="align-middle"><small>Fecha real de pago cliente</small></th>
+        <th class="align-middle"><small>Estatus de pago</small></th>
+        <th class="align-middle"><small>Porcentaje</small></th>
+        <th class="align-middle"><small>Cantidad total comisión</small></th>
+        <th class="align-middle"><small>Pagado</small></th>
+        <th class="align-middle"><small>Por pagar</small></th>
+        <th class="align-middle"><small>Cantidad mensual a recibir</small></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @commissions.each_with_index do |commission, index| %>
+      <tr>
+        <td class="align-middle"><small><%= index + 1 %></small></td>
+        <td class="align-middle"><small><%= commission.folder_user.folder.project.name %></small></td>
+        <td class="align-middle"><small><%= commission.folder_user.folder.phase.name %></small></td>
+        <td class="align-middle"><small><%= commission.folder_user.folder.stage.name %></small></td>
+        <td class="align-middle"><small><%= commission.folder_user.folder.lot.name %></small></td>
+        <td class="align-middle"><small><%= commission.folder_user.folder.id %></small></td>
+        <td class="align-middle"><small><%= "Diferido (#{commission.get_numeration})" %></small></td>
+        <td class="align-middle"><small><%= commission.folder_user.folder_user_concept.name %></small></td>
+        <td class="align-middle"><small><%= commission.folder_user.folder.user.label %></small></td>
+        <td class="align-middle"><small><%= number_to_currency(commission.sale_total) %></small></td>
+        <td class="align-middle"><small><%= commission.installment.date.strftime("%d/%m/%y") %></small></td>
+        <td class="align-middle"><small><%= commission.date.strftime("%d/%m/%y") %></small></td>
+        <td class="align-middle"><small><%= commission.status_label %></small></td>
+        <td class="align-middle"><small><%= commission.folder_user.percentage %>%</small></td>
+        <td class="align-middle"><small><%= number_to_currency(commission.folder_user.amount) %></small></td>
+        <td class="align-middle">
+          <small><%= number_to_currency(commission.paid? ? commission.amount : 0) %></small>
+        </td>
+        <td class="align-middle">
+          <small><%= number_to_currency(commission.paid? ? 0 : commission.amount) %></small>
+        </td>
+        <td class="align-middle"><small><%= number_to_currency(commission.amount) %></small></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <table class="float-right table-striped table-bordered w-25">
+    <tr class="text-nowrap">
+      <th class="p-2">Total pagado: </th>
+      <td class="p-2"><%= number_to_currency(@total_paid) %></td>
+    </tr>
+    <tr class="text-nowrap">
+      <th class="p-2">Pendiente por pagar: </th>
+      <td class="p-2"><%= number_to_currency(@total_not_paid) %></td>
+    </tr>
+  </table>
+
+  <footer class="footer">
+    <p>Nota: "Los importes reflejados en el estado de cuenta son antes de impuestos y/o retenciones."</p>
+  </footer>
+</div>

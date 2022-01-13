@@ -1,0 +1,32 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+    viewBox="<%= stage.blueprint.view_box %>" xml:space="preserve"
+    style="<%= "background-size:contain;background-image:url(#{rails_blob_url(stage.blueprint.background)}" if stage.blueprint.background.attached? && !(texts.present? && texts) %>">
+
+  <% if with_styles %>
+    <%= render("blueprints/styles_for_stage.html.erb",
+        stage: stage,
+        texts: texts) %>
+  <% else %>
+    <% content_for :head do %>
+      <%= render("blueprints/styles_for_stage.html.erb",
+        stage: stage,
+        texts: texts) %>
+    <% end %>
+  <% end %>
+
+  <%= render("blueprints/extras", extras: select_type(extras, "ground"), id: "ground") if !(stage.blueprint.background.attached? && !(texts.present? && texts)) %>
+  <%= render("blueprints/extras", extras: select_type(extras, "fillings"), id: "fillings") %>
+  <%= render("blueprints/extras", extras: select_type(extras, "flora"), id: "flora") if !(stage.blueprint.background.attached? && !(texts.present? && texts)) %>
+  <g>
+    <% stage.blueprint.blueprint_lots.each do |blueprint_lot| %>
+      <% if !texts && can?(:quote, :quote) && blueprint_lot.lot.present? && link %>
+        <%= link_to(blueprint_lot_render_tag(blueprint_lot, stage.blueprint, texts: texts, sale_map: sale_map, show_tooltip: show_tooltip, assignable: assignable), quote_project_phase_stage_lot_path(project, phase, stage, blueprint_lot.lot, client: params["client"]), target: "_blank") %>
+      <% else %>
+        <%= blueprint_lot_render_tag(blueprint_lot, stage.blueprint, lot: selected_lot, texts: texts, sale_map: sale_map, show_tooltip: show_tooltip, assignable: assignable) %>
+      <% end %>
+    <% end %>
+  </g>
+
+  <%= render("blueprints/extras", extras: select_type(extras, "texts"), id: "texts") if texts.present? && texts %>
+
+</svg>

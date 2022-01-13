@@ -1,0 +1,166 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4">
+      <h1 class="banner-title vertical-align p-0 m-0">Usuarios</h1>
+    </div>
+    <% if params[:stage].present? %>
+      <div class="col-sm-12 col-md-4 flex-middle-right">
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+          <div class="btn-group flex-wrap" role="group">
+            <div class="btn-group" role="group">
+              <%= link_to "Asignar todos",
+              assign_all_users_path(stage: params[:stage], email: params[:email], name: params[:name], role: params[:role], branch: params[:branch]),
+              class: "btn btn-primary custom-button-size vertical-align" %>
+              <%= link_to "Desasignar todos",
+              deallocate_all_users_path(stage: params[:stage], email: params[:email], name: params[:name], role: params[:role], branch: params[:branch]),
+              class: "btn btn-secondary custom-button-size vertical-align" %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-4 d-flex flex-middle-right flex-wrap">
+        <ol class="breadcrumb ol-projects">
+          <li class="breadcrumb-item"><%= link_to "Regresar", project_phase_stages_path(@project, @phase) %></li>
+          <p class="breadcrumb-item active">Asesores</p>
+        </ol>
+      </div>
+    <% else %>
+      <div class="col-sm-12 col-md-8 flex-middle-right">
+        <% if can?(:report, User) %>
+          <%= link_to "Exportar", users_path(:xlsx, email: params[:email], name: params[:name], role: params[:role], branch: params[:branch]), class: "btn btn-light mr-2" %>
+        <% end %>
+        <%= link_to("Recuperar", recovery_users_path, class: "btn btn-secondary mr-2") if is_evo_active? && can?(:create, User) %>
+        <%= link_to("Nuevo Usuario", new_user_path, class: "btn btn-primary mr-2") if can?(:create, User) %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <%= render "filters" %>
+</div>
+
+<% if @users.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ningún usuario.
+        <% if can?(:create, User) %>
+          <br> Puedes invitar uno.
+        <% end %>
+      </p>
+      <% if can?(:create, User) %>
+        <div class="text-center mt-3">
+          <%= link_to "Nuevo Usuario", new_user_path, class: "btn btn-primary jumping" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th><%= sortable "first_name", "Nombre" %></th>
+          <th><%= sortable "last_name", "Apellido" %></th>
+          <th><%= sortable "email", "Correo" %></th>
+          <th><%= sortable "role_id", "Rol" %></th>
+          <th><%= sortable "branch_id", "Sucursal" %></th>
+          <th class="text-center"><%= sortable "is_active", "Estado de la cuenta" %></th>
+          <% if is_evo_active? %>
+            <th class="text-center"><%= @evo_string %></th>
+          <% end %>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td><%= user.first_name %></td>
+            <td><%= user.last_name %></td>
+            <td><%= user.email %></td>
+            <td><%= user.role.name %><%= " / " + user.classifiers.map(&:name).join(" / ") if user.classifiers.any? %></td>
+            <td><%= user.branch.name if user.branch.present? %></td>
+            <td class="text-center">
+              <span class="badge badge-<%= user.is_active ? "success" : "secondary" %>"><%= user_status(user.is_active) %></span>
+            </td>
+            <% if is_evo_active? %>
+              <td class="text-center">
+                <% if user.structure.present? %>
+                  <span class="badge badge-<%= user.structure.active ? "success" : "secondary" %>">
+                    <%= structure_status(user.structure.active) %>
+                  </span>
+                <% else %>
+                  <span class="badge badge-light">N/A</span>
+                <% end %>
+              </td>
+            <% end %>
+            <td class="text-center">
+              <% if params[:stage].present? %>
+                <%= check_box_tag "complete", @stage.is_assigned(user), @stage.is_assigned(user),
+                                  data: {
+                                      activate: "toggle", onstyle: "success", offstyle: "secondary", on: "Asignado", off: "Desasignado",
+                                      remote: true, url: "/users/#{user.id}/stages/#{@stage.id}/assignment", method: :patch, size: "sm"
+                                  } if can?(:assignment, User) %>
+              <% else %>
+                <% if can?(:become, User) && (user != true_user) %>
+                  <%= link_to pretender_user_path(user), class: "table-link", data: { turbolinks: false } do %>
+                    <% if true_user != user %>
+                      <i class="fa fa-user-o"></i>
+                    <% end %>
+                  <% end %>
+                <% end %>
+                <% if can?(:read, user) %>
+                  <%= link_to user, class: "table-link" do %>
+                    <i class="fa fa-eye"></i>
+                  <% end %>
+                <% end %>
+                <% if can?(:verify_user_file, User) %>
+                  <%= link_to validate_user_path(user.id), class: "table-link" do %>
+                    <i class="fa fa-check-circle-o"></i>
+                  <% end %>
+                <% end %>
+                <% if can?(:update, user) %>
+                  <%= link_to edit_user_path(user), class: "table-link" do %>
+                    <i class="fa fa-pencil-square-o"></i>
+                  <% end %>
+                <% end %>
+                <% if can?(:destroy, user) %>
+                  <%= link_to user, class: "table-link", method: :delete, data: { confirm: "¿Estás seguro?" } do %>
+                    <i class="fa fa-trash-o"></i>
+                  <% end %>
+                <% end %>
+                <% if can?(:update, User) %>
+                  <% if user.invitation_sent_at.present? && user.invitation_accepted_at.nil? %>
+                    <%= link_to user_resend_invitation_path(user), method: :patch, class: "table-link", data: { toggle: "tooltip" }, title: "Enviar invitación" do %>
+                      <i class="fa fa-envelope-o"></i>
+                    <% end %>
+                  <% else %>
+                    <%= link_to user_reset_password_path(user), method: :patch, class: "table-link", data: { toggle: "tooltip" }, title: "Recuperación de contraseña" do %>
+                      <i class="fa fa-envelope-open-o"></i>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@users, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?#{params[:stage].present? ? "stage=#{params[:stage]}&" : ""}per_page='+this.value;}" %>
+        por página de un total de <%= @users.total_entries %>
+      </div>
+    </div>
+  </div>
+<% end %>

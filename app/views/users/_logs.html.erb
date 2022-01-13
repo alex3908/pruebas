@@ -1,0 +1,78 @@
+<div class="container">
+<div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-binnacle">
+    <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-binnacle" aria-expanded="false" aria-controls="collapse-binnacle">
+      <p class="text-left vertical-align m-0 py-3 color-primary">Bitácora</p>
+    </div>
+    <div class="collapse" id="collapse-binnacle" data-parent="#accordion-binnacle" v-pre="">
+      <div class="widget-body">
+        <div class="mt">
+          <div class="width-200 float-right">
+          </div>
+          <p></p>
+        </div>
+        <% if @logs.empty? %>
+          <p class="pb-3 m-0">No se tienen registros en la bitácora</p>
+        <% end %>
+        <div class="log-container">
+          <% if @logs.any? %>
+            <% @logs.each do |log| %>
+              <div class="py-2">
+                <div class="text-center pb-2"><b><%= log.user.label %></b> editó los siguientes campos
+                  el <%= log.date.strftime("%d/%m/%Y") %> a las <%= log.date.strftime("%I:%M%p") %></div>
+                <div class="table-container-without-height">
+                  <table class="table table-bordered background-white">
+                    <thead>
+                    <tr>
+                      <th width="20%">Campo</th>
+                      <th width="40%">Antiguo valor</th>
+                      <th width="40%">Nuevo valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% log.json_parse.each do |key, values| %>
+                      <tr>
+                        <td><%= get_translate(key) %></td>
+                        <td>
+                          <% if values[0].present? || key == 'is_active' %>
+                            <% case key %>
+                            <% when 'branch_id' %>
+                              <%= Branch.exists?(values[0]) ? Branch.find(values[0]).name : "No existe la entidad" %>
+                            <% when 'role_id' %>
+                              <%= Role.exists?(values[0]) ? Role.find(values[0]).name : "No existe la entidad" %>
+                            <% when 'is_active' %>
+                              <%= get_status(values[0]) %>
+                            <% else %>
+                              <%= values[0] %>
+                            <% end %>
+                          <% else %>
+                            <i>Sin valor</i>
+                          <% end %>
+                        </td>
+                        <td>
+                          <% if values[1].present? || key == 'is_active' %>
+                            <% case key %>
+                            <% when 'branch_id' %>
+                              <%= Branch.exists?(values[1]) ? Branch.find(values[1]).name : "No existe la entidad" %>
+                            <% when 'role_id' %>
+                              <%= Role.exists?(values[1]) ? Role.find(values[1]).name : "No existe la entidad" %>
+                            <% when 'is_active' %>
+                              <%= get_status(values[1]) %>
+                            <% else %>
+                              <%= values[1] %>
+                            <% end %>
+                          <% else %>
+                            <i>Sin valor</i>
+                          <% end %>
+                          </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

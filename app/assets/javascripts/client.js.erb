@@ -1,0 +1,315 @@
+document.addEventListener('vue:mounted', () => {
+  const env_api = "<%= ENV["API_POSTAL_CODE"] %>"
+
+  let main_phone = document.querySelector('#client_main_phone');
+  if (main_phone) {
+    window.intlTelInput(main_phone, {
+      separateDialCode: true,
+      hiddenInput: 'client_main_phone',
+      initialCountry: 'MX',
+      utilsScript:
+        'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/utils.js',
+    });
+  }
+
+  let optional_phone = document.querySelector('#client_optional_phone');
+  if (optional_phone) {
+    window.intlTelInput(optional_phone, {
+      separateDialCode: true,
+      initialCountry: 'MX',
+      hiddenInput: 'client_optional_phone',
+      utilsScript:
+        'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/utils.js',
+    });
+  }
+  setPersonTypeLabel($('#client_person option:selected').val());
+
+  $('input[type="tel"]').keyup(function (e) {
+    if (/\D/g.test(this.value)) {
+      // Filter non-digits from input value.
+      this.value = this.value.replace(/\D/g, '');
+    }
+  });
+
+  $('#client_additional_civil_status').on('change', function () {
+    const status_selected = $('#client_additional_civil_status option:selected').val();
+    const regime = $('#client_additional_regime').parent('div');
+    
+    if (status_selected === 'Casado') {
+      regime.removeClass('d-none');
+      regime.find('select').prop('disabled', false);
+    } else {
+      regime.addClass('d-none');
+      regime.find('select').prop('disabled', true);
+    }
+  });
+
+  $('#client_person').on('change', function () {
+    const client_person_selected = $('#client_person option:selected');
+    const moral_person = $('.moral-person');
+    const physical_person = $('.physical-person');
+    setPersonTypeLabel(client_person_selected.val());
+    if (client_person_selected.val() === 'physical') {
+      physical_person.removeClass('d-none');
+      physical_person.find('input').prop('disabled', false);
+      physical_person.find('select').prop('disabled', false);
+
+      if ($('#civil_status').val() !== 'Casado') {
+        const regime = $('#regime');
+        regime.prop('disabled', true);
+        regime.parent().addClass('d-none');
+      }
+
+      moral_person.addClass('d-none');
+      moral_person.find('input').prop('disabled', true);
+      moral_person.find('select').prop('disabled', true);
+    } else {
+      physical_person.addClass('d-none');
+      physical_person.find('input').prop('disabled', true);
+      physical_person.find('select').prop('disabled', true);
+      moral_person.removeClass('d-none');
+      moral_person.find('input').prop('disabled', false);
+      moral_person.find('select').prop('disabled', false);
+    }
+  });
+
+  const inside_mexico = $('.inside-mexico');
+  const outside_mexico = $('.outside-mexico');
+    $('#client_additional_country').on('change', function () {
+        const country_selected = $('#client_additional_country option:selected');
+
+        if (env_api == '' || country_selected.val() !== 'México') {
+            outside_mexico
+                .removeClass('d-none')
+                .find('input').prop('disabled', false);
+            inside_mexico
+                .addClass('d-none')
+                .find('input').prop('disabled', true);
+        } else {
+            if (country_selected.val() === '') {
+                inside_mexico
+                    .addClass('d-none')
+                    .find('input').prop('disabled', true);
+                outside_mexico
+                    .addClass('d-none')
+                    .find('input').prop('disabled', true);
+            } else {
+                if (country_selected.val() === 'México') {
+                    inside_mexico
+                        .removeClass('d-none')
+                        .find('input').prop('disabled', true)
+                        .find('select').prop('disabled', false);
+                    outside_mexico.addClass('d-none')
+                        .find('input').prop('disabled', true);
+                }
+            }
+        }
+    });
+
+    $('#client_additional_postal_code').on('focusout', function () {
+      const zipcode = $(this).val();
+      if (zipcode.length < 5 || env_api == '') return;
+      $.get(`${env_api}${zipcode}`, function(body) {
+        const state_select = $('#client_additional_state');
+        state_select
+          .find('option')
+          .not(':last')
+          .not(':first')
+          .remove();
+        if (body.estado && typeof body.estado == 'string') {
+          $('#client_additional_state option:last').before(
+            $('<option>', {
+              value: body.estado,
+              text: body.estado,
+              selected: true,
+            })
+          );
+        }
+        const city_select = $('#client_additional_city');
+        city_select
+          .find('option')
+          .not(':last')
+          .not(':first')
+          .remove();
+        if (body.municipio && typeof body.municipio == 'string') {
+          $('#client_additional_city option:last').before(
+            $('<option>', {
+              value: body.municipio,
+              text: body.municipio,
+              selected: true,
+            })
+          );
+        }
+        $('#client_additional_colony')
+          .find('option')
+          .not(':last')
+          .not(':first')
+          .remove();
+        if (body.colonias && body.colonias.length) {
+          for (const colonia of body.colonias) {
+            $('#client_additional_colony option:last').before(
+              $('<option>', {
+                value: colonia,
+                text: colonia,
+              })
+            );
+          }
+        }
+      });
+    });
+
+
+  $('#client_email').on('change', function () {
+    const create_client_button = $('input[type=submit]');
+    let email = $("input[name='client[email]']").val();
+
+    if (validateEmail(email)) {
+      let client_url = '/clients/validate_email';
+      let email_json = { email: email };
+
+      $.ajax({
+        type: 'POST',
+        contentType: 'application/json',
+        url: client_url,
+        data: JSON.stringify(email_json),
+        success: function (is_valid) {
+          if (is_valid) {
+            create_client_button.prop('disabled', false);
+          } else {
+            Swal.fire({
+              title: '¡Error!',
+              text: 'Ya existe un cliente con ese correo electrónico',
+              type: 'error',
+              confirmButtonText: 'Ok',
+            });
+            create_client_button.prop('disabled', true);
+          }
+        },
+        error: function (data) { },
+      });
+    } else {
+      Swal.fire({
+        title: '¡Error!',
+        text: 'El correo electrónico es inválido',
+        type: 'error',
+        confirmButtonText: 'Ok',
+      });
+      create_client_button.prop('disabled', true);
+    }
+  });
+
+  $('#client_additional_colony').on('change', function () {
+    const colony_selected = $('#client_additional_colony option:selected').val();
+    const custom_colony = $('.custom-colony');
+
+    if (colony_selected === 'custom') {
+      custom_colony.removeClass('d-none');
+      custom_colony.find('input').prop('disabled', false);
+    } else {
+      custom_colony.addClass('d-none');
+      custom_colony.find('input').prop('disabled', true);
+    }
+  });
+
+  $('#client_additional_city').on('change', function () {
+    const city_selected = $('#client_additional_city option:selected').val();
+    const custom_city = $('.custom-city');
+
+    if (city_selected === 'custom') {
+      custom_city.removeClass('d-none');
+      custom_city.find('input').prop('disabled', false);
+    } else {
+      custom_city.addClass('d-none');
+      custom_city.find('input').prop('disabled', true);
+    }
+  });
+
+  $('#client_additional_state').on('change', function () {
+    const state_selected = $('#client_additional_state option:selected').val();
+    const custom_state = $('.custom-state');
+
+    if (state_selected === 'custom') {
+      custom_state.removeClass('d-none');
+      custom_state.find('input').prop('disabled', false);
+    } else {
+      custom_state.addClass('d-none');
+      custom_state.find('input').prop('disabled', true);
+    }
+  });
+
+  $('#mass_reassign_client_user_concept_id').on('change', function () {
+    const concept_id = $('#mass_reassign_client_user_concept_id option:selected').val();
+    let concept_object = $("#source_autocomplete_id").data('autocomplete-dynamic-params')
+    concept_object["client_user_concept_id"] = concept_id
+    $("#source_autocomplete_id").attr('data-autocomplete-dynamic-params', JSON.stringify(concept_object))
+  });
+});
+
+function ValidateRfc(rfcString) {
+  let valid;
+  if (rfcString.length === 12) {
+    valid = '^(([A-Z]|[a-z]){3})([0-9]{6})((([A-Z]|[a-z]|[0-9]){3}))';
+  } else {
+    valid =
+      '^(([A-Z]|[a-z]|s){1})(([A-Z]|[a-z]){3})([0-9]{6})((([A-Z]|[a-z]|[0-9]){3}))';
+  }
+  const validRfc = new RegExp(valid);
+  const matchArray = rfcString.match(validRfc);
+
+  if (rfcString !== '') {
+    if (matchArray == null) {
+      Swal.fire({
+        title: '¡Error!',
+        text: 'El RFC es inválido',
+        type: 'error',
+        confirmButtonText: 'Ok',
+      });
+    } else {
+      Swal.fire({
+        title: '¡Éxito!',
+        text: 'El RFC ' + rfcString + ' es válido',
+        type: 'success',
+        confirmButtonText: 'Ok',
+      });
+    }
+  }
+}
+
+function ValidateCurp(curpString) {
+  const valid =
+    '^([A-Z][AEIOUX][A-Z]{2}\\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\\d])(\\d)';
+  const validRfc = new RegExp(valid);
+  const matchArray = curpString.match(validRfc);
+
+  if (curpString !== '') {
+    if (matchArray == null) {
+      Swal.fire({
+        title: '¡Error!',
+        text: 'El CURP es inválido',
+        type: 'error',
+        confirmButtonText: 'Ok',
+      });
+    } else {
+      Swal.fire({
+        title: '¡Éxito!',
+        text: 'El CURP ' + curpString + ' es válido',
+        type: 'success',
+        confirmButtonText: 'Ok',
+      });
+    }
+  }
+}
+function setPersonTypeLabel(person) {
+  const client_name_label = $('.client_name_label');
+  const hide_container = $('.hide-container');
+
+  if (person === 'physical' || person === '') {
+    client_name_label.text('Nombre');
+    hide_container.show();
+    hide_container.find("input").prop("disabled", false);
+  } else {
+    client_name_label.text('Nombre del comercio o empresa');
+    hide_container.hide();
+    hide_container.find("input").prop("disabled", true);
+  }
+}

@@ -1,0 +1,25 @@
+<% if @quotation.interest_payments.size > 1 %>
+  <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack" >
+    <thead>
+      <tr>
+        <th scope="col">Actualización</th>
+        <th scope="col">Monto</th>
+        <th scope="col">Pagos</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% unless @quotation.nil? %>
+        <% @quotation.interest_payments.each do |payment| %>
+          <tr>
+            <td class="align-middle"><%= payment[:interest] %></td>
+            <td class="align-middle"><%= number_to_currency(payment[:amount]) %></td>
+            <td class="align-middle"><%= payment[:payments] %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <% payment = @quotation.interest_payments.first %>
+  <b><%= payment[:payments] %></b> mensualidades de <b><%= number_to_currency(payment[:amount]) %></b> cada una
+<% end %>

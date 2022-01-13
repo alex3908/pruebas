@@ -1,0 +1,5 @@
+<% if confirmed_emails %>
+    <%= link_to("Enviar firma de promesa de compra a los clientes",send_purchase_promise_to_sign_folder_path(folder), data: { remote: "true", method: "post", confirm: "¿Deseas continuar? Con esta acción se iniciará el proceso de firma digital." }, class: "dropdown-item") %>
+<% else %>
+    <%= link_to("Enviar firma de promesa de compra a los clientes",folder_path(folder),data: { toggle: "tooltip" }, title: "El correo de los clientes aún no han sido confirmados." , class: "dropdown-item is-disabled") %>
+<% end %>

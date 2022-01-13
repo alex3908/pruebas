@@ -1,0 +1,77 @@
+.main-container {
+  white-space: nowrap;
+
+  .pipeline-container {
+    display: flex;
+    margin: auto;
+    text-align: center;
+    width: max-content;
+    height: 575px;
+    .step-column {
+      width: 262px;
+      .column-content {
+        background-color: #ddd;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 90%;
+        .folder-card {
+          position: relative;
+          .card-main-data {
+            width: 220px;
+            display: block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            margin-right: 8px;
+            margin-left: 8px;
+            text-align: left;
+          }
+          .card-secondary-data {
+            max-width: 185px;
+            display: block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            margin-right: 8px;
+            margin-left: 8px;
+            text-align: left;
+          }
+          .step-avatar {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.steps-form-container {
+  max-height: 500px;
+  max-width: 100%;
+  margin-top: 50px;
+  overflow-x: scroll;
+  overflow-y: scroll;
+
+  thead th {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+
+    &:first-child {
+      left: 0;
+      z-index: 11;
+    }
+  }
+
+  tbody th {
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    top: 0;
+    left: 0;
+    background: #fff;
+    z-index: 10;
+  }
+}

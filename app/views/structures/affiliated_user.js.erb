@@ -1,0 +1,31 @@
+<% if @error.present?  %>
+Swal.fire({
+    title: 'Error',
+    text: 'Hubo un error al intentar guardar la afiliación, por favor comunícate con tu responsable.',
+    type: 'error',
+    confirmButtonText: 'Continuar'
+})
+<% elsif !@can_create_structures %>
+    Swal.fire({
+        title: 'Error',
+        text: 'No es posible crear una nueva afiliación debido a que el nivel ha alcanzado su capacidad máxima.',
+        type: 'error',
+        confirmButtonText: 'Continuar',
+        footer: 'Si tienes alguna duda comunícate con tu responsable.'
+    })
+<% else %>
+$('#modal-window').modal('hide');
+Swal.fire({
+    title: '¡Afiliación creada con éxito!',
+    text: 'Ahora <%= @structure.user.label %> tendrá acceso al sistema',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+}).then(function() {
+    Turbolinks.visit("<%= subordinates_structures_path(@structure.parent_id) %>")
+});
+<% end %>

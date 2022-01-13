@@ -1,0 +1,35 @@
+<%= form_with(scope: :level_price, url: level_price_project_path(@project)) do |form| %>
+  <div class="form-group">
+    <%= form.label :date, "Fecha de ejecución" %>
+    <%= form.text_field :date, class: "form-control datetime-picker", placeholder: "dd/mm/yyyy hh:mm" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :stage_ids, "#{@stage_plural} a nivelar" %>
+
+    <div class="collapse show" id="stage-select">
+      <%= form.select :stage_ids, grouped_options_for_select(project.phases.map { |p| [p.name, p.stages.collect { |s| [s.full_name, s.id] }] }), {}, { multiple: true, placeholder: "Seleccionar" } %>
+    </div>
+
+    <div class="mt-1" data-toggle="collapse" data-target="#stage-select">
+      <%= form.check_box :all_stages, { data: { toggle: "collapse", target: "stage-select" } }, 'true', 'false' %>
+      <%= form.label :all_stages, "Nivelar todas las #{@stage_plural}" %>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <div class="col-md-6">
+      <%= form.label :price, "Precio" %>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">$</span>
+        </div>
+        <%= form.number_field :price, class: "form-control" %>
+      </div>
+    </div>
+    <div class="pt-4 col-md-6">
+      <%= form.submit "Enviar", class: "btn btn-primary" %>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    </div>
+  </div>
+<% end %>

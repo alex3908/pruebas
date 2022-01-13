@@ -1,0 +1,78 @@
+<div class="container-fluid">
+  <div class="row mb-3">
+    <div class="col-4 pr-0">
+      <hr class="marker-bar-green">
+    </div>
+    <div class="col-8 pl-0">
+      <hr class="marker-bar-gray">
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="table-container">
+    <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+      <thead>
+      <tr>
+        <th>Estado</th>
+        <th>Fecha</th>
+        <th>Cliente</th>
+        <th>Sucursal</th>
+        <th>Método de pago</th>
+        <th>Cuenta Bancaria</th>
+        <th>Monto</th>
+        <th width="11%">Concepto</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% if @cash_flows.length > 0 %>
+        <% @cash_flows.each do |cash_flow| %>
+          <tr>
+            <td width="15%" class="align-center font-weight-bold<%= " text-danger" if cash_flow.canceled? %>">
+              <%= cash_flow.status_label %>
+              <%= tag.i(class: "fa fa-info-circle text-center", style: "color: black", title: "#{cash_flow.canceled_by.label} canceló por #{cash_flow.cancelation_description}", "aria-hidden": true, rel: "tooltip") if cash_flow.canceled? %>
+            </td>
+            <td class="align-middle"><b><%= cash_flow.date.strftime("%d/%m/%Y") %></b></td>
+            <td class="align-middle"><%= cash_flow.client.label %></td>
+            <td class="align-middle"><%= cash_flow.branch&.name.presence || "N/A" %></td>
+            <td class="align-middle"><%= cash_flow.payment_method_label %></td>
+            <td class="align-middle"><div rel="tooltip" title="<%= cash_flow.bank_account_clabe %>"><%= cash_flow.bank_account_label %></div></td>
+            <td class="align-middle"><%= number_to_currency(cash_flow.amount) %></td>
+            <th class="align-middle font-size-10"><%= concept_with_percentage(cash_flow) %></th>
+            <td>
+              <div class="btn-group" role="group" aria-label="Acciones">
+                <%= link_to(fa_icon("envelope"), resend_notification_folder_payment_path(id: cash_flow.payments.take), method: :patch, remote: true, class: "btn btn-outline-secondary", data: { toggle: "tooltip" }, title: "Reenviar correo") if can?(:resend_notification, CashFlow) && cash_flow.active? && cash_flow.payments.size > 0 %>
+                <%= link_to(fa_icon("file-o"), invoice_folder_cash_flow_path(@folder, cash_flow, format: :pdf), target: "_blank", class: "btn btn-outline-secondary", data: { toggle: "tooltip" }, title: "Comprobante") if can?(:invoice, Payment) && cash_flow.active? %>
+                <%= link_to(fa_icon("file-text-o"), invoice_folder_cash_flow_path(@folder, cash_flow, format: :pdf, type: :voucher), target: "_blank", class: "btn btn-outline-secondary", data: { toggle: "tooltip" }, title: "Recibo") if can?(:invoice, Payment) && cash_flow.active? %>
+                <% if can?(:cancel, CashFlow) && cash_flow.active? %>
+                    <% if cash_flow.can_be_canceled? %>
+                      <%= link_to(fa_icon("ban"), see_cancel_modal_folder_cash_flow_path(@folder, cash_flow), method: :get, data: { toggle: "modal", target: "#modal-window" }, remote: true, title: "Cancelar", class: "btn btn-outline-warning") %>
+                    <% else %>
+                      <%= button_tag(fa_icon("ban"), rel: "tooltip", title: "No es posible cancelar esta reestructura", class: "btn btn-outline-dark") %>
+                    <% end %>
+                <% end %>
+                <%= link_to(fa_icon("edit"), edit_folder_cash_flow_path(@folder, cash_flow), class: "btn btn-outline-secondary", data: { toggle: "modal", target: "#modal-window" }, remote: true) if can?(:update, CashFlow) %>
+                <%= link_to(fa_icon("eye"),  rails_blob_path(cash_flow.voucher), target: "_blank", class:"btn btn-outline-secondary") if cash_flow.voucher.attached? %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="9" class="text-center">
+            No hay flujos de caja para este expediente
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="modal-window" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+</div>

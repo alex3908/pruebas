@@ -1,0 +1,11 @@
+  <%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">¡FELICIDADES <%= @participant_name %>!</span></h1>
+  &nbsp;
+  <div style="text-align: center;">
+    <p>AHORA QUE SE HA TERMINADO TU PROCESO DE FIRMA CON <%= @company_name %> DEL <%= @folder.project.project_entity_name.upcase %> <%= @folder.project.name %> <%= @folder.project.stage_entity_name.upcase %> <%= @folder.lot.stage.name %> <%= @folder.project.lot_entity_name.upcase %> <%= @folder.lot.name %>, TIENES TU PATRIMONIO COMPLETAMENTE ASEGURADO. PRONTO SE PONDRÁ EN CONTACTO TU ESPECIALISTAS DE POSTVENTA QUIEN TE GUIARÁ EN TU FINACIAMIENTO.
+    PARA DESCARGAR EL DOCUMENTO FIRMADO, <a href="<%= @document_link %>">HAZ CLICK AQUÍ</a>, PARA DESCARGAR LA NOM-151, <a href="<%= @nom_document_link %>">HAZ CLICK AQUÍ</a>
+
+    </p>
+    <p>MUCHAS GRACIAS POR LA CONFIANZA DE INVERTIR CON NOSOTROS.</p>
+  </div>
+   <% end %>

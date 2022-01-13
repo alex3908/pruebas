@@ -1,0 +1,27 @@
+<%= render layout: "components/mailer_block" do %>
+  <p style="text-align: center;">
+    <span>
+      Esta suscripción finalizará pronto
+    </span>
+  </p>
+  <div style="text-align: center;">
+    <div>
+      Folio: <b><%= @folder.id %></b>
+    </div>
+    <div>
+      <%= @project_singular %>: <b><%= @project.name %></b>
+    </div>
+    <div>
+      <%= @phase_singular %>: <b><%= @phase.name %></b>
+    </div>
+    <div>
+      <%= @stage_singular %>: <b><%= @stage.name %></b>
+    </div>
+    <div>
+      <%= @lot_singular %>: <b><%= @lot.name %></b>
+    </div>
+    <div>
+      Fecha de finalización: <b><%= I18n.l(@subscription.billing_end, format: "%d de %B de %Y") %></b>
+    </div>
+  </div>
+<% end %>

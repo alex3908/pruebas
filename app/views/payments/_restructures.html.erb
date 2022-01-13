@@ -1,0 +1,73 @@
+<div class="container-fluid">
+  <div class="row mb-3">
+    <div class="col-4 pr-0">
+      <hr class="marker-bar-green">
+    </div>
+    <div class="col-8 pl-0">
+      <hr class="marker-bar-gray">
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="table-container">
+    <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+      <thead>
+      <tr>
+        <th scope="col">Estado</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Letra</th>
+        <th scope="col">Sucursal</th>
+        <th scope="col">Cliente</th>
+        <th scope="col">Concepto</th>
+        <th scope="col">Acciones</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% if @payments.length > 0 %>
+        <% @payments.each do |payment| %>
+          <tr>
+            <td width="15%" class="align-middle font-weight-bold<%= " text-danger" if payment.canceled? %>">
+              <%= payment.status_label %>
+              <%= tag.i(class: "fa fa-info-circle text-center", style: "color: black", title: "#{payment.canceled_by.label} canceló por #{payment.cancelation_description}", "aria-hidden": true, rel: "tooltip") if payment.canceled? %>
+            </td>
+            <td class="align-middle"><b><%= payment.created_at.strftime("%d/%m/%Y") %></b></td>
+            <td><span class="badge badge-info"><%= payment.installment.label %></span></td>
+            <td class="align-middle"><%= payment.branch.name %></td>
+            <td class="align-middle"><%= payment.client.label %></td>
+            <td class="align-middle"><%= payment.restructure.concept_label %></td>
+            <td class="align-middle">
+              <% if can?(:invoice, Payment) && payment.active? %>
+                <div class="btn-group" role="group" aria-label="Acciones">
+                  <%= link_to(fa_icon("file-o"), invoice_folder_payment_path(@folder, payment, format: :pdf), target: "_blank", class: "btn btn-outline-secondary", data: { toggle: "tooltip" }, title: "Comprobante") %>
+                  <%= link_to(fa_icon("file-text-o"), invoice_folder_payment_path(@folder, payment, format: :pdf, type: :voucher), target: "_blank", class: "btn btn-outline-secondary", data: { toggle: "tooltip" }, title: "Recibo") %>
+                  <% if can?(:cancel, CashFlow) %>
+                    <% if payment.can_be_canceled? %>
+                      <%= link_to(fa_icon("ban"), see_cancel_modal_folder_payment_path(@folder, payment), method: :get, data: { toggle: "modal", target: "#modal-window" }, remote: true, title: "Cancelar", class: "btn btn-outline-warning") %>
+                    <% else %>
+                      <%= button_tag(fa_icon("ban"), rel: "tooltip", title: "No es posible cancelar esta reestructura", class: "btn btn-outline-dark") %>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="7" class="text-center">
+            No hay reestructuras sin flujo de caja para este expediente
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="modal-window" class="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Métodos de Pago</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+      <% if can?(:create, PaymentMethod) %>
+        <%= link_to "Nuevo Método de Pago", new_payment_method_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @payment_methods.empty? %>
+  <div class="container">
+    <p>No hay métodos de pago.</p>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Nombre</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @payment_methods.each do |payment_method| %>
+          <tr>
+            <td class="align-middle">
+              <%= payment_method.name %>
+              <% if payment_method.cash_back %>
+                <span class="badge badge-light">Bonificación</span>
+              <% end %>
+            </td>
+            <td class="text-right">
+              <% if can?(:update, PaymentMethod) %>
+                <%= link_to edit_payment_method_path(payment_method), class: "table-link" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:destroy, PaymentMethod) %>
+                <%= link_to payment_method, class: "table-link", method: :delete, data: { confirm: "¿Estás seguro?" } do %>
+                  <i class="fa fa-trash-o"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@payment_methods, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

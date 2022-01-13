@@ -1,0 +1,95 @@
+<% if project.present? && project.background.attached? %>
+  <% content_for :head do %>
+    <style>
+      .pdf-bg {
+        background-image: url('<%= wicked_blob_path(project.background) %>');
+      }
+    </style>
+  <% end %>
+<% end %>
+<div class="pdf-bg">
+  <div class="padding-top-80">
+    <div class="container p-5 pt-0 m-0">
+      <div class="title-container">
+        <div class="square-point"></div>
+        <h1><%= @name %></h1>
+        <div class="square-point"></div>
+      </div>
+      <div class="col-xs-6 col-xs-offset-3 pb-200">
+        <table class="table-infor w-100">
+          <colgroup>
+            <col span="1" class="table-left-column">
+            <col>
+          </colgroup>
+          <tr>
+            <td>Fecha:</td>
+            <td><%= @payment.created_at.strftime("%d/%m/%Y") %></td>
+          </tr>
+          <tr>
+            <td>Sr. (A)</td>
+            <td><%= @payment.client.label %></td>
+          </tr>
+          <tr>
+            <td>Concepto de:</td>
+            <td>
+              <%= @payment.installment.label %>
+              <br>
+              <%= @payment.restructure&.concept_label %>
+            </td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @project_singular %>:</td>
+            <td><%= @payment.installment.folder.project.name %></td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @phase_singular %>:</td>
+            <td><%= @payment.installment.folder.phase.name %></td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @stage_singular %>:</td>
+            <td><%= @payment.installment.folder.stage.name %></td>
+          </tr>
+          <tr>
+            <td class="text-capitalize"><%= @lot_singular %>:</td>
+            <td><%= @payment.installment.folder.lot.name %></td>
+          </tr>
+        </table>
+        <div class="subtitle-primary">
+          <h2 class="text-center">DETALLES DEL MOVIMIENTO</h2>
+        </div>
+        <table class="table-infor w-100">
+          <colgroup>
+            <col span="1" class="table-left-column">
+            <col>
+          </colgroup>
+          <tr>
+            <td>Sucursal:</td>
+            <td><%= @payment.branch.name %></td>
+          </tr>
+        </table>
+      </div>
+      <% if @with_signature && @payment.user.present? %>
+        <div class="col-xs-4 col-xs-offset-4">
+          <div class="secondary-bar-sign">
+            <p><%= @payment.user.label %><br><%= @payment.user.role.name %></p>
+          </div>
+        </div>
+      <% end %>
+      <div class="branches-list">
+        <div class="col-xs-12">
+          <p class="text-center">
+            <i>El presente recibo no sirve para efectos fiscales.</i>
+          </p>
+        </div>
+        <% @branches.each do |branch| %>
+          <div class="col-xs-4 branch-element">
+            <div class="branch-name"><%= branch.name %></div>
+            <div class="branch-address">
+              <%= branch.address %> <%= branch.phone %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

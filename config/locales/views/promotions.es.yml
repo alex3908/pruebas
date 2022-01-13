@@ -1,0 +1,48 @@
+es:
+  promotions:
+    index:
+      new: Nueva promoción
+      search_for_name: Buscar por nombre
+      table:
+        name: Nombre
+        start_date: Fecha de inicio
+        end_date: Fecha de fin
+        amount: Monto
+        min_area: Tamaño
+        term_min: Plazo Mensu.
+        downpayment_min: Plazo Engan.
+        operation: Método
+        state: Estado
+      coupon: Cupón
+    form:
+      general_information: Información general
+      discount: Descuento
+      affective_date: Fechas de vigencia
+      unit_type: Tipo de unidad
+      deadlines: Plazos
+      downpayment: Enganche
+      advance: Anticipo
+      operations:
+        over: Multiplicativo por plazo
+        higher: Mayor
+        addition: Suma
+      downpayment_types:
+        amount: Monto
+        percentage: Porcentaje
+      initialpayment_types:
+        amount: Monto
+        percentage: Porcentaje
+      blank_for_unlimit: Dejar en blanco para considerar sin límite.
+      blank_to_unconsider: Deja en blanco para no considerar.
+      monthly_payments: mensualidades
+      days: días
+      months: mes(es)
+      binnacle: Bitácora
+      not_records_binnacle: No se tienen registros en la bitácora
+      expedient: Expediente
+      server: El servidor
+      attribute_log: "<b>%{user}</b> editó los siguientes camposel %{date} a las %{hour}"
+      binnacle_table: 
+        field: Campo
+        old_value: Antiguo valor
+        new_value: Nuevo valor

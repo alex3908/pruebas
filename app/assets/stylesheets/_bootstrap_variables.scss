@@ -1,0 +1,47 @@
+// Color system variables
+$primary: #54d335;
+$primary-gray: #c3c9ca;
+$primary-pdf: $primary;
+$new-format-text-pdf: #0e1111;
+$boxes-border-color: rgba(14, 17, 17, 0.8);
+$primary-light: lighten($primary-pdf, 20%);
+$primary-lighter: lighten($primary-pdf, 40%);
+
+$colors: (
+  'warning': #ffa200,
+  'danger': #dc3545,
+  'edit': #1e90ff,
+  'accent': #fbe48e,
+);
+$warning: map-get($colors, 'warning');
+$danger: map-get($colors, 'danger');
+$accent: map-get($colors, 'accent');
+$multiple: map-get($colors, 'edit');
+
+$pdf-title: $primary-pdf;
+$pdf-input-text: #2a6e19;
+$bg-color: $primary-light;
+$header-border: $primary-pdf;
+$table-border: $primary-light;
+$table-text: gray;
+$table-gray-border: #808080;
+$table-black-text: black;
+$footer-text: gray;
+$payments-table-data: black;
+$payments-table-headers: white;
+$secondary-bar-sign: $accent;
+$loading-color: #0076ff;
+
+// Fonts
+$font-family-sans-serif: 'Montserrat', -apple-system, BlinkMacSystemFont,
+  'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+  'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+$font-family-logo: 'Poppins', $font-family-sans-serif;
+$font-weight-base: 400;
+
+$input-bg: #ececec;
+$input-border: #ececec;
+$input-border-focus: $primary;
+$input-border-radius: 10px;
+$input-border-radius-lg: 12px;
+$input-border-radius-sm: 8px;

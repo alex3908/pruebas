@@ -1,0 +1,63 @@
+
+<div class="container">
+  <div class="px-4 mb-4 mt-4">
+    <div v-pre="">
+      <div class="widget-body">
+        <div class="mt">
+          <div class="width-200 float-right">
+          </div>
+          <p></p>
+        </div>
+        <% if @job_class.blank? %>
+          <p class="text-warning pb-3 m-0">Selecciona una tarea para ver los registros</p>
+          <%= form_tag(read_logs_job_statuses_path, method: :get) do %>
+            <div class="form-group col-12 col-md-6">
+              <%= label_tag :job_class, "Tarea" %>
+              <%= select_tag :job_class, options_for_select(JobStatus.job_classes.map { |k, v| [v, k] }), { class: "form-control", required: true, include_blank: "Selecciona una opción" } %>
+            </div>
+            <div class="col-12 col-md-6 text-right pt-3">
+              <%= button_tag("Buscar", type: "submit", class: "btn btn-primary") %>
+            </div>
+          <% end %>
+        <% elsif @job_statuses.empty? %>
+          <p class="pb-3 m-0">No se tienen registros en la bitácora</p>
+        <% else %>
+          <div class="log-container">
+            <% @job_statuses.each do |log| %>
+              <div class="py-2">
+                <div class="text-center pb-2"><b><%= log.user.label %></b> programó la tarea el
+                  el <%= log.created_at.strftime("%d/%m/%Y") %> a las <%= log.created_at.strftime("%I:%M%p") %></div>
+                <div class="table-container-without-height">
+                  <table class="table table-bordered background-white">
+                    <thead>
+                      <tr>
+                        <th width="20%">Etapas</th>
+                        <th width="20%">Nuevo Precio</th>
+                        <th width="20%">Estado</th>
+                        <th width="20%">Fecha de ejecución</th>
+                        <th width="20%">Opciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><%= log.stages.map(&:name).join(", ") %></td>
+                        <td>
+                          <%= number_to_currency(log.price) %>
+                        </td>
+                        <td> <%= JobStatus.human_enum_name(:status, log.status) %> </td>
+                        <td><%= log.scheduled_date&.strftime("%d/%m/%Y %I:%M%p") %></td>
+                        <td>
+                          <%= link_to(fa_icon("ban"), cancel_job_status_path(log, logs: :price_leveler), data: { method: "delete", confirm: "¿Estás seguro que deseas cancelar la tarea?" }, class: "btn btn-outline-secondary lock-button") if can?(:cancel, JobStatus) && log.status == "pending" %>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+<table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Número de Pagos</th>
+      <th>Descuento</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @discounts.each do |discount| %>
+      <tr>
+        <td><%= discount.name %></td>
+        <td><%= discount.total_payments %></td>
+        <td><%= "%.2f" % (discount.discount * 100) %> %</td>
+          <td class="text-right">
+            <% if can?(:activate_plan, discount) %>
+              <% if discount.total_payments != @base_total_payments %>
+                <%= check_box_tag "complete", discount.is_active, discount.is_active,
+                  data: {
+                      activate: "toggle", onstyle: "success", offstyle: "secondary", on: "Activado", off: "Desactivado",
+                      remote: true, url: activate_plan_credit_scheme_discount_path(@credit_scheme, discount.id), method: :patch
+                  } %>
+              <% end %>
+            <% end %>
+
+            <% if can?(:read, discount) %>
+              <%= link_to credit_scheme_discount_path(@credit_scheme, discount), class: "table-link" do %>
+                <i class="fa fa-eye"></i>
+              <% end %>
+            <% end %>
+
+            <% if can?(:update, discount) %>
+              <%= link_to edit_credit_scheme_discount_path(@credit_scheme, discount), class: "table-link" do %>
+                <i class="fa fa-pencil-square-o"></i>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>

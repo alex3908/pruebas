@@ -1,0 +1,89 @@
+<div class="container">
+  <div class="row">
+
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Esquemas de crédito</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-secondary float-right mr-2" %>
+      <%= link_to("Nuevo", new_credit_scheme_path, class: "btn btn-primary") if can?(:create, CreditScheme) %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @credit_schemes.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ningún esquema de crédito.
+        <% if can?(:create, CreditScheme) %>
+          <br> Comienza registrando uno.
+        <% end %>
+      </p>
+      <% if can?(:create, CreditScheme) %>
+        <div class="text-center mt-3">
+          <%= link_to "Nuevo", new_credit_scheme_path, class: "btn btn-primary jumping" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Estatus</th>
+          <th></th>
+        </tr>
+      </thead>
+        <% @credit_schemes.each do |credit_scheme| %>
+        <tr>
+          <td><%= credit_scheme.name %></td>
+          <td>
+            <% if can?(:change_status, CreditScheme) %>
+              <%= check_box_tag "status", credit_scheme.status, credit_scheme.status,
+                data: {
+                  activate: "toggle",
+                  onstyle: (credit_scheme.stages.count > 0) ? "warning" : "success",
+                  offstyle: "secondary",
+                  on: "Activa",
+                  off: "Oculta",
+                  remote: true,
+                  url: change_status_credit_scheme_path(credit_scheme), method: :patch
+                } %>
+            <% end %>
+          </td>
+          <td class="text-right">
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Opciones
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <%= link_to("Editar", edit_credit_scheme_path(credit_scheme), class: "dropdown-item") if can?(:update, CreditScheme) %>
+                <%= link_to("Eliminar", credit_scheme_path(credit_scheme), method: :delete, data: { confirm: "\u00BFEs\u00E1s seguro?" }, class: "dropdown-item") if can?(:destroy, CreditScheme) && credit_scheme.payment_schemes.empty? && credit_scheme.stages.empty? %>
+                <%= link_to(@stage_plural, stages_credit_scheme_path(credit_scheme), class: "dropdown-item") %>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+
+  <div class="container">
+    <%= will_paginate(@credit_schemes, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

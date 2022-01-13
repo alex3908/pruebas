@@ -1,0 +1,122 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Reporte de pagos</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Reportes", reports_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Pagos</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<div class="container">
+  <nav class="pb-3">
+    <div class="nav nav-tabs tab-elements">
+      <li class="nav-item">
+        <a id="payment_date" class="nav-link">Fecha de pago</a>
+      </li>
+      <li class="nav-item">
+        <a id="reserve_date" class="nav-link">Fecha real de reserva</a>
+      </li>
+      <li class="nav-item">
+        <a id="cash_flow_date" class="nav-link">Fecha aplicación de pago</a>
+      </li>
+    </div>
+  </nav>
+</div>
+<%= search_form_for @q, url: payments_reports_path, html: { method: :post }, data: { controller: "export", 'target': "export.form", 'export-url': payments_reports_path(format: :json) } do |f| %>
+  <div class="container">
+    <div class="row">
+
+      <div class="col-md-6 col-lg-3 mb-3 payment_date_section">
+        <%= f.label :created_at_gteq, "Buscar desde la fecha de pago:" %>
+        <%= f.date_field :created_at_gteq, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3 payment_date_section">
+        <%= f.label :created_at_end_of_day_lteq, "Buscar hasta la fecha:" %>
+        <%= f.date_field :created_at_end_of_day_lteq, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3 reserve_date_section d-none">
+        <%= f.label :installment_folder_created_at_gteq, "Buscar desde la fecha de reserva:" %>
+        <%= f.date_field :installment_folder_created_at_gteq, class: "form-control", disabled: true %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3 reserve_date_section d-none">
+        <%= f.label :installment_folder_created_at_end_of_day_lteq, "Buscar hasta la fecha:" %>
+        <%= f.date_field :installment_folder_created_at_end_of_day_lteq, class: "form-control", disabled: true %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3 cash_flow_date_section d-none">
+        <%= f.label :cash_flow_created_at_gteq, "Buscar desde la fecha de aplicación de pago:" %>
+        <%= f.date_field :cash_flow_created_at_gteq, class: "form-control", disabled: true %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3 cash_flow_date_section d-none">
+        <%= f.label :cash_flow_created_at_end_of_day_lteq, "Buscar hasta la fecha:" %>
+        <%= f.date_field :cash_flow_created_at_end_of_day_lteq, class: "form-control", disabled: true %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3 ">
+        <%= f.label :installment_folder_lot_stage_phase_project_id_eq do %> Buscar por <span class="text-lowercase"><%= @project_singular %>: </span>
+        <% end %>
+        <%= f.select :installment_folder_lot_stage_phase_project_id_eq, @projects.map { |project| [project.name, { "data-phases" => project.phases.select(:id, :name).to_json(include: { stages: { only: [:id, :name] } }) }, project.id] }, { include_blank: "Todos" }, class: "form-control project" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3 ">
+        <%= f.label :installment_folder_lot_stage_phase_id_eq do %> Buscar por <span class="text-lowercase"><%= @phase_singular %>: </span>
+        <% end %>
+        <%= f.select :installment_folder_lot_stage_phase_id_eq, [["Todas", ""]], { disabled: true }, class: "form-control input-white bg-input-disabled phase" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3 ">
+        <%= f.label :installment_folder_lot_stage_id_eq do %> Buscar por <span class="text-lowercase"><%= @stage_singular %>: </span>
+        <% end %>
+        <%= f.select :installment_folder_lot_stage_id_eq, [["Todas", ""]], { disabled: true }, class: "form-control input-white bg-input-disabled stage" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= f.label :installment_folder_id_eq, "Buscar por folio:" %>
+        <%= f.search_field :installment_folder_id_eq, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= f.label :client_email_cont, "Buscar por correo:" %>
+        <%= f.search_field :client_email_cont, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= f.label :client_name_cont, "Buscar por cliente:" %>
+        <%= f.search_field :client_name_cont, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= f.label :installment_folder_lot_number_eq, "Buscar por número de unidad:" %>
+        <%= f.search_field :installment_folder_lot_number_eq, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= f.label :installment_folder_lot_label_cont, "Buscar por clasificador de unidad:" %>
+        <%= f.search_field :installment_folder_lot_label_cont, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= f.label :status, "Buscar por estado:" %>
+        <%= f.select :status, [["Todos", nil], ["Activo", Payment::STATUS[:ACTIVE]], ["Cancelado", Payment::STATUS[:CANCELED]]], class: "form-control" %>
+      </div>
+
+      <div class="col-md-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+<% end %>

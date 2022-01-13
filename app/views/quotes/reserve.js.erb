@@ -1,0 +1,63 @@
+<% if local_assigns[:error] == 'lock' %>
+Swal.fire({
+    title: 'Error',
+    text: 'Este <%= @lot_singular %> cuenta con una reserva activa.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu responsable.'
+})
+<% elsif local_assigns[:error] == 'no_file' %>
+Swal.fire({
+    title: 'Error',
+    text: 'Para poder reservar es necesario adjuntar el <%= @stage.credit_scheme.document_template.name %>.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu responsable.'
+})
+<% elsif local_assigns[:error] == 'period-lock' %>
+Swal.fire({
+    title: 'Error',
+    text: 'No puedes reservar este <%= @lot_singular %>, porque ha expirado recientemente.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu Project Manager.'
+})
+<% elsif local_assigns[:error] == 'is-not-responsable' %>
+Swal.fire({
+    title: '¡Atención!',
+    text: 'No fue posible mover el expediente ya que es necesario que un responsable este ligado a este paso',
+    type: 'warning',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu Project Manager.'
+})
+<% elsif local_assigns[:error] == 'blocked' %>
+Swal.fire({
+    title: '¡Atención!',
+    text: 'No fue posible mover el expediente ya que el paso destino se encuentra bloqueado.',
+    type: 'warning',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu Project Manager.'
+})
+<% elsif @folder.errors.count == 0 %>
+Swal.fire({
+    title: '¡Expediente guardado con éxito!',
+    text: 'Procede a llenar todo el expediente de tu cliente cuanto antes',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+}).then(function() {
+    Turbolinks.visit("<%= folder_path @folder %>")
+});
+<% else %>
+Swal.fire({
+    title: 'Error',
+    text: 'Hubo un error al intentar guardar tu reserva, por favor corrobora los datos.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu responsable.'
+})
+<% end %>

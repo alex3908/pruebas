@@ -1,0 +1,35 @@
+<div class="accordion collapse-elements px-4 mb-4" id="accordion-additional">
+  <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Filtros</p>
+  </div>
+  <div class="row collapse show" id="collapse-section" data-parent="#accordion-additional">
+    <%= form_tag(settings_path, method: :get, class: "w-100") do %>
+      <%= hidden_field_tag :direction, params[:direction] %>
+      <%= hidden_field_tag :sort, params[:sort] %>
+      <div class="container py-3">
+        <div class="row">
+          <div class="col-md-6 col-lg-4 mb-4">
+            <%= label_tag :label, "Buscar por etiqueta:" %>
+            <%= text_field_tag :label, params[:label], class: "form-control" %>
+          </div>
+          <div class="col-md-6 col-lg-4 mb-4">
+            <%= label_tag :data_type, "Buscar por tipo de dato:" %>
+            <%= select_tag :data_type, options_for_select(Setting::TYPE_LABELS.map { |data_type| [data_type[1], {}, data_type[0]] }, params["data_type"]),
+                           { include_blank: "Selecciona un cliente", class: "form-control" } %>
+          </div>
+          <div class="col-md-6 col-lg-4 mb-4">
+            <%= label_tag :concept, "Buscar por concepto:" %>
+            <%= select_tag :concept, options_for_select(Setting::CONCEPTS.map { |concept| [concept[1], {}, concept[0]] }, params["concept"]),
+                           { include_blank: "Selecciona un cliente", class: "form-control" } %>
+          </div>
+
+          <div class="col-md-12 col-lg-12 text-right">
+            <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+              <i class="fa fa-search" aria-hidden="true"></i> Buscar
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

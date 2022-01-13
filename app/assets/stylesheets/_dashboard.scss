@@ -1,0 +1,147 @@
+.dashboard-flex-counters {
+  display: flex;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.dashboard-flex-counters > div {
+  height: 100px;
+  flex-grow: 1;
+  margin: 10px;
+}
+
+.dashboard-counter {
+  font-size: 2em;
+  line-height: normal;
+  color: #63656a;
+}
+
+.dashboard-title {
+  font-size: 1em;
+  line-height: normal;
+  color: #63656a;
+}
+
+.dashboard-card {
+  border-radius: 10px;
+  border: solid 1px rgba(153, 153, 153, 0.29);
+  background-color: #ffffff;
+}
+
+.image-container {
+  width: 100px;
+  height: 60px;
+  border-radius: 2px;
+}
+
+.vertical-line {
+  border-right: 2px solid #efefef;
+}
+
+.border-radius-10 {
+  border-radius: 10px !important;
+}
+
+.progress {
+  display: inline-flex;
+  height: 0.6rem;
+}
+
+.project-logo-bg {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.content-dashboard {
+  margin: auto;
+  height: 50vh;
+  width: 60%;
+  vertical-align: middle;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.color-gray {
+  color: gray;
+
+  a {
+    color: gray;
+  }
+}
+
+/*
+  * Off Canvas sidebar at medium breakpoint
+  * --------------------------------------------------
+  */
+@media screen and (max-width: 992px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all 0.25s ease-out;
+    -moz-transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
+  }
+
+  .row-offcanvas-left .sidebar-offcanvas {
+    left: -33%;
+  }
+
+  .row-offcanvas-left.active {
+    left: 33%;
+    margin-left: -6px;
+  }
+
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 33%;
+    height: 100%;
+  }
+}
+
+/*
+ * Off Canvas wider at sm breakpoint
+ * --------------------------------------------------
+ */
+@media screen and (max-width: 34em) {
+  .row-offcanvas-left .sidebar-offcanvas {
+    left: -45%;
+  }
+
+  .row-offcanvas-left.active {
+    left: 45%;
+    margin-left: -6px;
+  }
+
+  .sidebar-offcanvas {
+    width: 45%;
+  }
+}
+
+.card {
+  overflow: hidden;
+}
+
+.card-body .rotate {
+  z-index: 8;
+  float: right;
+  height: 100%;
+}
+
+.card-body .rotate i {
+  color: rgba(20, 20, 20, 0.15);
+  position: absolute;
+  left: 0;
+  left: auto;
+  right: -10px;
+  bottom: 0;
+  display: block;
+  -webkit-transform: rotate(-44deg);
+  -moz-transform: rotate(-44deg);
+  -o-transform: rotate(-44deg);
+  -ms-transform: rotate(-44deg);
+  transform: rotate(-44deg);
+}

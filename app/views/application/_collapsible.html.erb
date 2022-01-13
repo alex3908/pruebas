@@ -1,0 +1,8 @@
+<%= yield %>
+
+<b-link v-b-toggle href="#<%= identifier %>">
+  <%= content_for(:toggler) %>
+</b-link>
+<b-collapse id="<%= identifier %>">
+  <%= content_for(:content) %>
+</b-collapse>

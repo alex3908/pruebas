@@ -1,0 +1,17 @@
+<tr>
+  <td class="align-middle"><%= name %></td>
+  <td class="align-middle text-center">
+    <%= form.file_field key, direct_upload: true, class: "d-none" %>
+    <% if file.attached? %>
+      <%= link_to rails_blob_path(file), target: "_blank", style: "text-decoration:none" do %>
+        <i class="fa fa-file-text-o fa-folder-size" aria-hidden="true"></i>
+      <% end %>
+      <%= link_to remove_file_users_path(current_user, key: key), method: :delete, data: { confirm: "¿Estás seguro de eliminar el #{name}?" }, style: "text-decoration:none" do %>
+        <i class="fa fa-trash-o fa-folder-size icon-red"></i>
+      <% end %>
+      <i class="fa fa-info-circle fa-folder-size" aria-hidden="true" title="<%= approved_label_result current_user.file_approve(key) %>" rel="tooltip"></i>
+    <% else %>
+      <i class="fa fa-cloud-upload fa-folder-size icon-click <%= key.to_s %>" aria-hidden="true"></i>
+    <% end %>
+  </td>
+</tr>

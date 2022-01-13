@@ -1,0 +1,252 @@
+<div class="row">
+  <% if client.physical? %>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Nombres:</strong> <%= client.name %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Primer apellido:</strong> <%= client.first_surname %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Segundo apellido:</strong> <%= client.second_surname %>
+    </div>
+
+  <% else %>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Nombre del comercio o empresa:</strong> <%= client.name %>
+    </div>
+  <% end %>
+
+  <div class="form-group col-sm-12 col-md-6 col-lg-4">
+    <strong>Teléfono principal:</strong> <%= client.formatted_main_phone %>
+  </div>
+  <% if client.optional_phone.present? %>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Teléfono opcional:</strong> <%= client.formatted_optional_phone %>
+    </div>
+  <% end %>
+  <div class="form-group col-sm-12 col-md-6 col-lg-4">
+    <strong>Correo:</strong> <%= client.email %>
+    <% if client.confirmed_email %>
+      <i class="fa fa-check-circle-o text-info" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Correo electrónico verificado."></i>
+    <% end %>
+    <% if can?(:delete_suppression, Client) && client.suppresed_email? %>
+      <%= link_to "Eliminar bloqueo", delete_suppression_client_path(client), method: :delete, class: "btn btn-danger", title: "Correo con bloqueo con proveedor", data: { hidden: :true, toggle: :tooltip, placement: :top } %>
+    <% end %>
+  </div>
+  <div class="form-group col-sm-12 col-md-6 col-lg-4">
+    <strong>Género:</strong>
+    <%= client.get_gender %>
+  </div>
+
+  <% if client.person == 'moral' && client.moral_client.present? %>
+
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Nombre del Apoderado Legal:</strong>
+      <%= client.moral_client.legal_name %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Tipo de Identificación:</strong>
+      <%= client.moral_client.identification_type&.name %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Número de Identificación:</strong>
+      <%= client.moral_client.identification_number %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Vigencia de Identificación:</strong>
+      <%= client.moral_client.validity_identification %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Fecha de Nacimiento:</strong>
+      <%= client.moral_client.birthdate %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>País de nacionalidad:</strong>
+      <%= client.moral_client.country %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>RFC:</strong>
+      <%= client.moral_client.legal_rfc %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>CURP del Apoderado Legal:</strong> <%= client.moral_client.curp %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Razón Social:</strong>
+      <%= client.moral_client.business_name %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>RFC de la empresa:</strong>
+      <%= client.moral_client.rfc_company %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Actividad o Giro:</strong>
+      <%= client.moral_client.activity %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Tipo de Identificación de la empresa:</strong>
+      <%= client.moral_client&.company_identification_type&.name %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Número de Identificación de la empresa:</strong>
+      <%= client.moral_client.company_identification_number %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Vigencia de Identificación de la empresa:</strong>
+      <%= client.moral_client.company_validity_identification %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Nombre de la Notaria:</strong>
+      <%= client.moral_client.notary_name %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Nombre del Notario Público:</strong>
+      <%= client.moral_client.notary_public_name %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Número del Notario Público</strong>
+      <%= client.moral_client.notary_public_number %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Estado del Registro Público de la Propiedad y Comercio:</strong>
+      <%= client.moral_client.notary_public_catalog_republic %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Fecha del Registro Público de la Propiedad y Comercio:</strong>
+      <%= client.moral_client.commercial_electronic_folio_number %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Fecha de constitución:</strong>
+      <%= client.moral_client.constitution_date %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Número de Folio Electrónico Mercantil:</strong>
+      <%= client.moral_client.commercial_electronic_folio_number %>
+    </div>
+  <% end %>
+
+  <% if client.person == 'physical' && client.physical_client.present? %>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Tipo de Identificación:</strong>
+      <%= client.physical_client.identification_type&.name %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Número de Identificación:</strong>
+      <%= client.physical_client.identification_number %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Vigencia de Identificación:</strong>
+      <%= client.physical_client.validity_identification %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>CURP:</strong> <%= client.physical_client.curp %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>RFC:</strong>
+      <%= client.physical_client.rfc %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Lugar de Nacimiento:</strong>
+      <%= client.physical_client.place_birth %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Fecha de Nacimiento:</strong>
+      <%= client.physical_client.birthdate %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Ocupación:</strong>
+      <%= client.physical_client.occupation %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Nacionalidad:</strong>
+      <%= client.physical_client.nationality %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Estado Civil:</strong>
+      <%= client.physical_client.civil_status %>
+    </div>
+    <% if client.physical_client.civil_status == "Casado" && client.physical_client.regime.present? %>
+      <div class="form-group col-sm-12 col-md-6 col-lg-4">
+        <strong>Regimen:</strong>
+        <%= client.physical_client.regime %>
+      </div>
+    <% end %>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>País:</strong>
+      <%= client.physical_client.country %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Estado:</strong>
+      <%= client.physical_client.state %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Ciudad:</strong>
+      <%= client.physical_client.city %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Calle:</strong>
+      <%= client.physical_client.street %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Número Exterior:</strong>
+      <%= client.physical_client.house_number %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Número Interior:</strong>
+      <%= client.physical_client.interior_number %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Colonia:</strong>
+      <%= client.physical_client.colony %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Código Postal:</strong>
+      <%= client.physical_client.postal_code %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 col-lg-4">
+      <strong>Localidad:</strong>
+      <%= client.physical_client.location %>
+    </div>
+  <% end %>
+
+  <div class="form-group col-sm-12 col-md-6 col-lg-4">
+    <strong>Fecha de creación:</strong>
+    <span class="color-edit"><%= client.created_at.strftime("%d/%m/%Y") %>
+      a las <%= client.created_at.strftime("%I:%M%p") %></span>
+  </div>
+
+  <% if can?(:read, ClientUser) %>
+    <div class="form-group col-sm-12 col-md-12">
+      <div class="accordion collapse-elements px-4 py-2 my-4" id="client-user-<%= client.id %>">
+          <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse"
+              data-target="#collapse-client-user-<%= client.id %>" aria-expanded="false" aria-controls="collapse-step-log">
+              <p class="text-left vertical-align m-0 py-3 color-primary">Responsables</p>
+          </div>
+          <div class="collapse" id="collapse-client-user-<%= client.id %>" data-parent="#client-user-<%= client.id %>">
+            <client-users :client-id="<%= client.id %>"
+                          :can-add-client-user="<%= can?(:create, ClientUser) %>"
+                          :can-edit-client-user="<%= can?(:update, ClientUser) %>"
+                          :can-delete-client-user="<%= can?(:destroy, ClientUser) %>"
+                          :use-autocomplete="<%= can?(:create, FolderUser) || can?(:update, FolderUser) %>" />
+          </div>
+      </div>
+    </div>
+  <% end %>
+
+<% if can?(:read, ReferenceContact) %>
+    <div class="form-group col-sm-12 col-md-12">
+      <div class="accordion collapse-elements px-4 py-2 my-4" id="reference-contact-<%= client.id %>">
+          <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse"
+              data-target="#collapse-reference-contact-<%= client.id %>" aria-expanded="false" aria-controls="collapse-step-log">
+              <p class="text-left vertical-align m-0 py-3 color-primary">Contactos de referencia</p>
+          </div>
+          <div class="collapse" id="collapse-reference-contact-<%= client.id %>" data-parent="#reference-contact-<%= client.id %>">
+                       <reference-contacts :client-id="<%= client.id %>"
+                            :can-add-reference-contacts="<%= can?(:create, ReferenceContact) %>"
+                            :can-edit-reference-contacts="<%= can?(:update, ReferenceContact) %>"
+                            :can-delete-reference-contacts="<%= can?(:destroy, ReferenceContact) %>" />
+          </div>
+      </div>
+    </div>
+  <% end %>
+</div>

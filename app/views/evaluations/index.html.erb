@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Evaluaciones</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+      <%= link_to("Nueva Evaluación", new_evaluation_path, class: "btn btn-primary") if can?(:create, Evaluation) %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if (@evaluations_approve.size + @evaluations_reject.size) < 1 %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado evaluaciones</span>.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <% if @evaluations_approve.size > 0 %>
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between pt-3">
+        <h3 class="text-left vertical-align m-0 py-3">Aprobación</h3>
+        <div class="clearfix py-2"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <%= render partial: "table", locals: { evaluations: @evaluations_approve } %>
+    </div>
+  <% end %>
+
+  <% if @evaluations_reject.size > 0 %>
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between pt-3">
+        <h3 class="text-left vertical-align m-0 py-3">Rechazo</h3>
+        <div class="clearfix py-2"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <%= render partial: "table", locals: { evaluations: @evaluations_reject } %>
+    </div>
+  <% end %>
+
+  <% if @evaluations_cancel.size > 0 %>
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between pt-3">
+        <h3 class="text-left vertical-align m-0 py-3">Cancelación</h3>
+        <div class="clearfix py-2"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <%= render partial: "table", locals: { evaluations: @evaluations_cancel } %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,154 @@
+<%= form_with(model: digital_signature_service, url: [enterprise, digital_signature_service], local: true) do |form| %>
+  <% if @digital_signature_service.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@digital_signature_service.errors.count, "error") %> errores encontrados:</h2>
+
+      <ul>
+        <% @digital_signature_service.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <h4><%= digital_signature_service.name.capitalize %></h4>
+  <div class="row">
+    <div class="form-group col-12 col-md-4">
+      <%= form.label :environment, "Modo de prueba" %>
+      <div>
+        <%= form.check_box :environment,
+          { data: {
+            activate: "toggle",
+            onstyle: "success",
+            offstyle: "secondary",
+            on: "ACTIVADO",
+            off: "DESACTIVADO",
+          } }, "test", "production" %>
+      </div>
+    </div>
+    <div class="form-group col-12 col-md-4">
+      <%= form.label :is_automatic, "Modo automatico" %>
+      <div>
+        <%= form.check_box :is_automatic,
+          { data: {
+            activate: "toggle",
+            onstyle: "success",
+            offstyle: "secondary",
+            on: "ACTIVADO",
+            off: "DESACTIVADO",
+          } } %>
+      </div>
+    </div>
+
+     <div class="form-group col-12 col-md-4">
+      <%= form.label :jump_to_step, "Saltar al paso" %>
+      <div>
+        <%= form.check_box :jump_to_step,
+          { data: {
+            activate: "toggle",
+            onstyle: "success",
+            offstyle: "secondary",
+            on: "ACTIVADO",
+            off: "DESACTIVADO",
+          } } %>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="form-group row">
+    <div id="is_manual" class="col-md-6" style="<%= digital_signature_service.is_automatic ? '': 'display:none;' %>">
+      <%= form.label :step_id, "Paso" %>
+      <%= form.collection_select :step_id, @steps || [], :id, :name, { prompt: true },{required:true} %>
+    </div>
+
+    <div id="is_jump" class="col-md-6" style="<%= digital_signature_service.jump_to_step ? '': 'display:none;' %>">
+      <%= form.label :jump_step_id, "Saltar al paso" %>
+      <%= form.collection_select :jump_step_id, @steps || [], :id, :name, { prompt: true },{required:true} %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-md-6">
+        <%= form.label :document_template_id, "Adjuntar contrato a" %>
+        <%= form.collection_select :document_template_id, @document_templates || [], :id, :name, { prompt: true },{required:true} %>
+    </div>
+    <div class="form-group col-md-6">
+      <%= form.label :use_email_confirmation, "Activar confirmación de correo" %>
+      <div>
+        <%= form.check_box :use_email_confirmation,
+          { data: {
+            activate: "toggle",
+            onstyle: "success",
+            offstyle: "secondary",
+            on: "ACTIVADO",
+            off: "DESACTIVADO",
+          } } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6">
+        <%= form.label :document_nom_id, "Adjuntar NOM-151 a" %>
+        <%= form.collection_select :document_nom_id, @document_templates || [], :id, :name, { include_blank: true }, { prompt: true } %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-12 col-md-4">
+      <%= form.label :is_shield_level_three_clients, "Activar nivel 3 para clientes" %>
+      <div>
+        <%= form.check_box :is_shield_level_three_clients,
+          { data: {
+            activate: "toggle",
+            onstyle: "success",
+            offstyle: "secondary",
+            on: "ACTIVADO",
+            off: "DESACTIVADO",
+          } } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-12 col-md-4">
+      <%= form.label :is_shield_level_three_signers, "Activar nivel 3 para firmantes" %>
+      <div>
+        <%= form.check_box :is_shield_level_three_signers,
+          { data: {
+            activate: "toggle",
+            onstyle: "success",
+            offstyle: "secondary",
+            on: "ACTIVADO",
+            off: "DESACTIVADO",
+          } } %>
+      </div>
+    </div>
+  </div>
+
+  <div id="is_shield_level_three" class="form-group row" style="<%= digital_signature_service.is_shield_level_three_clients || digital_signature_service.is_shield_level_three_signers  ? '': 'display:none;' %>">
+      <div class="accordion collapse-elements px-4 py-2 w-100" id="accordion-shield-level-three">
+        <div class="d-flex justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-section-shield-level-three" aria-expanded="true" aria-controls="collapse-section-shield-level-three">
+          <p class="text-left vertical-align m-0 py-3 color-primary">Mensaje de blindaje 3</p>
+        </div>
+        <div class="table-container collapse show" id="collapse-section-shield-level-three" data-parent="#accordion-shield-level-three">
+         <br>
+          <p v-pre>
+            El texto proporcionado en este campo se utiliza para personalizar el mensaje de Blindaje 3,
+            cuenta con 3 campos que se pueden utilizar dentro del cuerpo del mensaje que serán reemplazados
+            con el valor correspondiente {{contractName}} como nombre del contrato, {{today}} como fecha del día de hoy y {{participantName}}
+            como nombre del participante, Ejemplo: <i>Yo {{participantName}} he leído y entiendo los términos y condiciones del contrato {{contractName}},
+            de fecha {{today}} y manifiesto mi aceptación en el uso de la firma electrónica en relación con el presente mensaje de datos y
+            la evidencia digital para este contrato.</i>
+          </p>
+          <br>
+          <%= form.text_area :shield_level_three_message, class:"form-control", "v-pre": '' %>
+        </div>
+      </div>
+  </div>
+
+  <%= render partial: "properties", locals: { property_name: "properties", form: form, properties: digital_signature_service.properties || {}, digital_signature_service: digital_signature_service } %>
+
+  <%= link_to "Regresar", edit_enterprise_path(enterprise), class: "btn btn-secondary" %>
+  <%= form.submit "Guardar", class: "btn btn-success" %>
+<% end %>

@@ -1,0 +1,29 @@
+<% if @stage.present? && @project.present? %>
+  <% if @stage.blueprint.present? %>
+    <h4 class="banner-subtitle text-center"><%= "#{@stage.phase.name} / #{@stage.name}" %></h4>
+    <h1 class="banner-title text-center"><%= @project.name %></h1>
+    <div class="row">
+      <% if @user.present? %>
+        <div class="col-sm-12">
+          <div class="text-center"><%= image_tag @user.image_nil, class: "img-fluid sidebar-image" %></div>
+          <p class="banner-subtitle text-center m-0">Asesor</p>
+          <h6 class="text-center m-0"><%= @user.label %></h6>
+          <p class="text-center m-0">Teléfono: <b><%= @user.phone %></b></p>
+          <p class="text-center m-0">Correo Electrónico: <b><%= @user.email %></b></p>
+        </div>
+      <% end %>
+    </div>
+
+    <hr class="divider">
+
+    <%= render partial: "blueprint_with_quote", locals: { stage: @stage, project: @project,  phase: @phase, extras: @extras, user: @user, client: @client, folder: @folder, total_payments: @total_payments, quotation: @quotation } %>
+
+    <p class="mt-5 mb-3 color-primary text-center"><span class="color-gray"><%= t("app.auth.copy", brand: @full_company_name) %></span> | <a href=<%= @privacy_policy %>><%= t("app.auth.privacy_policy") %></a></p>
+  <% else %>
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        Esta <%= @stage_singular %> aún no cuenta con un plano disponible.
+      </p>
+    </div>
+  <% end %>
+<% end %>

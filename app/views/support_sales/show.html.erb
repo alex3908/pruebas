@@ -1,0 +1,83 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Solicitud de soporte</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to "Expedientes", folders_path %></li>
+        <li class="breadcrumb-item"><%= link_to "Carpeta", folder_path(@folder) %></li>
+        <li class="breadcrumb-item active" aria-current="page">Solicitud de soporte</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-3 text-center">
+      Folio: <b><%= @folder.id %></b>
+    </div>
+    <div class="col-md-3 text-center">
+      <%= @folder.lot.project.lot_entity_name %>: <b><%= @folder.lot.name %></b>
+    </div>
+    <div class="col-md-3 text-center">
+      <%= @folder.phase.name %> - <%= @folder.stage.name %>
+    </div>
+    <div class="col-md-3 text-center">
+      <span>Estado: <b><%= @folder.status_label %></b></span>
+    </div>
+    <div class="col-md-3 text-center">
+      Fecha de Inicio: <b><%= @folder.calc_date.strftime("%d/%m/%Y") %></b>
+    </div>
+    <% if can?(:create_custom, Contract) || can?(:update_custom, Contract) %>
+      <div class="col-md-3 text-center">
+        Contrato:
+        <% if @folder.contract.present? %>
+          <span class="badge badge-info">Personalizado</span>
+        <% elsif @contract.present? %>
+          <span class="badge badge-secondary">Plantilla</span>
+        <% else %>
+          <span class="badge badge-warning">Sin contrato</span>
+        <% end %>
+      </div>
+    <% end %>
+    <div class="col-md-3 text-center">
+      Tiempo de operación:
+      <b>
+        <% if @folder.approved_date.nil? %>
+          <%= distance_of_time_in_words(Time.now, @folder.calc_date, { accumulate_on: :days, highest_measure_only: true }) %>
+        <% else %>
+          <%= distance_of_time_in_words(@folder.approved_date, @folder.calc_date, { accumulate_on: :days, highest_measure_only: true }) %>
+        <% end %>
+      </b>
+    </div>
+    <% if can?(:set_ready_state, Folder) %>
+      <div class="col-md-3 text-center">
+        Promesa de compra:
+        <% if @folder.ready? %>
+          <span class="badge badge-success">Activa</span>
+        <% else %>
+          <span class="badge badge-secondary">No activa</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<div class="container">
+  <%= render "form",
+    support_sale: @support_sale,
+    view: @view,
+    support_managers: @support_managers,
+    support_coordinators: @support_coordinators,
+    supporters: @supporters %>
+</div>
+<div class="container">
+  <%= render "logs" if can?(:see_binnacle, SupportSale) %>
+</div>

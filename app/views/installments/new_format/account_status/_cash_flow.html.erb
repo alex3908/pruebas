@@ -1,0 +1,54 @@
+<section class="payments-quotation">
+<% total_payment, index = 0, 0 %>
+<% @slice_cash_flows.each do |cash_flows| %>
+  <div class="table-content page-break-table mt-5">
+    <table class="mt-5 mb-2" style="width:100%">
+        <tr>
+            <th>
+                <div class="bg-date-green text-center m-0 mt-3 pt-2 pb-1">
+                    <p class="text-bold">FLUJO DE CAJA</p>
+                </div>
+            </th>
+        </tr>
+    </table>
+    <div class="payments-table-green">
+      <table class="table table-payments table-border">
+        <tbody class="account-status-table">
+        <tr>
+          <th class="normal-header">No.</th>
+          <th class="normal-header">Folio de Seguimiento</th>
+          <th class="normal-header">Fecha</th>
+          <th class="normal-header">Cantidad Pagada</th>
+          <th class="normal-header">Forma de Pago</th>
+          <th class="normal-header">Estatus</th>
+          <th class="normal-header">Tipo de Abono</th>
+        </tr>
+        <% cash_flows.each do |cash_flow| %>
+          <% total_payment += cash_flow.amount %>
+          <tr>
+            <td class="new_format align-middle"><small><%= index += 1 %></small></td>
+            <td class="new_format align-middle"><small><%= cash_flow.folio %></small></td>
+            <td class="new_format align-middle"><small><%= cash_flow.date.strftime("%Y-%m-%d") %></small></td>
+            <td class="new_format align-middle"><small><%= number_to_currency(cash_flow.amount) %></small></td>
+            <td class="new_format align-middle"><small><%= cash_flow.payment_method_label %></small></td>
+            <td class="new_format align-middle"><small><%= cash_flow.status_label %></small></td>
+            <td class="new_format align-middle"><small><%= concept_with_percentage(cash_flow, true) %></small></td>
+          </tr>
+        <% end %>
+        <% if cash_flows.equal?(@slice_cash_flows.last) %>
+          <tr>
+            <td colspan="3" class="new_format bg-date-green align-middle"><b>Total</b></td>
+            <td class="new_format align-middle text-danger">
+              <%= number_to_currency(total_payment) %>
+            </td>
+            <td class="new_format align-middle"></td>
+            <td class="new_format align-middle"></td>
+            <td class="new_format align-middle"></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+</section>

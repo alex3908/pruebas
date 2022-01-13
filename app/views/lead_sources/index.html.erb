@@ -1,0 +1,75 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Orígenes</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-secondary float-right mr-2" %>
+      <%= link_to "Nuevo Origen", new_lead_source_path, class: "btn btn-primary float-right mr-2" if can?(:create, LeadSource) %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @lead_sources.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ningún origen.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Llave de Origen</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @lead_sources.each do |lead_source| %>
+          <tr>
+            <td><%= lead_source.name %></td>
+            <td><%= lead_source.source_key %></td>
+            <td class="float-right text-center">
+              <% if can?(:activate, lead_source) %>
+                <div class="p-2">
+                  <%= check_box_tag "complete", lead_source.is_active, lead_source.is_active,
+                          data: {
+                          activate: "toggle", onstyle: "success", offstyle: "secondary", on: "Activado", off: "Desactivado",
+                          remote: true, url: activate_lead_source_url(lead_source), method: :patch
+                        } %>
+                </div>
+              <% end %>
+              <% if can?(:update, LeadSource) %>
+                <%= link_to edit_lead_source_path(lead_source), class: "table-link" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:destroy, LeadSource) && lead_source.clients.empty? %>
+                <%= link_to lead_source, class: "table-link", method: :delete, data: { confirm: "¿Estás seguro?" } do %>
+                  <i class="fa fa-trash-o"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+<%= will_paginate(@lead_sources, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+<div class="text-center mt-3">
+  <div class="d-inline-block" style="max-width: 100px">
+    Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                             onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+  </div>
+</div>

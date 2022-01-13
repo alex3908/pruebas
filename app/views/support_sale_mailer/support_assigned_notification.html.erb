@@ -1,0 +1,80 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+​
+<head>
+  <title>
+  </title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    .text-center {
+      text-align: center;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    .w-70 {
+      width: 70%;
+    }
+
+    .w-25 {
+      width: 25%;
+    }
+
+    .w-10 {
+      width: 10%;
+    }
+
+    .text-content {
+      font-size: 20px;
+      font-family: 'Avenir Next'
+    }
+
+    .pt-1 {
+      padding-top: 10px;
+    }
+
+    .pt-5 {
+      padding-top: 50px;
+    }
+
+    .link-unstyled {
+      color: black;
+    }
+
+    .link-unstyled:hover {
+      text-decoration: none;
+    }
+
+    ul {
+      list-style: none;
+    }
+  </style>
+</head>
+​
+<body>
+<div class="text-center">
+  <%= image_tag("brands/orve-logo-black-green.png", class: "w-70") %>
+  <div class="text-content">
+    Se asignó a un asesor para soporte con la venta.
+    Puedes consultar la solicitud haciendo click <b><%= link_to "aquí", support_sale_folder_url(@folder.id) %></b>.
+
+    El asesor de soporte es:
+    <ul>
+      <li>
+      <h4><%= @supporter %></h4>
+      </li>
+      <li>
+        Coordinador: <u><b><%= @support_coordinator %></b></u>
+      </li>
+      <li>
+        Gerente: <u><b><%= @support_manager %></b></u>
+    </li>
+  </ul>
+  </div>
+</div>
+</body>
+</html>

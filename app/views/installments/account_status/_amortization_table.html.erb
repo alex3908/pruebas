@@ -1,0 +1,54 @@
+<% @slice_installments.each do |installments| %>
+  <div class="table-content page-break-table">
+    <hr class="accent-line">
+    <div class="primary-light-background">Tabla de Amortización</div>
+    <hr class="accent-line">
+    <div class="payments-table pt-3">
+      <table class="table">
+        <tbody>
+        <tr>
+          <th class="normal-header"></th>
+          <th class="normal-header">No.</th>
+          <th class="normal-header">Fecha</th>
+          <th class="normal-header">Pago</th>
+          <th class="normal-header">Saldo</th>
+          <th class="normal-header">Tipo</th>
+          <th class="normal-header">Estatus</th>
+        </tr>
+        <% installments.each do |payment| %>
+            <tr class="no-border">
+              <td class="gray-row w-1 <%= installment_table_class(overdue: payment[:overdue], next_overdue: payment[:next_overdue]) %>">
+              </td>
+              <td class="gray-row"><%= payment[:number] %></td>
+              <td class="gray-row">
+                <%= payment[:date] %>
+              </td>
+              <td class="gray-light-row">
+                <%= number_to_currency(payment[:payment]) %>
+              </td>
+              <td class="gray-light-row">
+                <%= number_to_currency(payment[:residue].present? ? payment[:residue] : payment[:payment]) %>
+              </td>
+              <td class="text-capitalize gray-light-row">
+                <% if payment[:concept] == Installment::CONCEPT[:INITIAL_PAYMENT] %>
+                  <%= tag.span("Apartado", class: "d-block") %>
+                <% else %>
+                  <%= tag.span("Enganche #{payment[:number]}", class: "d-block") if payment[:down_payment] != 0 %>
+                <% end %>
+                <%= tag.span("Parcialidad #{payment[:number]}", class: "d-block") if payment[:interest].present? %>
+                <%= tag.span(payment[:type_capital_payment], class: "d-block") if payment[:type_capital_payment].present? %>
+              </td>
+              <td class="text-capitalize gray-light-row">
+                <% if payment[:residue] != 0 %>
+                  <%= payment[:overdue] ? "Vencido" : "Activo" %>
+                <% else %>
+                  Pagado
+                <% end %>
+              </td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

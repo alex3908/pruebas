@@ -1,0 +1,66 @@
+<div class="accordion collapse-elements px-4 py-2 my-4" id="accordion-quote-log">
+    <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse"
+        data-target="#collapse-quote-log" aria-expanded="false" aria-controls="collapse-step-log">
+        <p class="text-left vertical-align m-0 py-3 color-primary">Bitacorá de Cotizaciones</p>
+    </div>
+    <div class="collapse" id="collapse-quote-log" data-parent="#accordion-quote-log">
+        <div class="widget-body">
+            <% if quote_logs.empty? %>
+            <p class="pb-3 m-0">No se ha encontrado ningún registro en la bitácora</p>
+            <% else %>
+            <div class="container">
+                <% quote_logs.each do |log| %>
+                <div class="my-3 mr-5">
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div>
+                            <%= tag.small(time_label(log.created_at), class: "text-secondary") %>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1 text-secondary text-right">
+                            <i class="fa <%= quote_log_icon(log) %> fa-2x" aria-hidden="true"></i>
+                        </div>
+                        <div class="col p-0 text-justify">
+                            <%= quote_header(log) %>
+                            <%= quote_body(log) %>
+                            <%= quote_timestamp(log) %>
+
+                            <% if quote_actions(log).size > 0 %>
+                            <br>
+                            Acciones:
+                            <ul>
+                                <% quote_actions(log).each do |action| %>
+                                <li><%= action %></li>
+                                <% end %>
+                            </ul>
+
+                            <% end %>
+                        </div>
+
+                        <div class="col-md-12 col-lg-12 text-right">
+                            <% if log.folder.present? %>
+                            <%= link_to("Ver Expediente", folder_url(log.folder), class: "btn btn-outline-secondary btn-enter btn-sm enter-icon") if can?(:read, Folder) %>
+                            <% end %>
+                        </div>
+                    </div>
+
+                </div>
+                <% end %>
+            </div>
+            <div class="container">
+                <%= will_paginate(quote_logs, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+                <div class="text-center mt-3">
+                    <div class="d-inline-block" style="max-width: 100px">
+                        Mostrando
+                        <%= select_tag :ppage, options_for_select([5, 10, 20, 50, 100], @ppage),
+                             onchange: "if(this.value){window.location='?ppage='+this.value+'&model=#{QuoteLog.name}';}" %>
+                        por
+                        página
+                    </div>
+                </div>
+            </div>
+            <% end %>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="pdf-new-bg px-5">
+  <div class="complementary-header float-right">
+    <table style="width:100%">
+        <tr>
+            <td>
+                <h1 class="no-letter-spacing text-bold">COMPROBANTE DE PAGO</h1>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <section class="payments-quotation px-3">
+    <div class="table-content page-break-table mt-5">
+        <table class="mt-5 mb-2" style="width:100%">
+            <tr>
+                <th>
+                    <div class="bg-date text-center m-0 mt-3 pt-2 pb-1">
+                      <p class="text-bold">PAGO EN LÍNEA</p>
+                      <%= wicked_pdf_image_tag "#{provider}.png", size: "128x32", class: "mx-auto d-block" %>
+                    </div>
+                </th>
+            </tr>
+        </table>
+
+        <div class="container mb-5 pb-5">
+          <div class="row">
+            <div class="col-xs-6 right_col">
+              <p class="new_format">Nombre del cliente: </p>
+            </div>
+            <div class="col-xs-6 left_col">
+              <p><%= client_name %></p>
+            </div>
+            <div class="col-xs-6 right_col">
+              <p class="new_format">Concepto: </p>
+            </div>
+            <div class="col-xs-6 left_col">
+              <%= concept %>
+            </div>
+            <div class="col-xs-6 right_col">
+              <p class="new_format">Importe: </p>
+            </div>
+            <div class="col-xs-6 left_col">
+              <p><%= number_to_currency(amount) %></p>
+            </div>
+            <div class="col-xs-6 right_col">
+              <p class="new_format">Fecha y hora: </p>
+            </div>
+            <div class="col-xs-6 left_col">
+              <p><%= date.strftime("%d-%m-%Y %H:%M") %></p>
+            </div>
+          </div>
+          <div class="row branches-list">
+            <div class="col-xs-12">
+              <p class="text-center">
+                <i>Comprobante válido salvo buen cobro</i>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <table class="mt-5 mb-2" style="width:100%">
+            <tr>
+                <th>
+                    <div class="bg-date text-center m-0 mt-3 pt-2 pb-1">
+                      <p>ID de transacción: <%= transaction_token %></p>
+                    </div>
+                </th>
+            </tr>
+        </table>
+    </div>
+  </section>
+</div>

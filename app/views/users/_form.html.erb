@@ -1,0 +1,137 @@
+<%= form_with(model: user, local: true, url: "manage") do |form| %>
+  <%= csrf_meta_tags %>
+  <% if user.errors.any? %>
+    <div class="alert alert-warning" role="alert">
+      <h6 class="alert-heading">No se pudo guardar
+        por <%= pluralize_without_count(user.errors.count, "la siguiente razón", "las siguientes razones") %>:</h6>
+      <ul class="mb-0">
+        <% user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= hidden_field_tag :leader, @leader %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :first_name, "Nombre(s)" %>
+      <%= form.text_field :first_name, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :last_name, "Apellidos" %>
+      <%= form.text_field :last_name, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :email, "Correo" %>
+      <%= form.email_field :email, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :phone, "Teléfono" %>
+      <%= form.text_field :phone, class: "form-control", title: "Debe contener solo números" %>
+    </div>
+
+    <% if @user.persisted? && can?(:change_password, User) %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :password, "Contraseña" %>
+        <%= form.password_field :password, class: "form-control", minlength: 6 %>
+      </div>
+    <% end %>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :branch_id, "Sucursal" %>
+      <%= form.select :branch_id, @branches.collect { |branch| [branch.name, branch.id] }, { }, required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <label for="user_role">Rol</label>
+      <div class="input-group<%= " is-invalid" if @max_branches_reached %>">
+        <select id="user_role" name="user[role_id]" class="form-control" <%= "disabled" if @user.persisted? && @user.structure %> required>
+          <option value="">Selecciona un rol</option>
+          <% if can?(:read, Role) %>
+            <optgroup label="CRM">
+              <% @roles.each do |role| %>
+                <% unless role.is_evo %>
+                  <option <%= "selected" if @user.role_id == role.id %> value="<%= role.id %>"><%= role.name %> </option>
+                <% end %>
+              <% end %>
+            </optgroup>
+          <% end %>
+
+          <% if is_evo_active? %>
+            <optgroup label="<%= @evo_string %>">
+              <% if @user.persisted? && @user.structure %>
+                  <option data-type="evo" data-key="<%= @user.role.key %>" data-level="<%= @user.role.level %>" selected value="<%= @user.role.id %>"><%= @user.role.name %></option>
+              <% else %>
+                <% @roles.each do |role| %>
+                  <% if role.level.present? && !@max_branches_reached %>
+                    <option data-type="evo" data-level="<%= role.level %>" data-key="<%= role.key %>" <%= "selected" if @user.persisted? && @user.role_id == role.id %> value="<%= role.id %>"><%= role.name %></option>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </optgroup>
+          <% end %>
+        </select>
+        <div class="invalid-feedback">
+          Has alcanzado el límite de usuarios a tu cargo.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6 level-section d-none">
+      <%= form.fields_for :level do |level| %>
+        <label for="user_level"></label>
+        <select id="user_level" name="user[level][leader]" class="form-control">
+        </select>
+      <% end %>
+    </div>
+
+    <% if @user.new_record? %>
+      <div class="form-group col-sm-12 col-md-6 classifier-section d-none">
+        <label for="user_classifier_ids">Clasificadores</label>
+        <select id="user_classifier_ids" name="user[classifier_ids][]" multiple class="form-control">
+        </select>
+      </div>
+    <% elsif @user.role.present? && @user.role.classifiers.any? %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :classifier_ids, "Clasificadores de rol" %>
+        <%= form.select :classifier_ids, options_from_collection_for_select(@user.role.classifiers, :id, :name, @user.classifier_ids), {}, multiple: true %>
+      </div>
+    <% end %>
+
+    <% if can?(:select_referrer, User) %>
+      <%= form.fields_for :referent do |referent| %>
+        <div class="form-group col-sm-12 col-md-6 <%= "d-none" if @user.new_record? %>" id="referent_container">
+          <%= referent.label :referrer, "Referente" %>
+          <%= referent.select :referrer, @referents&.collect { |referrer| ["#{referrer.label} (#{referrer.email})", referrer.id] } || [], { include_blank: "Selecciona un Referente", selected: @referent&.referrer_id }, disabled: (@referent.present? && cannot?(:update_referrer, User)), class: "form-control" %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="actions col-md-12 pt-3">
+      <%= link_to "Cancelar", @user.new_record? ? users_path : @user, class: "btn btn-secondary" %>
+      <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>
+
+<% if cannot?(:evo_access, User) || can?(:create_realtor, User) %>
+  <% content_for :scripts do %>
+    <script>
+      $(document).on('vue:mounted', function () {
+        create_structure(<%= current_user.structure.present? %>);
+
+        $('#user_role').on('change', function () {
+          create_structure(<%= current_user.structure.present? %>);
+          <% if @user.new_record? %>
+              select_classifiers();
+        <% end %>
+        });
+      });
+    </script>
+  <% end %>
+<% end %>

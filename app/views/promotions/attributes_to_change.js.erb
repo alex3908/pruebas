@@ -1,0 +1,23 @@
+
+Swal.fire({
+  title: 'Campos modificados.',
+  text: 'lista de los campos editados.',
+  type: 'warning',
+  html: "<%= attributes_changes(@promotion) %>",
+  showCancelButton: true,
+  closeOnCancel: false,
+  allowOutsideClick: false,
+  cancelButtonText: 'Cancelar',
+  confirmButtonText: 'Gurdar cambios',
+  customClass: {
+    confirmButton: 'btn btn-success',
+    cancelButton: 'btn btn-danger ml-2',
+  },
+  buttonsStyling: false,
+})
+  .then(function(isConfirm) {
+    if (isConfirm.value) {
+      $('#promotion_form').attr('action', '<%= promotion_path %>');
+      $('#promotion_form').submit();
+    }
+  })

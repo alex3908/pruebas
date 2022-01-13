@@ -1,0 +1,32 @@
+<div class="modal fade" id="reassignClientModal" role="dialog" aria-labelledby="reassignClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reassignClientModalLabel">Reasignación del Propietario</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <%= form_with(model: @folder, local: true, url: "#{@folder.id}/reassign_client") do |form| %>
+        <div data-controller="autocomplete" data-autocomplete-url="<%= autocomplete_clients_path %>" data-autocomplete-search="search=">
+          <div class="modal-body">
+            <div class="row">
+              <div class="form-group col-sm-12 col-md-12">
+                <%= form.label :client, "Cliente" %>
+                  <input class="autocomplete-input form-control" data-target="autocomplete.field">
+                  <%= form.hidden_field :client, value: "", class: "autocomplete-hidden", "data-target" => "autocomplete.hidden" %>
+              </div>
+            </div>
+            <div class="modal-footer pt-2">
+              <div class="actions py-3">
+                <%= form.submit "Guardar", class: "btn btn-primary", "data-action" => "autocomplete#validateAutocomplete" %>
+              </div>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+<div class="modal fade" id="rejectFolderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Rechazar Expediente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= form_with(model: @folder, local: true, url: reject_folder_path) do |f| %>
+          <% @reject_questions.each do |question| %>
+            <div class="form-check mb-3">
+              <div class="row">
+                <div class="col-8 vertical-align">
+                  <%= f.label "answer[#{question.id}]", question.question, class: "form-check-label" %>
+                </div>
+                <div class="col-4 d-flex justify-content-center">
+                  <%= f.check_box "answer[#{question.id}]", { data: {
+                      activate: "toggle",
+                      onstyle: "success",
+                      offstyle: "secondary",
+                      on: "Si",
+                      off: "No",
+                  } }, "Si", "No" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <div class="modal-footer pt-2">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <%= f.submit "Guardar", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

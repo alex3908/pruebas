@@ -1,0 +1,96 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Pasos del Pipeline</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to("Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2") %>
+      <%= link_to("Nuevo Paso", new_step_path, class: "btn btn-primary") if can?(:create, Step) %>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <% if can?(:read, Step) && @steps.empty? && can?(:see_deleted, Step) && @deleted_steps.empty? %>
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">No se han encontrado pasos.</p>
+    </div>
+  <% end %>
+  <% if can?(:read, Step) && @steps.any? %>
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <%= tag.th("") if can?(:update, Step) || can?(:destroy, Step) || can?(:block, Step) %>
+          </tr>
+        </thead>
+        <tbody class="<%= "sortable" if can?(:sort, Step) %>">
+          <% @steps.each do |step| %>
+            <%= tag.tr("", id: "#{step.sortable_id if can?(:sort, Step)}") do %>
+              <td class="align-middle">
+                <%= tag.i("", class: "fa fa-bars mr-2 text-secondary", aria: { hidden: "true" }) if can?(:sort, Step) %>
+                <%= tag.b(step.name) %>
+              </td>
+              <% if can?(:update, Step) || can?(:destroy, Step) || can?(:block, Step) %>
+                <td class="text-right">
+                  <%= link_to(fa_icon("edit"), edit_step_path(step), class: "table-link", data: { toggle: "tooltip" }, title: "Editar") if can?(:update, Step) %>
+                  <% if can?(:destroy, Step) && step.folders.empty? && step.referrer_steps.empty? && step.deleted_at.nil? %>
+                    <%= link_to fa_icon("trash"), step_path(step), method: :delete, data: { toggle: "tooltip", confirm: "\u00BFEs\u00E1s seguro?" }, class: "table-link", title: "Eliminar" %>
+                  <% elsif can?(:destroy, Step) && step.folders.any? %>
+                    <%= tag.a(fa_icon("trash"), data: { toggle: "tooltip" }, title: "Este paso tiene expedientes", class: "table-link text-secondary") %>
+                  <% elsif can?(:destroy, Step) && step.referrer_steps.any? %>
+                    <%= tag.a(fa_icon("trash"), data: { toggle: "tooltip" }, title: "Otro paso paso hace referencia a este", class: "table-link text-secondary") %>
+                  <% end %>
+                  <div class="d-inline">
+                    <%= check_box_tag "blocked", "1", step.blocked,
+                      data: {
+                        activate: "toggle",
+                        onstyle: "danger",
+                        offstyle: "success",
+                        on: "Bloqueado",
+                        off: "Desbloqueado",
+                        remote: true,
+                        url: toggle_block_step_path(step), method: :patch
+                      } if can?(:block, Step) %>
+                  </div>
+                </td>
+              <% end %>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <% if can?(:see_deleted, Step) && @deleted_steps.any? %>
+    <div class="row mt-5">
+      <div class="col-sm-12 col-md-6">
+        <h3 class="banner-title vertical-align p-0 m-0">Pasos eliminados</h3>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="table-container-without-height">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @deleted_steps.each do |step| %>
+            <%= tag.tr("", class: "bg-warning") do %>
+              <%= tag.td(step.name) %>
+              <% if can?(:update, Step) %>
+                <td class="text-center">
+                  <%= link_to(fa_icon("edit"), edit_step_path(step), class: "table-link", data: { toggle: "tooltip" }, title: "Editar") %>
+                </td>
+              <% end %>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

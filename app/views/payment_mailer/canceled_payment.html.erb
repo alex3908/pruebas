@@ -1,0 +1,10 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Pago rechazado</span></h1>
+  &nbsp;
+
+  <p>
+    <span>
+      Estimado cliente el pago con folio <b><%= @folio %></b> tu <%= @lot_singular %> <%= @lot.name %> en el <%= @project_singular %> <%= @project.name %> <%= @phase_singular %> <%= @phase.name %> <%= @stage_singular %> <%= @stage.name %> ha sido cancelado. Si tienes alguna duda comunícate con tu especialista.
+    </span>
+  </p>
+<% end %>

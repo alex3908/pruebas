@@ -1,0 +1,88 @@
+<div class="container">
+  <div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-cashback-logs">
+    <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-cashback-logs" aria-expanded="false" aria-controls="collapse-cashback-logs">
+      <p class="text-left vertical-align m-0 py-3 color-primary">Bonificaciones</p>
+    </div>
+    <div class="collapse" id="collapse-cashback-logs" data-parent="#accordion-cashback-logs">
+      <div class="widget-body">
+        <div class="mt">
+          <div class="width-200 float-right">
+          </div>
+          <% if cash_backs.blank? %>
+            <p class="pb-3 m-0">No se han agregado bonificaciones.</p>
+          <% end %>
+          <div class="log-container">
+            <% if cash_backs.any? %>
+              <h5>Bonificaciones</h5>
+              <% cash_backs.each do |cash_back| %>
+                <div class="py-2">
+                  <div class="text-center <%= "text-danger" if cash_back.canceled_at.present? %>">
+                    El usuario <b><%= cash_back.user.label %></b> agregó la bonificación el
+                    <%= cash_back.created_at.strftime("%d/%m/%Y") %> a las <%= cash_back.created_at.strftime("%I:%M%p") %>
+                    con un monto de <b><%= number_to_currency(cash_back.amount) %></b>
+                    <div>
+                      <p class="text-secondary"><strong>Método de pago:</strong> <%= cash_back.payment_method.name %></p>
+                    </div>
+                    <div>
+                      <% if cash_back.canceled_at.present? %>
+                        <strong class="text-danger">Esta bonificación ha sido cancelada por <%= cash_back.canceled_by.label %> el día <%= cash_back.canceled_at.strftime("%d/%m/%Y") %></strong>
+                      <% elsif cash_back.cash_back_flows.empty? && can_cancel_cashbacks %>
+                        <%= link_to "Cancelar", cancel_client_cash_back_path(cash_back.client, cash_back), method: :patch, remote: true, class: "btn btn-danger btn-sm", data: { confirm: "¿Está seguro que desea cancelar la bonificación?" } %>
+                      <% elsif cash_back.cash_back_flows.any? && can_cancel_cashbacks %>
+                        <%= link_to "Cancelar", "javascript:;", class: "btn btn-outline-danger disabled btn-sm" %>
+                        <%= help_tooltip("No se puede cancelar la bonificación si ya ha sido usada en algún pago") %>
+                      <% end %>
+                    </div>
+                    <div>
+                      <small class="text-info"><%= "Bonificación exclusiva del expediente ##{cash_back.exclusive_folder_id}" unless cash_back.exclusive_folder_id.nil? %></small>
+                    </div>
+                  </div>
+                  <div>
+                    <strong>Movimientos</strong>
+                  </div>
+                  <% if cash_back.cash_back_flows.any? %>
+                    <div class="table-container-without-height">
+                      <table class="table table-bordered background-white">
+                        <thead>
+                          <tr>
+                            <th>Fecha</th>
+                            <th>Concepto</th>
+                            <th>Monto usado</th>
+                            <th>Saldo restante</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <% cash_back.cash_back_flows.each do |cbf| %>
+                              <tr>
+                                <td>
+                                  <%= cbf.created_at.strftime("%d/%m/%Y") %> a las <%= cbf.created_at.strftime("%I:%M%p") %>
+                                </td>
+                                <td>
+                                  <%= concept_with_percentage(cbf.cash_flow) %>
+                                </td>
+                                <td>
+                                  <%= number_to_currency(cbf.amount_used) %>
+                                </td>
+                                <td>
+                                  <%= number_to_currency(cbf.balance_after) %>
+                                </td>
+                              </tr>
+                            <% end %>
+                        </tbody>
+                      </table>
+                    </div>
+                  <% else %>
+                    <p class="text-muted">Sin movimientos</p>
+                  <% end %>
+                  <div class="text-center">
+                    &#8226; &#8226; &#8226;
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Servicio de firma digital</h1>
+    </div>
+  </div>
+  <hr class="divider">
+  <%= render partial: "form", locals: { digital_signature_service: @digital_signature_service, creator: @digital_signature_service.creator, enterprise: @enterprise } %>
+</div>

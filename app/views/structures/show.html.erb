@@ -1,0 +1,174 @@
+<% if @show_initial_message %>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-sm-12">
+      <h1 class="banner-title vertical-align p-0 m-0">¡Bienvenido a tu módulo multinivel!</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to "Regresar", @return_path, class: "btn btn-outline-secondary mr-2" %>
+    </div>
+  </div>
+  <div class="container">
+    <hr class="divider">
+  </div>
+  <div class="container">
+    <div class="row">
+      <% if can?(:set_level_to_role, Structure) %>
+        <div class="col-md-12 mt-5 text-center">
+          <div class="py-5">
+            <p class="text-center h5 leyend">
+              Para iniciar selecciona tu rol inicial
+            </p>
+          </div>
+          <%= link_to level_settings_structures_path, class: "btn btn-primary", title: "Módulo de configuración de niveles" do %>
+            <i class="fa fa-cogs" aria-hidden="true"></i> Ir al módulo de configuración de niveles
+          <% end %>
+        </div>
+      <% else %>
+        <div class="col-md-12 text-center">
+          <h5 class="text-center">Sin configuración</h5>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<% else %>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0"><%= @structure_label %></h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <% structure_label = singularize_label(@structure_label) %>
+      <%= link_to("Crear #{structure_label}", new_user_structures_path(@structure&.id, structure_label: structure_label), class: "mr-1 btn btn-primary", data: {toggle: "modal", target: "#modal-window"}, remote: true) if can?(:create_user, Structure) && @role.present? %>
+      <%= link_to("Afiliar #{structure_label}", unaffiliated_users_structures_path(@structure&.id, structure_label: structure_label), class: "mr-1 btn btn-secondary", data: {toggle: "modal", target: "#modal-window"}, remote: true) if can?(:affiliated_user, Structure) && @role.present? %>
+      <%= link_to "Regresar", @return_path, class: "btn btn-outline-secondary mr-2" %>
+      <div class="btn-group" role="group">
+        <button id="btnGroupDropActions" type="button" class="btn btn-info mr-1 custom-button-size dropdown-toggle"
+          data-toggle="dropdown" title="Configurar" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-cogs" aria-hidden="true"></i>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupDropActions">
+          <%= link_to "Configuración de niveles", level_settings_structures_path(@structure&.id), class: "dropdown-item", title: "Módulo de configuración de niveles" if can?(:see_level_configurations_modal, Structure) || can?(:set_level_to_role, Structure) %>
+          <%= link_to "Ver estructura de los niveles", see_structure_tree_structures_path(role_id: @role&.id), class: "dropdown-item", title: "Ver estructura de los niveles", data: {toggle: "modal", target: "#modal-window"}, remote: true %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<% if @structures.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ningún nivel.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Subordinados</th>
+            <th>Fecha de incorporación</th>
+            <th>Ventas realizadas</th>
+            <th class="text-center">Estado</th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @structures.each do |structure| %>
+          <% invalid_structure = structure.role.id != @role&.id %>
+          <tr class="<%= "bg-warning" if invalid_structure %>">
+            <td>
+              <% if structure.user.present? %>
+                <%= tag.div structure.user.label, class: "text-left d-block" %>
+                <%= tag.div structure.user.email, class: "text-left d-block" %>
+              <% else %>
+                <span class="badge badge-info">Sin Responsable</span>
+              <% end %>
+            </td>
+            <td>
+              <%= tag.div structure.role.name, class: "text-left d-block" %><%= " / " + structure.user.classifiers.map(&:name).join(" / ") if structure.user.present? && structure.user.classifiers.any? %>
+            </td>
+            <td>
+              <%= structure.max_branches.zero? ? "N/A" : "#{structure.direct_subordinates_active.size} / #{structure.max_branches}" %>
+            </td>
+            <td>
+              <%= only_date(structure.created_at) %>
+            </td>
+            <td>
+              <%= structure.user.present? ? structure.user.closed_deals.size : "N/A" %>
+            </td>
+            <td class="text-center">
+              <span
+                class="d-block m-1 badge badge-<%= structure.active ? "success" : "secondary" %>"><%= structure_status(structure.active) %></span>
+              <% if structure.user.present? && !structure.user&.is_active %>
+                <span class="d-block m-1 badge badge-light">Usuario Inactivo</span>
+              <% end %>
+            </td>
+            <td class="text-center">
+
+              <% if can?(:approval, Structure) && !invalid_structure %>
+                <% if structure.user.present? && !structure.active %>
+                  <% if can_it_be_approved_or_rejected?(structure) %>
+                    <%= link_to(fa_icon("check"), approve_structure_path(structure), class: "table-link color-primary", method: :patch, data: { toggle: "tooltip", remote: true, confirm: "¿Estás seguro de realizar esta acción?" }, title: "Aprobar") %>
+                    <%= link_to(fa_icon("close"), reject_structure_path(structure), class: "table-link text-danger", method: :delete, data: { toggle: "tooltip", remote: true, confirm: "¿Estás seguro de realizar esta acción?" }, title: "Rechazar") %>
+                  <% end %>
+                <% end %>
+              <% end %>
+              <%= link_to(fa_icon("arrow-right"), subordinates_structures_path(structure.id), class: "table-link", data: {toggle: "tooltip"}, title: "Subordinados") if (invalid_structure && structure.has_children?) || (!invalid_structure && (structure.role.level || 0 ) < @max_level) %>
+
+              <% if can?(:hire_and_fire, Structure) && !invalid_structure %>
+                <% if structure.user.present? %>
+                <%= link_to(fa_icon("chain-broken"), fire_structure_path(structure.id), method: :patch, class: "table-link", data: { toggle: "tooltip", remote: true, confirm: "¿Estás seguro de realizar esta acción?" }, title: "Retirar Responsable") %>
+                <% else %>
+                  <%= label_tag :add_user, data: {toggle: "tooltip"}, title: "Agregar Responsable" do %>
+                    <%= link_to(fa_icon("link"), prospects_structure_path(structure.id), class: "link-unstyled", data: { toggle: "modal", target: "#modal-window" }, remote: true) %>
+                  <% end %>
+                <% end %>
+              <% end %>
+
+              <% if structure.user.present? %>
+                <% if structure.user.invitation_sent_at.present? && structure.user.invitation_accepted_at.nil? %>
+                  <% if can?(:resend_invitation, Structure) %>
+                    <%= link_to resend_invitation_structure_path(structure), method: :patch, class: "table-link", data: { toggle: "tooltip" }, title: "Enviar invitación", remote: true do %>
+                      <i class="fa fa-envelope-o"></i>
+                    <% end %>
+                  <% end %>
+                <% else %>
+                  <% if can?(:reset_password, Structure) %>
+                    <%= link_to reset_password_structure_path(structure), method: :patch, class: "table-link", data: { toggle: "tooltip" }, title: "Recuperación de contraseña", remote: true do %>
+                      <i class="fa fa-envelope-open-o"></i>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+              <%= link_to(fa_icon("eye"), information_structure_path(structure.id), class: "table-link", data: {toggle: "tooltip"}, title: "Ver") if can?(:information, Structure) && structure.user.present? %>
+              <%= link_to(fa_icon("trash"), destroy_structure_path(structure.id), class: "link-unstyled", method: :delete, data: { toggle: "tooltip", remote: true, confirm: "¿Estás seguro de realizar esta acción?" }, title: "Eliminar") if can?(:destroy, Structure) && (structure.children.blank? || invalid_structure) %>
+              <%= link_to fa_icon("cog"), see_configuration_structure_path(structure.id, format: :js), class: "table-link", title: "Configuraciones", data: {toggle: "modal", target: "#modal-window"}, remote: true if can?(:see_level_configurations_modal, Structure) && !invalid_structure %>
+
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@structures, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                        onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por
+        página
+      </div>
+    </div>
+  </div>
+<% end %>
+<% end %>
+<%= render partial: "modal_container" %>

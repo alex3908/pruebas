@@ -1,0 +1,29 @@
+<% if @stage.errors.count > 0 %>
+Swal.fire({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  type: 'error',
+  title: "Hubo un error al intentar hacer el cambio."
+});
+<%else%>
+Swal.fire({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  type: 'success',
+  title: "La <%= @stage_singular %> se ha desasignado correctamente."
+});
+
+<% if @phase.blueprint.present? %>
+$("[data-id=<%= @stage.id%>]").find(".deallocate-button").after('<%= escape_javascript button_tag(fa_icon("map-marker"), type: "button", class: "btn btn-outline-primary assign-button", data: { "stage-name": @stage.name, "stage-id": @stage.id, "project-id": @project.id, "phase-id": @phase.id, toggle: "modal", target: "#assignStageModal" }) %>');
+<% end %>
+
+$("[data-id=<%=@stage.id%>]").find(".deallocate-button").hide();
+
+$("#svg-stages [data-blueprint-stage-id=<%=@blueprint_stage.id%>]").attr("data-original-title", "<%= tooltip_stage_label(@blueprint_stage.stage, sale_map: false).html_safe %>");
+$("#svg-stages [data-blueprint-stage-id=<%=@blueprint_stage.id%>]").removeClass("assigned");
+$("#svg-stages [data-blueprint-stage-id=<%=@blueprint_stage.id%>]").addClass("assignable");
+<% end %>

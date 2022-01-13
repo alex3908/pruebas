@@ -1,0 +1,30 @@
+<div class="table-container">
+  <%# Todo: Add variable columns depending on the periods %>
+  <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+    <thead>
+    <tr>
+      <th>Número de pago</th>
+      <th>Amortización 1</th>
+      <% if @project.quotation != "conventional"%>
+        <th>Amortización 2</th>
+        <th>Amortización 3</th>
+      <% end %>
+      <th>Precio de <%= @project.lot_entity_name %></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @simple_quotations.each do |quotation| %>
+      <tr class="<%= "bg-info text-white" if quotation[:payments] == @quotation.total_payments %>">
+        <td class="align-middle"><%= term_name(quotation[:payments]) %></td>
+        <td class="align-middle"><%= "#{number_to_currency(quotation[:updates].first[:amount])} (#{quotation[:updates].first[:payments]})" if quotation[:updates].first && quotation[:updates].first[:payments] > 0 %></td>
+        <% if @project.quotation != "conventional"%>
+          <td class="align-middle"><%= "#{number_to_currency(quotation[:updates].second[:amount])} (#{quotation[:updates].second[:payments]})" if quotation[:updates].second && quotation[:updates].second[:payments] > 0 %></td>
+          <td class="align-middle"><%= "#{number_to_currency(quotation[:updates].third[:amount])} (#{quotation[:updates].third[:payments]})" if quotation[:updates].third && quotation[:updates].third[:payments] > 0 %></td>
+        <% end %>
+        <td class="align-middle"><%= number_to_currency(quotation[:price]) %> (<%= '%.2f' % quotation[:discount] %>%)</td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,18 @@
+.paypal-button {
+  background-image: image-url('icons/paypal.png');
+  background-position-x: center;
+  background-size: 70px;
+  background-repeat: no-repeat;
+  background-position-y: center;
+  background-color: transparent;
+  min-height: 40px;
+  width: 100px;
+
+  &:after {
+    display: none;
+  }
+}
+
+.accordion .select2 .selection .select2-selection {
+  background-color: white;
+}

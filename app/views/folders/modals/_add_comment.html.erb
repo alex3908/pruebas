@@ -1,0 +1,26 @@
+<div class="modal fade" id="commentModal" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="commentModalLabel">Agregar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <%= form_with(url: folder_comments_path(@folder), model: Comment.new, local: false) do |form| %>
+          <div class="modal-body">
+            <div class="row">
+              <div class="form-group col-sm-12 col-md-12">
+                <%= form.label :message, "Comentario" %>
+                <%= form.text_area :message, class: "form-control", required: true %>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer pt-2">
+            <%= form.submit "Guardar", class: "btn btn-primary" %>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          </div>
+        <% end %>
+    </div>
+  </div>
+</div>

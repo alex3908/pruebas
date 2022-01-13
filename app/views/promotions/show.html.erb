@@ -1,0 +1,83 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Promoción: <%= @promotion.name %></h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to "Regresar", promotions_path(@project, @phase), class: "btn btn-outline-secondary mr-2" %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <%= render "stages/filters" %>
+</div>
+
+<% if @stages.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No hay etapas disponibles para activar esta promoción.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th class="text-capitalize"><%= sortable "project_id", @project_singular %></th>
+        <th class="text-capitalize"><%= sortable "phase_id", @phase_singular %></th>
+        <th class="text-capitalize"><%= sortable "stage_id", @stage_singular %></th>
+        <th colspan="2">Estatus de Promoción</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @stages.each do |stage| %>
+        <tr>
+          <td class="align-middle"><%= stage.phase.project.name %></td>
+          <td class="align-middle"><%= stage.phase.name %></td>
+          <td class="align-middle"><%= stage.name %></td>
+          <td class="align-middle">
+          <% if can? :update, @promotion %>
+            <%= check_box_tag "stage-#{stage.id}", "1", stage.has_promotion(@promotion),
+              onchange: "$(this).data('params', 'status=' + this.checked)",
+              data: {
+                activate: "toggle",
+                onstyle: "success",
+                offstyle: "secondary",
+                on: "Activado",
+                off: "Desactivado",
+                remote: true,
+                url: activate_promotion_path(@promotion, stage: stage),
+                method: :patch
+              } %>
+          <% else %>
+            <%= check_box_tag "stage-#{stage.id}", "1", stage.has_promotion(@promotion),
+              disabled: true,
+              data: {
+                disabled: true,
+                activate: "toggle",
+                onstyle: "success",
+                offstyle: "secondary",
+                on: "Activado",
+                off: "Desactivado",
+              } %>
+          <% end %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= will_paginate(@stages, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+          onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

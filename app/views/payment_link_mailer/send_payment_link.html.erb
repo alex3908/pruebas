@@ -1,0 +1,14 @@
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <span>
+        Apreciable <b><%= @client.label %></b>,
+    </span>
+  </p>
+  <p>
+    <span>
+        en este correo encontraras la opción para utilizar el servicio de pagos en línea de tu <%= @lot_singular %> <%= @lot.name %> en el <%= @project_singular %> <%= @project.name %> <%= @phase_singular %> <%= @phase.name %> <%= @stage_singular %> <%= @stage.name %>.
+    </span>
+  </p>
+  <%= render partial: "components/mailer_button", locals: { url: folder_pay_online_url(@folder), title: "Pagar" } if @type == "down-payment" %>
+  <%= render partial: "components/mailer_button", locals: { url: new_online_payment_url(@folder.id), title: "Pagar" } if @type == "finance" %>
+<% end %>

@@ -1,0 +1,23 @@
+<div class="pdf-new-bg px-5">
+  <div class="complementary-header float-right">
+    <table style="width:100%">
+        <tr>
+            <td>
+                <h1 class="no-letter-spacing text-bold">ESTADO DE CUENTA</h1>
+            </td>
+        </tr>
+    </table>
+  </div>
+  <div class="conditions-container">
+    <hr class="outer-separator new_format mt-3 p-0">
+    <%= render "installments/new_format/account_status/general_information" %>
+    <%= render "installments/new_format/account_status/cash_back" %>
+    <%= render "installments/new_format/account_status/bank_information" %>
+    <small class="mt-5">La información que se indica es de carácter informativo, los pagos señalados son válidos salvo el buen cobro en las cuentas bancarias autorizadas que se indican en su promesa de compraventa ya que La Ley Federal para la Prevención e Identificación de Operaciones con Recursos de Procedencia Ilícita, le obliga a presentar ante notario los comprobantes de pago que emite su banco para escriturar su lote.</small>
+  </div>
+</div>
+<div class="pdf-bg-image-all-pages account-status px-5">
+  <%= render "installments/new_format/account_status/cash_flow" %>
+  <%= render "installments/new_format/account_status/amortization_table" %>
+  <%= render "installments/new_format/account_status/additional_concept_payments" %>
+</div>

@@ -1,0 +1,34 @@
+ <style>
+  .lot-map {
+    position: relative;
+    margin-top: 100px;
+    <% if @lot.map.attached? %>
+      background-image: url('<%= wicked_blob_path(@lot.map) %>');
+    <% end %>
+    width: auto;
+    height: 700px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+
+  .map {
+    width: auto;
+    max-height: 800px;
+  }
+
+  p {
+    font-size: 18px;
+    text-align: justify;
+    margin: 0 12px;
+  }
+</style>
+
+<div class="padding-top-50" style="page-break-inside: avoid;">
+  <div class="container p-5 text-center">
+    <h1 class="mb-5"><%= @lot.stage.lot_description_title.presence || 'Anexo' %></h1>
+    <%= html_code_block&.html_safe %>
+    <div class="w-100 lot-map">
+    </div>
+  </div>
+</div>

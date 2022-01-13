@@ -1,0 +1,407 @@
+es:
+  activerecord:
+    errors:
+      messages:
+        greater_than_or_equal_to: "debe ser mayor o igual a %{value}" 
+        less_than_or_equal_to: "debe ser menor o igual a %{value}" 
+        blank: no puede estar vacío
+      models:
+        commission_scheme:
+          attributes:
+            global_commission:
+              greater_than_or_equal_to: debe ser mayor o igual a 0 
+              less_than_or_equal_to: debe ser menor o igual a 100
+            commission_schemes_roles:
+              duplicate_commission_roles: con la misma responsabilidad (sea el caso) duplicada.
+              in_use: está en uso. Asegurase de dejar de usar este esquema de comisión para poder eliminarlo.
+        commission_schemes_role:
+          attributes:
+            commission:
+              greater_than_or_equal_to: debe ser mayor o igual a 0
+              less_than_or_equal_to: debe ser menor o igual a 100
+            role:
+              taken: con la misma responsabilidad (sea el caso) comisión duplicada.
+            stages_commission_schemes_roles:
+              in_use: esta definida. Asegurese de no estar usando esta configuración para poder eliminar el registro.
+    models:
+      commission_scheme:
+        one: Esquema de comisión
+        other: Esquemas de comisiones
+      commission_schemes_role: 
+        one: Esquema de comisión para rol
+        other: Esquemas de comisiones para roles
+      credit_scheme:
+        one: Esquema de crédito
+        other: Esquemas de créditos
+      document_section:
+        one: Sección de documento
+        other: Secciones de documento
+      document_template:
+        one: Plantilla de documento
+        other: Plantillas de documentos
+      lot:
+        one: Unidad
+        other: Unidades
+      period:
+        one: Periodo
+        other: Periodos
+      permission:
+        one: Permiso
+        other: Permisos
+      phase:
+        one: Fase
+        other: Fases
+      project:
+        one: Proyecto
+        other: Proyectos
+      promotion:
+        one: Promoción
+        other: Promociones
+      role_permission:
+        one: Acesso
+        other: Accesos
+      role:
+        one: Rol
+        other: Roles
+      stage:
+        one: Etapa
+        other: Etapas
+      stages_commission_schemes_role:
+        one: Comisiones para administrativos en privada
+        other: Comisiones para administrativos en privadas
+      step_document:
+        one: Paso de documento
+        other: Pasos de documento
+      step_role_document_template:
+        one: Paso de rol a plantilla
+        other: Pasos de rol a plantillas
+      step_role:
+        one: Paso de role
+        other: Pasos de roles
+      step:
+        one: Paso de pipeline
+        other: Pasos de pipeline
+      down_payment:
+        one: Enganche mínimo
+        other: Enganches mínimos
+    attributes:
+      commission_scheme:
+        name: Nombre
+        global_commission: Comisión por referido
+        commission_schemes_roles: Comisiones para roles
+      commission_schemes_role: &commission_schemes_role
+        commission_scheme_id: Esquema de comisión
+        commission_scheme: Esquema de comisión
+        role_id: Rol
+        role: Rol
+        folder_user_concept_id: Responsabilidad
+        folder_user_concept: Responsable
+        commission: Comisión
+        stages_commission_schemes_roles: Comisión de role en privada
+      commission_schemes_roles:
+        <<: *commission_schemes_role
+      credit_scheme:
+        name: Nombre
+        status: Estatus
+        compound_interest: Interés Relativo
+        expire_months: Meses relativos
+        first_payment: Primer pago del apartado en
+        lock_payment: Monto para bloqueo
+        initial_payment: Monto de apartado
+        min_capital_payment: Monto mínimo de abono a capital
+        min_down_payment_advance: Monto mínimo de abono a enganche
+        max_grace_months: Meses máximos para cambio de fecha
+        max_delay_payments: Meses máximos para prórroga de pagos
+        show_rate: Mostrar tasa de interés
+        show_price: Mostrar precio por metro cuadrado
+        relative_discount: Descuento relativo
+        immediate_extra_months: Meses extras del primer período
+        max_percent_immediate_lots_sold: Porcentaje máximo de unidades vendidas en construcción inmediata
+        min_down_payment: Porcentaje mínimo de enganche
+        relative_down_payment: Enganche relativo
+        max_finance: Meses máximos a financiar el enganche
+        start_installments: Meses de gracia del financiamiento
+        initial_payment_active: Apartado activo
+        independent_initial_payment: Apartado independiente
+        second_payment: Primer pago del enganche en
+        max_down_payment_percentage: Porcentaje máximo de enganche
+        down_payment_editable: Enganche editable
+        initial_payment_editable: Apartado editable
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+        deleted_at: Fecha de eliminación
+      document_section:
+        name: Nombre
+        action: Acción
+        order: Orden
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+      document_template:
+        name: Nombre
+        permissions: Permisos
+        requires_approval: Requiere aprobación
+        document_section_id: Sección
+        key: Clave
+        action: Acción
+        copy_to_all: '¿Añadirlo a expedientes antiguos?'
+        visible: '¿Visible?'
+        order: Orden
+        formats: Formatos soportados
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+      lot:
+        rid: rid
+        name: Clasificador
+        depth: Fondo
+        front: Frente
+        area: Área
+        price: Precio adicional por m²
+        stage_id: Etapa
+        status: Estatus
+        adjoining_north: Colinda al Norte con
+        adjoining_south: Colinda al Sur con
+        adjoining_east: Colinda al Este con
+        adjoining_west: Colinda al Oeste con
+        north: Norte en metros
+        south: Sur en metros
+        east: Este en metros
+        west: Oeste en metros
+        description: Descripción
+        planking: Tablaje
+        folio: Folio catastral
+        number: Número
+        label: Clasificador
+        undivided: Proindiviso
+        color: Color de disponibilidad
+        fixed_price: Precio final
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+        deleted_at: Fecha de eliminación
+        colloquial_name: Nombre coloquial
+        identification_name: Nombre de identificación
+        owner_name: Nombre del propietario
+        acquisition_cost: Valor de adquisición
+        market_price: Valor de mercado
+        exchange_rate: Tipo de cambio
+        vocation: Vocación
+        descriptive_status: Estatus
+        statuses:
+          for_sale: Disponible
+          reserved: Reservado
+          sold: Vendido
+          locked_sale: Bloqueado
+      period:
+        payments: Mensualidades
+        interest: Interés
+        order: Orden
+        credit_scheme_id: Esquema de crédito
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+      permission:
+        name: Nombre
+        subject_class: Clase de sujeto
+        action: Acción
+        description: Descripción
+        hidden: ¿Oculto?
+      phase:
+        name: Nombre
+        start_date: Fecha de inicio
+        project_id: Proyecto
+        rid: rid
+        reference: Referencia
+        order: Orden
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+        deleted_at: Fecha de eliminación
+      project:
+        name: Nombre
+        reference: Referencia
+        quotation: Tipo
+        phone: Teléfono
+        email: Correo
+        currency: Tipo de Moneda
+        macroplane: Macroplano
+        logo: Logo
+        background: Fondo
+        templates: Plantilla
+        project_entity_name: Primer Nivel
+        phase_entity_name: Segundo Nivel
+        stage_entity_name: Tercer Nivel 
+        lot_entity_name: Cuarto Nivel
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+        deleted_at: Fecha de eliminación
+      promotion:
+        name: Nombre de la promoción
+        start_date: Inicio
+        end_date: Fin
+        amount: Porcentaje de descuento (0 a 100)
+        min_area: Límite menor
+        max_area: Límite mayor
+        operation: Tipo de cálculo
+        active: Estado de promoción
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+        term_min: Límite menor del plazo de mensualidades
+        term_max: Límite mayor del plazo de mensualidades
+        downpayment_min: Límite menor del plazo de enganche
+        downpayment_max: Límite mayor del plazo de enganche
+        downpayment_amount: Enganche mínimo
+        downpayment_type: Tipo de enganche mínimo
+        initialpayment_amount: Apartado mínimo
+        initialpayment_type: Tipo de apartado mínimo
+        max_days_for_first_payment: Límite de días para primer pago
+        downpayment_editable: Eng. Modificable
+        initialpayment_editable: Apartado Modificable
+        no_interest_installments: Sin cuotas de interés
+        start_installments: Meses de gracia para la mensualidad
+        zero_rate_extra: Mensualidades extras con tasa cero
+        is_commissionable: Es comisionable
+        enabled_coupons: Habilitar cupones
+        show_percentage: Mostrar porcentaje
+        draft: En borrador
+        deleted_at: Fecha de eliminación
+        down_payment_differ: Enganche diferido
+        initialpayment_types:
+          amount: Monto
+          percentage: Porcentaje
+        operations:
+          over: Multiplicativo
+          higher: Mayor
+          addition: Suma
+      role_permission:
+        role_id: Rol
+        permission_id: Permiso
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+      role:
+        name: Nombre
+        key: Clave
+        is_evo: ¿Es Evo?
+        hidden: ¿Oculto?
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+        deleted_at: Fecha de eliminación
+      stage:
+        rid: rid
+        price: Precio
+        name: Nombre
+        active: Activo
+        phase_id: Fase
+        enterprise_id: Empresa cobrataria
+        release_date: Fecha de salida
+        stage_type: Tipo
+        min_down_payment: Porcentaje mínimo de enganche
+        order: Orden
+        initial_payment: Monto de apartado
+        initial_payment_expiration: Periodo de gracia para apartado
+        max_finance: Meses máximos a financiar el enganche
+        first_payment: Primer pago del enganche en
+        reference: Referencia
+        down_payment_expiration: Periodo de gracia para enganche
+        lock_seller_period: Periodo de bloqueo de asesor
+        start_installments: Primer pago de las mensualidades después de
+        min_capital_payment: Monto mínimo de abono a capital
+        payment_expiration: Periodo de gracia para considerar cartera vencida
+        payment_email: Correo electrónico de pago
+        lock_payment: Monto para bloqueo
+        credit_scheme_id: Esquema de crédito
+        immediate_extra_months: Meses extras del primer período (construcción inmediata)
+        max_percent_immediate_lots_sold: Porcentaje máximo de unidades vendidas en construcción inmediata
+        min_down_payment_advance: Monto mínimo de abono a enganche
+        payment_receptor_emails: Correos receptores de pagos
+        lot_description: Anexo 3
+        show_full_name: Mostrar nombre completo
+        sort: Ordenar
+        active_annexes: Visibilidad en el expediente
+        start_date_by: Usar fecha inicial de
+        show_price: Mostrar precio por metro cuadrado
+        show_rate: Mostrar tasa de interés
+        max_grace_months: Meses máximos para cambio de fecha
+        active_commissions: Generar comisiones por ventas
+        commission_scheme_id: Esquema de comisión
+        max_delay_payments: Meses máximos para prórroga de pagos
+        max_commission_amount: Mensualidades máximas de comisiones
+        relative_discount: Descuento relativo
+        sudden_death: Muerte súbita para expedientes
+        observarions: Observaciones
+        active_messages: Notificar por mensajes de texto
+        is_expirable: Expirable
+        active_mails: Notificar por correo
+        purchase_conditions: Condiciones de Compra
+        lot_description_title: Nombre del Anexo
+        delivery_date: Fecha de entrada
+        stage_description_title: Nombre del Anexo
+        phase_description_title: Nombre del Anexo
+        deleted_at: Fecha de eliminación
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+        formula: Tipo de cotización
+        pdf_annexes: Anexos PDF
+        expire_months: Meses relativos
+        emails: Correos receptores de pagos
+        slug: Clave URL
+        owner_enterprise_id: Empresa propietaria
+      stages_commission_schemes_role:
+        stage_id: Etapa
+        commission_schemes_roles: Esquema de comission de rol
+        folder_user_concept_id: Responsabilidad
+        users: Usuarios
+      step_document:
+        step_id: Paso
+        document_template_id: Plantilla de documento
+        required: Requerido
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+      step_role_document_template:
+        step_role_id: Rol de pipeline
+        document_template_id: Plantilla de documento
+        readable: Leer
+        editable: Editar
+        uploadable: Subir
+        destroyable: Eliminar
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+      step_role:
+        step_id: Paso
+        role_id: Rol
+        update_financial: Actualizar financiamiento
+        update_coowners: Actualizar copropietario
+        can_cancel: Cancelar
+        can_approve: Enviar a paso siguiente
+        can_soft_reject: Enviar a paso anterior
+        can_reject: Rechazar
+        visible: Visible
+        can_make_installments: Puede cobrar
+        can_comment: Agregar comentarios
+        can_manage_reminders: Gestionar recordatorio
+        can_add_folder_user: Crear responsables
+        can_edit_folder_user: Editar responsables
+        can_remove_folder_user: Eliminar responsables
+        can_send_to_sign_purchase_promise: Firmar promesa de compraventa
+        can_send_to_cancel_sign_purchase_promise: Cancelar firma de promesa de compraventa
+        can_send_to_sign_folder_documents: Firmar documentos
+        can_send_to_cancel_sign_folder_documents: Cancelar firma de documentos
+        can_resend_sign_files: Reiniciar firma
+        can_reassign_seller: Reasignar propietario
+        can_reassign_client: Reasignar cliente
+        send_by_whatsapp: Enviar link de pago por whatsapp
+        send_by_email: Enviar link de pago por email
+        copy_to_clipboard: Copiar link de pago al portapapeles
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+      step:
+        name: Nombre
+        order: Orden
+        reject_step_id: Paso al que rechaza
+        hubspot_id: Hubspot
+        installments_step: Con acceso a cobranza
+        lot_status: comportamiento de unidades
+        folders_expires: ¿Se expira en este paso?
+        folder_user_concept_id: Responsable requerido
+        blocked: Bloqueado
+        folders_count: Conteo de expedientes
+        created_at: Fecha de creación
+        updated_at: Fecha de actualización
+        deleted_at: Fecha de eliminación
+

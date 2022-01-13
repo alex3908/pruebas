@@ -1,0 +1,45 @@
+<%= form_with(model: online_payment_service, url: [enterprise, online_payment_service], local: true) do |form| %>
+  <% if @online_payment_service.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@online_payment_service.errors.count, "error") %> errores encontrados:</h2>
+
+      <ul>
+        <% @online_payment_service.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <h4><%= online_payment_service.provider.capitalize %></h4>
+  <div class="form-group">
+    <%= form.label :environment, "Modo de prueba" %>
+    <div>
+      <%= form.check_box :environment,
+        { data: {
+          activate: "toggle",
+          onstyle: "success",
+          offstyle: "secondary",
+          on: "ACTIVADO",
+          off: "DESACTIVADO",
+        } }, "test", "production" %>
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-md-6">
+      <%= form.label :bank_account_id, "Cuenta Bancaria" %>
+      <%= form.collection_select :bank_account_id, @enterprise.bank_accounts || [], :id, :account_number, { prompt: true }, { required: true } %>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :payment_method_id, "Método de Pago" %>
+      <%= form.collection_select :payment_method_id, @payment_methods || [], :id, :name, { prompt: true }, { required: true } %>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :branch_id, "Sucursal" %>
+      <%= form.collection_select :branch_id, @branches || [], :id, :name, { prompt: true }, { required: true } %>
+    </div>
+  </div>
+  <%= render partial: "properties", locals: { property_name: "properties", form: form, properties: online_payment_service.properties || {}, online_payment_service: online_payment_service } %>
+
+  <%= link_to "Regresar", edit_enterprise_path(enterprise), class: "btn btn-secondary" %>
+  <%= form.submit "Guardar", class: "btn btn-success" %>
+<% end %>

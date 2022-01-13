@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+      <h1 class="banner-title vertical-align p-0 m-0">Configuración de niveles</h1>
+    </div>
+    <div class="col-md-6 col-sm-12 flex-middle-right">
+      <%= link_to "Regresar", subordinates_structures_path(@structure&.id), class: "btn btn-outline-secondary mr-2" %>
+      <%= link_to "Nuevo rol", add_child_node_structures_path(@structure&.id), class: "btn btn-primary mr-2", title: "Nuevo rol", data: {toggle: "modal", target: "#modal-window"}, remote: true if can?(:set_level_to_role, Structure) %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<% if @levels.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ningún rol.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="table-container">
+          <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+            <thead>
+              <tr>
+                <th>Nivel</th>
+                <th>Rol</th>
+                <th>Subordinados permitidos</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @levels.each do |level| %>
+                <tr>
+                  <%= tag.td level.level + 1 %>
+                  <%= tag.td level.name %>
+                  <%= tag.td level.maximum_schemes %>
+                  <%= content_tag :td, class:  "text-right" do %>
+                    <% if can?(:set_level_to_role, Structure) %>
+                      <%= link_to(fa_icon("trash"), update_level_structures_path(@structure&.id, role_id: level),
+                          class: "table-link",
+                          method: :patch,
+                          data: {
+                            confirm: "¿Estás seguro? Esta acción eliminará el rol de la estructura actual así como sus roles hijos."
+                          },
+                          remote: true,
+                          title: "Eliminar nivel") %>
+
+                      <%= link_to(fa_icon("pencil-square-o"), replace_role_structures_path(@structure&.id, role_id: level), class: "table-link", method: :get, remote: true, title: "Reemplazar rol") %>
+                    <% end %>
+                    <%= link_to(fa_icon("wrench"), see_level_configurations_modal_structures_path(@structure&.id, role_id: level), class: "table-link", method: :get, remote: true, title: "Actualizar configuraciones del nivel") if can?(:see_level_configurations_modal, Structure) %>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<%= render partial: "modal_container" %>

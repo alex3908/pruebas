@@ -1,0 +1,62 @@
+ <div class="accordion collapse-elements px-4 mb-4" id="accordion-additional">
+    <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+      <p class="text-left vertical-align m-0 py-3 color-primary">Filtros</p>
+    </div>
+    <div class="row collapse show" id="collapse-section" data-parent="#accordion-additional">
+      <%= form_tag(@filter_path, method: :get, class: "w-100") do %>
+        <%= hidden_field_tag :direction, params[:direction] %>
+        <%= hidden_field_tag :sort, params[:sort] %>
+        <% if params[:stage].present? %>
+          <%= hidden_field_tag :stage, params[:stage] %>
+        <% end %>
+        <div class="container py-3">
+          <div class="row">
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :email, "Buscar por correo:" %>
+              <%= text_field_tag :email, params[:email], class: "form-control" %>
+            </div>
+
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :name, "Buscar por nombre:" %>
+              <%= text_field_tag :name, params[:name], class: "form-control" %>
+            </div>
+
+              <div class="col-md-6 col-lg-3 mb-3">
+                <%= label_tag :role, "Buscar por rol:" %>
+                <select id="role" name="role" class="form-control">
+                  <option value="">Todos</option>
+                  <optgroup label="CRM">
+                    <% @roles.select{ |role| !role.is_evo }.each do |role| %>
+                      <option <%= "selected" if params["role"].to_i == role.id %> value="<%= role.id %>"><%= role.name %> </option>
+                    <% end %>
+                  </optgroup>
+                  <% if is_evo_active? %>
+                    <optgroup label="<%= @evo_string %>">
+                      <% @roles.select{ |role| role.is_evo }.each do |role| %>
+                        <option data-type="evo" data-key="<%= role.key %>" <%= "selected" if params["role"].to_i == role.id %> value="<%= role.id %>"><%= role.name %></option>
+                      <% end %>
+                    </optgroup>
+                  <% end %>
+                </select>
+              </div>
+
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :branch, "Buscar por sucursal:" %>
+              <%= select_tag :branch, options_from_collection_for_select(@branches, :id, :name, params["branch"]), class: "form-control", include_blank: "Selecciona una sucursal" %>
+            </div>
+
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :status, "Buscar por estatus:" %>
+              <%= select_tag :status, options_for_select([["Activo", "active"], ["No activo", "nonactive"]], params["status"]), class: "form-control", include_blank: "Selecciona un estatus" %>
+            </div>
+
+            <div class="col-md-12 col-lg-12 col-mb-12 text-right pt-2">
+              <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                <i class="fa fa-search" aria-hidden="true"></i> Buscar
+              <% end %>
+            </div>
+          </div>
+      <% end %>
+      </div>
+    </div>
+  </div>

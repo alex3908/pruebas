@@ -1,0 +1,222 @@
+<% if @stage.blueprint.present? %>
+  <% content_for :head do %>
+    <% if !@stage.new_record? %>
+      <style>
+        <%= sanitize @stage.blueprint.styles %>
+
+        .lot {
+          margin: auto;
+          max-width: 800px;
+        }
+
+        .no-outline {
+          outline: none !important;
+        }
+
+        .for_sale {
+          fill: <%= sanitize @stage.blueprint.available_color %>;
+        }
+
+        .reserved {
+          fill: <%= sanitize @stage.blueprint.reserved_color %>;
+        }
+
+        .sold {
+          fill: <%= sanitize @stage.blueprint.sold_color %> !important;
+        }
+
+        .locked_sale {
+          fill: <%= sanitize(@stage.blueprint.locked_color || @stage.blueprint.sold_color) %> !important;
+        }
+
+        .assigned {
+          fill: #008CC1;
+        }
+
+        .locked {
+          fill: #252525;
+        }
+
+        #svg-lots * {
+          cursor: pointer;
+        }
+      </style>
+
+    <% end %>
+  <% end %>
+<% end %>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0"><%= @lot_plural %> de <%= @phase.name %> <%= @stage.name %> </h1>
+    </div>
+
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <div class="btn-group" role="group" aria-label="Acciones">
+        <%= link_to "Regresar", project_phase_stages_path(@project, @phase), class: "btn btn-outline-secondary align-self-center" %>
+        <%= link_to "Nuevo", new_project_phase_stage_lot_path, class: "btn btn-outline-primary align-self-center" if can?(:create, Lot) %>
+        <% if can?(:create, Lot) %>
+          <div class="btn btn-outline-primary align-self-center" data-controller="import" data-import-url="<%= import_project_phase_stage_lots_path(format: :json) %>">
+            <%= file_field_tag :file, accept: ".xls, .xlsx", class: "d-none", data: { 'target': "import.input", 'action': "import#upload" } %>
+            <label class="m-0" for="file">Importar</label>
+          </div>
+          <%= form_tag(project_phase_stage_lots_path, method: :get, class: "btn btn-outline-primary align-self-center p-0", data: { 'controller': "export", 'target': "export.form", 'export-url': export_project_phase_stage_lots_path(format: :json) }) do %>
+            <%= button_tag("Exportar", type: "button", class: "btn btn-outline-primary border-0", data: { action: "export#generate" }) %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @lots.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se han encontrado <%= @lot_plural %> para esta <span class="text-lowercase"><%= @stage_singular %></span>.
+        <% if can?(:create, Lot) %>
+          <br> Puedes importarlos.
+        <% end %>
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+
+        <thead>
+          <tr>
+            <th class="text-center">Número de <%= @lot_singular %></th>
+            <th class="text-center">Área</th>
+            <th class="text-center">Estado</th>
+            <th class="text-center">Mapa Ilustrativo</th>
+            <th class="text-center">Plano de <%= @lot_singular %></th>
+            <th class="text-right" colspan="5">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        <% @lots.each do |lot| %>
+          <tr data-id="<%= lot.id %>">
+            <td class="align-middle"><%= lot.name %></td>
+            <td class="align-middle"><%= lot.area %>m<sup>2</sup></td>
+            <td class="align-middle text-center">
+              <span class="status badge <%= lot_status_class(lot) %>"><%= lot.status_label %></span>
+            </td>
+            <td class="align-middle text-center"> <%= lot.chepina.attached? ? link_to(image_tag(lot.chepina.variant(resize: "50x50"), class: "chepina-image", alt: ""), url_for(lot.chepina)) : image_tag("no-image.png", class: "chepina-image", alt: "") %></td>
+            <td class="align-middle text-center"> <%= lot.map.attached? ? link_to(image_tag(lot.map.variant(resize: "50x50"), class: "chepina-image", alt: ""), url_for(lot.map)) : image_tag("no-image.png", class: "chepina-image", alt: "") %></td>
+            <td class="align-middle text-right">
+              <div class="btn-group" role="group" aria-label="Acciones">
+                <% if can?(:update, lot) %>
+                  <%= form_tag("#", data: { controller: "export", 'target': "export.form", 'export-url': annexes_project_phase_stage_lot_path(@project, @phase, @stage, lot, format: :json) }) do %>
+                    <%= button_tag(fa_icon("file-o"), type: "button", class: "btn btn-outline-secondary", style: "border-top-right-radius: 0; border-bottom-right-radius: 0;", data: { action: "export#generate", toggle: "tooltip" }, title: "Anexos") %>
+                  <% end %>
+                <% end %>
+
+                <%= link_to(fa_icon("pencil"), edit_project_phase_stage_lot_path(@project, @phase, @stage, lot, page: params[:page]), class: "btn btn-outline-secondary", data: { toggle: "tooltip" }, title: "Editar") if can?(:update, lot) %>
+                <%= button_tag(fa_icon("lock"), type: :button, class: "btn btn-outline-secondary disabled", rel: "tooltip", title: "Este #{@lot_singular} cuenta con un proceso de venta, no se puede bloquear.") if lot.reserved? || lot.sold? %>
+                <%= link_to(fa_icon("lock"), lock_lot_project_phase_stage_lot_path(@project, @phase, @stage, lot), data: { remote: "true", method: "patch" }, class: "btn btn-outline-secondary lock-button") if lot.for_sale? && can?(:lock, Lot) %>
+                <%= link_to(fa_icon("unlock"), lock_lot_project_phase_stage_lot_path(@project, @phase, @stage, lot), data: { remote: "true", method: "patch", confirm: "¿Estás seguro de desbloquear este #{@lot_singular}? Cualquier asesor podrá reservarlo." }, class: "btn btn-outline-secondary lock-button") if lot.locked_sale? && can?(:lock, Lot) %>
+
+                <% if @stage.blueprint.present? %>
+
+                  <%= button_tag(fa_icon("map-marker"),
+                    type: "button",
+                    data: {
+                      "lot-name": lot.name,
+                      "lot-id": lot.id,
+                      "project-id": @project.id,
+                      "phase-id": @phase.id,
+                      "stage-id": @stage.id,
+                      toggle: "modal",
+                      target: "#assignLotModal"
+                    },
+                    class: "btn btn-outline-primary assign-button",
+                    style: "#{"display: none" unless lot.blueprint_lot.nil?}") %>
+
+                  <%= link_to(fa_stack("ban", "map-marker"),
+                    deallocate_project_phase_stage_lot_path(@project, @phase, @stage, lot),
+                    method: :patch,
+                    remote: true,
+                    title: "Desasignar",
+                    data: {
+                      confirm: "\u00BFEst\u00E1s seguro?",
+                      toggle: "tooltip"
+                    },
+                    class: "btn btn-outline-warning deallocate-button",
+                    style: "#{"display: none" if lot.blueprint_lot.nil?}") %>
+                <% end %>
+
+                <%= link_to(fa_icon("trash"),
+                  project_phase_stage_lot_path(@project, @phase, @stage, lot),
+                  method: :delete,
+                  remote: true,
+                  data: {
+                    confirm: "\u00BFEst\u00E1s seguro de eliminar este #{@lot_singular}? Esta acción no puede recuperarse.",
+                    toggle: "tooltip"
+                  },
+                  title: "Eliminar",
+                  class: "btn btn-outline-danger delete-button",
+                  style: "#{"display: none" unless lot.blueprint_lot.nil?}") if lot.for_sale? && !lot.has_folder? && can?(:destroy, Lot) %>
+
+              </div>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@lots, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %>por página
+      </div>
+    </div>
+    <% if @stage.blueprint.present? %>
+      <!-- Modal -->
+      <div class="modal fade" id="assignLotModal" aria-labelledby="assignLot">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="lot_name"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" value="" name="lot_id" id="lot_id">
+              <input type="hidden" value="" name="project_id" id="project_id">
+              <input type="hidden" value="" name="phase_id" id="phase_id">
+              <input type="hidden" value="" name="stage_id" id="stage_id">
+
+              <div class="lot">
+                <%= render("blueprints/blueprint_for_stage",
+                  project: @project,
+                  phase: @phase,
+                  stage: @stage,
+                  extras: @extras,
+                  selected_lot: nil,
+                  sale_map: false,
+                  show_tooltip: true,
+                  assignable: true,
+                  link: false,
+                  texts: false,
+                  with_styles: false) %>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

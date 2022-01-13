@@ -1,0 +1,72 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Solicitudes de Archivos</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Archivos</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @job_statuses.length == 0 %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se encontró ninguna petición de descarga de archivos vigente.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th><%= sortable "name", "Nombre" %></th>
+            <th><%= sortable "created_at", "Fecha de Solicitud" %></th>
+            <th><%= sortable "expires_at", "Tiempo de validez" %></th>
+            <th><%= sortable "status", "Estado" %></th>
+
+            <th class="text-right">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @job_statuses.each do |job_status| %>
+            <tr>
+              <td> <%= job_status.name %> </td>
+              <td> <%= I18n.l(job_status.created_at, format: "%l:%M %P %d/%b/%y") %> </td>
+              <td> <%= distance_of_time_in_words(Time.zone.now, job_status.expires_at, { accumulate_on: :hours, highest_measure_only: true }) if job_status.expires_at.present? %> </td>
+              <td> <%= JobStatus.human_enum_name(:status, job_status.status) %> </td>
+              <td class="text-right">
+              <%= link_to "Ver progreso", job_status_path(job_status), class: "btn btn-secondary" %>
+              <% if job_status.downloadable? && job_status.success? && job_status.file.attached? %>
+                <%= link_to "Ver archivo", rails_blob_path(job_status.file, disposition: "attachment"), class: "btn btn-secondary" %>
+              <% else %>
+                <%= link_to "No disponible", "#", class: "btn btn-secondary disabled" %>
+              <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= will_paginate(@job_statuses, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+          onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+
+<% end %>

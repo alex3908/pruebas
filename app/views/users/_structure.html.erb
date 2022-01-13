@@ -1,0 +1,37 @@
+<% if is_evo_active? %>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-1 text-center py-3">
+        <%= image_tag("icons/evo-structure.png", class: "img-fluid") %>
+      </div>
+      <div class="col-md-11">
+        <div class="d-flex flex-wrap justify-content-between">
+          <h6 class="text-left vertical-align m-0 py-3">Estructura <%= @evo_string %></h6>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-green">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-gray">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="evo-structure">
+        <% superiors = @user.structure.ancestors %>
+        <% superiors.each_with_index do |superior, index| %>
+          <% if superior.user.present? %>
+            <div class="text-center">
+              <span class="d-block font-bold"><%= superior.user.role.name %></span>
+              <span class="d-block"><%= superior.user.label %></span>
+              <span class="d-block"><%= superior.user.email %></span>
+            </div>
+            <% if index != superiors.count - 1 %>
+              <div class="arrow-right"></div>
+            <% end %>
+          <% end %>
+        <% end %>
+    </div>
+  </div>
+<% end %>

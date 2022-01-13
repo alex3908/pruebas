@@ -1,0 +1,36 @@
+<% if @additional_concepts_payments.size > 0 %>
+<section class="payments-quoatation">
+    <div class="table-content page-break-table mt-5">
+        <table class="mt-5 mb-2" style="width:100%">
+            <tr>
+                <th>
+                    <div class="bg-date-green text-center m-0 mt-3 pt-2 pb-1">
+                        <p class="text-bold">SERVICIOS ADICIONALES</p>
+                    </div>
+                </th>
+            </tr>
+        </table>
+        <div class="payments-table-green pt-3">
+            <table class="table table-additional-concept-payments table-border">
+                <thead>
+                    <th class="normal-header">Concepto</th>
+                    <th class="normal-header">Fecha de pago</th>
+                    <th class="normal-header">Monto pagado</th>
+                    <th class="normal-header">Estatus</th>
+                </thead>
+                <tbody>
+                    <% @additional_concepts_payments.each do |additional_concept_payment| %>
+                        <tr>
+                            <td class="new_format align-middle bg-white"><%= additional_concept_payment[:name] %></td>
+                            <td class="new_format align-middle bg-white"><%= additional_concept_payment[:date] %></td>
+                            <td class="new_format align-middle bg-white"><%= number_to_currency(additional_concept_payment[:payment_amount]) %></td>
+                            <td class="new_format align-middle bg-white"><%= additional_concept_payment[:status] %></td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+<% end %>

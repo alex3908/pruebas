@@ -1,0 +1,15 @@
+<%= render layout: "components/mailer_block" do %>
+  Apreciable <%= @user_name.upcase %>:<br>
+  &nbsp;
+  <div style="text-align: justify;">
+    Su cuenta ha sido aprobada, ya puede acceder al <a href="//<%= ENV["APP_URL"] %>">CRM Inmobiliario <%= "de #{@company_name}" if @company_name.present? %></a>
+  </div><br>
+
+  <div style="color:#7a7a7a;">
+    Si tiene preguntas puede contactarnos al teléfono <span style="color: #5e5e5e; font-weight: 600;"><%= @phone %></span>
+  </div>
+
+  <div style="text-align: justify;">
+    ¡Saludos!
+  </div>
+<% end %>

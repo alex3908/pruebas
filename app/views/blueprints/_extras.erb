@@ -1,0 +1,7 @@
+<g id="<%= id %>">
+  <% extras.each do |extra| -%>
+    <% if valid_html_type(extra.html_type) %>
+     <%= blueprint_extra_render_tag(extra) %>
+    <% end %>
+  <% end -%>
+</g>

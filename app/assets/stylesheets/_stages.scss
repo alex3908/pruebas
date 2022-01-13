@@ -1,0 +1,53 @@
+.chepina-border {
+  border-radius: 10px;
+  border: solid 2px #63656a;
+}
+
+.modal-close {
+  padding: 20px;
+  overflow: hidden;
+}
+
+.modal-close .close {
+  position: relative;
+}
+
+.modal-close .close:before {
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.modal-close .close:after {
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.modal-header-bg {
+  background-color: #ececec;
+}
+
+.modal-only-data {
+  max-width: 100%;
+  flex: 0 0 100%;
+}
+
+#lotModal .modal-dialog {
+  width: 100vw;
+  max-width: 1000px;
+}
+
+.remove-client-btn {
+  height: 40px;
+}
+
+.red-letters {
+  color: red;
+}
+
+input[type='date'],
+input[type='time'],
+input[type='datetime-local'],
+input[type='month'] {
+  background-color: #ececec;
+  border: solid 1px #ececec;
+  border-radius: 10px;
+  -webkit-appearance: listbox;
+}

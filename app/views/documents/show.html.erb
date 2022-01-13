@@ -1,0 +1,27 @@
+<div class="container">
+<section class="files w-100">
+  <div class="d-flex justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">Historial de cambios de <%= @document.document_template.name %>. <%= "Expendiente con folio #{@folder.id}" if @folder.present? %></h3>
+  </div>
+  <div class="row mb-3">
+    <div class="col-4 pr-0">
+      <hr class="marker-bar-gray">
+    </div>
+    <div class="col-8 pl-0">
+      <hr class="marker-bar-green">
+    </div>
+  </div>
+
+  <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+    <thead>
+      <tr>
+        <th width="70%">Fecha de creación</th>
+        <th width="30%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render @document.file_versions.newest %>
+    </tbody>
+  </table>
+</section>
+</div>

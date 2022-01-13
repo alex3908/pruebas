@@ -1,0 +1,34 @@
+<% if client.present? %>
+  <%= form_with(model: client, local: true, url: "/clients/#{client.id}/update_files") do |form| %>
+  <%= form.hidden_field(:folder, value: @folder.id) %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th width="70%"><%= label %></th>
+          <th width="30%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% client.documents
+        .includes(:document_template)
+        .order("document_templates.order ASC")
+        .each do |document| %>
+          <%= render partial: "clients/document_input",
+            locals: {
+              form: form,
+              document: document,
+              client: client
+            } %>
+        <% end %>
+      </tbody>
+    </table>
+    <table class="table table-striped">
+      <tr class="bg-white">
+        <td width="70%"></td>
+        <td width="30%" class="text-center">
+          <%= form.submit("Guardar", class: "btn btn-primary file-submit", disabled: true) unless @folder.canceled? %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+<% end %>

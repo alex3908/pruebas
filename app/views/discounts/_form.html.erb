@@ -1,0 +1,30 @@
+<%= form_with(model: discount, local: true, url: [@credit_scheme, discount]) do |form| %>
+  <% if discount.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(discount.errors.count, "error") %> prohibited this discount from being saved:</h2>
+
+      <ul>
+      <% discount.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :total_payments, "Límite inferior" %>
+      <%= form.number_field :total_payments, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :discount, "Descuento (%)" %>
+      <%= form.number_field :discount, min: 0, max: 100, step: 0.01, class: "form-control", required: true %>
+    </div>
+  </div>
+
+  <div class="actions py-3">
+    <%= link_to "Cancelar", credit_scheme_discounts_path(@credit_scheme), class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

@@ -1,0 +1,16 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Cargo fallido</span></h1>
+  &nbsp;
+
+  <p>
+    <span>
+      Te informamos que se intentó cobrar el pago domiciliado de tu compra en el proyecto <%= @lot.full_name %> pero no tuvimos éxito.
+      <br>
+      No se realizará un nuevo intento, por lo que te invitamos a realizar tu pago en nuestra pasarela, <%= link_to "¡haz clic aquí!", new_online_payment_url(@folder.id) %>
+    </span>
+  </p>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <%= image_tag("error-payment.png") %>
+<% end %>

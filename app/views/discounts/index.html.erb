@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Descuentos Base</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to "Regresar", credit_schemes_path, class: "btn btn-outline-secondary mr-2" %>
+      <% if can?(:create, Discount) %>
+        <%= link_to "Nuevo Descuento", new_credit_scheme_discount_path(@credit_scheme), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @discounts.empty? %>
+  <div class="container">
+    <p>Aún no hay descuentos.</p>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <%= render partial: "quotation_table" %>
+    </div>
+    <%= will_paginate(@discounts, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

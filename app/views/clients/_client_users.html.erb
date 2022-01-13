@@ -1,0 +1,13 @@
+<div class="accordion collapse-elements px-4 py-2 my-4" id="accordion-client-user">
+    <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse"
+        data-target="#collapse-client-user" aria-expanded="false" aria-controls="collapse-step-log">
+        <p class="text-left vertical-align m-0 py-3 color-primary">Responsables</p>
+    </div>
+    <div class="collapse" id="collapse-client-user" data-parent="#accordion-client-user">
+        <client-users :client-id="<%= client.id %>"
+                      :can-add-client-user="<%= can?(:create, ClientUser) %>"
+                      :can-edit-client-user="<%= can?(:update, ClientUser) %>"
+                      :can-delete-client-user="<%= can?(:destroy, ClientUser) %>"
+                      :use-autocomplete="<%= can?(:create, FolderUser) || can?(:update, FolderUser) %>" />
+    </div>
+</div>

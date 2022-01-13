@@ -1,0 +1,194 @@
+@import './bootstrap_variables';
+@import 'bootstrap/scss/bootstrap';
+@import 'font-awesome';
+@import 'bootstrap-colorpicker/src/sass/colorpicker';
+@import 'bootstrap4-toggle/css/bootstrap4-toggle';
+@import 'tablesaw/dist/tablesaw';
+@import 'jquery-datetimepicker/build/jquery.datetimepicker.min';
+@import 'sweetalert2/src/sweetalert2';
+@import './navbar';
+@import './pagination';
+@import './template';
+@import './devise';
+@import './uikit';
+@import './projects';
+@import './users';
+@import './dashboard';
+@import './enterprises';
+@import './clients';
+@import './stages';
+@import './tables';
+@import './lots';
+@import './quotations';
+@import './folders';
+@import './settings';
+@import './invitations';
+@import './toolbar';
+@import './keyframes';
+@import './approvals';
+@import './evo';
+@import './payments';
+@import './autocomplete';
+@import 'select2';
+@import './steps';
+@import 'bootstrap-datepicker';
+@import 'intlTelInput';
+@import './credit_schemes';
+@import './organizations/orve'; /* Needs to be the last import */
+@import url('https://fonts.googleapis.com/css?family=Montserrat:200,400,500|Poppins:300,400,500,700&display=swap');
+
+// Vue
+@import 'bootstrap-vue/src/index';
+
+html,
+body {
+  min-width: 320px;
+}
+
+trix-editor div span {
+  background-color: #6f42c1 !important;
+  height: 7px;
+  width: 100px;
+  margin: 2px;
+}
+
+a {
+  transition: color 150ms ease-in-out;
+}
+
+.thumbnail {
+  display: block;
+  padding: 4px;
+  line-height: 20px;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+  width: 50px;
+  height: 50px;
+}
+
+.table-container,
+.table-container-without-height {
+  max-width: 100%;
+  overflow: scroll;
+  overflow-y: hidden;
+}
+
+.table-container {
+  min-height: 200px;
+}
+
+.scroll-table-modal {
+  height: 200px;
+  overflow: auto;
+}
+
+.payment-gateway {
+  min-height: 130px;
+}
+
+.table-container::-webkit-scrollbar,
+.table-container-without-height::-webkit-scrollbar {
+  display: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.alert {
+  text-align: left;
+
+  .alert-error,
+  &.alert-error {
+    background-color: #f2dede;
+    border-color: #eed3d7;
+    color: #b94a48;
+  }
+
+  .alert-alert,
+  &.alert-alert {
+    background-color: rgba(30, 144, 255, 0.7);
+    border-color: dodgerblue;
+    color: #ffffff;
+  }
+
+  .alert-success,
+  .alert-notice,
+  &.alert-success,
+  &.alert-notice {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #468847;
+  }
+}
+
+.tablesaw-cell-content {
+  font-variant-numeric: tabular-nums;
+}
+
+.card-users {
+  max-width: 100% !important;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.toggle.off {
+  &.card-body {
+    display: none;
+  }
+}
+
+.alert .close {
+  font-size: 1.2rem;
+}
+
+.nav-link.disabled {
+  pointer-events: auto;
+}
+
+.w-mx-1800 {
+  max-width: 1800px;
+}
+
+.mh-50 {
+  max-height: 50px;
+}
+
+.text-no-wrap {
+  white-space: nowrap;
+}
+
+.custom-avatar {
+  background-origin: border-box !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}

@@ -1,0 +1,13 @@
+<% if project.present? && project.background.attached? %>
+  <% content_for :head do %>
+    <style>
+      .pdf-new-bg {
+        background-image: url('<%= wicked_blob_path(project.background) %>');
+      }
+    </style>
+  <% end %>
+<% end %>
+
+<% clients.each do |client| %>
+  <%= render partial: "folders/files/new_format/partials/purchase_promise_attached_client", locals: { client: client } %>
+<% end %>

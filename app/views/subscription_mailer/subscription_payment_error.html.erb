@@ -1,0 +1,33 @@
+<%= render layout: "components/mailer_block" do %>
+  <p style="text-align: center;">
+    <span>
+      Un pago domiciliado ha fallado
+    </span>
+  </p>
+  <div style="text-align: center;">
+    <div>
+      Cliente: <b><%= @client.label %></b>
+    </div>
+    <div>
+      Folio: <b><%= @folder.id %></b>
+    </div>
+    <div>
+      <%= @project_singular %>: <b><%= @project.name %></b>
+    </div>
+    <div>
+      <%= @phase_singular %>: <b><%= @phase.name %></b>
+    </div>
+    <div>
+      <%= @stage_singular %>: <b><%= @stage.name %></b>
+    </div>
+    <div>
+      <%= @lot_singular %>: <b><%= @lot.name %></b>
+    </div>
+    <div>
+      Monto: <b><%= number_to_currency(@amount) %></b>
+    </div>
+    <div>
+      Fecha: <b><%= @date.strftime("%d/%m/%Y") %></b>
+    </div>
+  </div>
+<% end %>

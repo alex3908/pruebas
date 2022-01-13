@@ -1,0 +1,413 @@
+<%= form_with(model: promotion, url: (@promotion.new_record? ? promotions_path : attributes_to_change_promotion_path(format: :js)), local: false, id: "promotion_form") do |form| %>
+  <% if promotion.errors.any? %>
+    <div class="alert alert-warning" role="alert">
+      <h6 class="alert-heading">
+        <%= t('form.not_record_for', errors: pluralize_without_count(@promotion.errors.count, t('form.following_reason'), t('form.following_reasons')) ) %>
+      </h6>
+      <ul class="mb-0">
+        <% promotion.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <fieldset>
+
+    <legend><%= t('.general_information') %></legend>
+
+    <div class="row">
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :name %>
+        <%= form.text_field :name, class: "form-control" %>
+      </div>
+
+      <% if promotion.persisted? && can?(:activate_promotion, Promotion) %>
+        <div class="form-group col-12 col-md-2 text-center">
+          <%= form.label :active %>
+          <div>
+          <% if promotion.draft %>
+            <%= link_to activate_promotion_promotion_path, method: :patch,  data: { toggle: "tooltip", confirm: t('confirmations.active?', item: Promotion.model_name.human) }, title: t('label.active', item: Promotion.model_name.human), remote: true, class: "btn btn-primary" do %>
+              <i class="fa fa-check" aria-hidden="true"></i>
+            <% end %>
+          <% else %>
+            <%= form.check_box :active,
+                          data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: t('on_'),
+                              off: t('off_')
+                          } %>
+          <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="form-group col-12 col-md-2 text-center">
+        <%= form.label :is_commissionable %>
+        <div>
+          <%= form.check_box :is_commissionable,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: t('yes_'),
+                                 off: t('not_')
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-2 text-center">
+        <%= form.label :enabled_coupons %>
+        <div>
+          <%= form.check_box :enabled_coupons,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: t('yes_'),
+                                 off: t('not_')
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-2 text-center">
+        <%= form.label :show_percentage %>
+        <div>
+          <%= form.check_box :show_percentage,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: t('yes_'),
+                                 off: t('not_')
+                             } %>
+        </div>
+      </div>
+    </div>
+
+  </fieldset>
+
+  <fieldset>
+
+    <legend><%= t('.discount') %></legend>
+
+    <div class="row">
+      <div class="form-group col-12 col-md-6">
+        <%= form.label "Tipo de promoción" %>
+        <%= form.select("discount_type", [[t('.initialpayment_types.amount'), "amount"], [t('.initialpayment_types.percentage'), "percentage"] ], class: "form-control") %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :amount %>
+        <div class="input-group">
+          <%= form.number_field :amount, min: 0,  max: @promotion.discount_type_percentage? ? 100 : nil, step: 0.01, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <div class="input-group-text input-text-right"><%= @promotion.discount_type_percentage? ? "%" : "$" %></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :operation %>
+        <%= form.select(:operation, [[t('.operations.over'), "over"], [t('.operations.higher'), "higher"], [t('.operations.addition'), "addition"]], { include_blank: t('select', article: t('articles.famale.a'), item: t('option')) }, class: "form-control", required: true) %>
+      </div>
+    </div>
+
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t('.affective_date') %></legend>
+
+    <div class="row">
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :start_date %>
+        <%= form.date_field :start_date, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :end_date %>
+        <%= form.date_field :end_date, class: "form-control" %>
+        <small class="form-text text-muted"><%= t('.blank_for_unlimit') %></small>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t('.unit_type') %></legend>
+
+    <div class="row">
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :min_area %>
+        <div class="input-group">
+          <%= form.number_field :min_area, min: 0, step: 0.01, class: "form-control text-right", required: true %>
+          <div class="input-group-append">
+            <span class="input-group-text">m&sup2;</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :max_area %>
+        <div class="input-group">
+          <%= form.number_field :max_area, min: 1, step: 0.01, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text">m&sup2;</span>
+          </div>
+        </div>
+        <small class="form-text text-muted"><%= t('.blank_for_unlimit') %></small>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t('.deadlines') %></legend>
+    <div class="row">
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :term_min %>
+        <div class="input-group">
+          <%= form.number_field :term_min, min: 1, step: 1, class: "form-control text-right", required: true %>
+          <div class="input-group-append">
+            <span class="input-group-text"><%= t('.monthly_payments') %></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :term_max %>
+        <div class="input-group">
+          <%= form.number_field :term_max, min: 0, step: 1, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text"><%= t('.monthly_payments') %></span>
+          </div>
+        </div>
+        <small class="form-text text-muted"><%= t('.blank_for_unlimit') %></small>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :downpayment_min, "Límite menor del plazo de enganche" %>
+        <div class="input-group">
+          <%= form.number_field :downpayment_min, min: 0, step: 1, class: "form-control text-right", required: true %>
+          <div class="input-group-append">
+            <span class="input-group-text"><%= t('.monthly_payments') %></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :downpayment_max %>
+        <div class="input-group">
+          <%= form.number_field :downpayment_max, min: 1, step: 1, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text"><%= t('.monthly_payments') %></span>
+          </div>
+        </div>
+        <small class="form-text text-muted"><%= t('.blank_for_unlimit') %></small>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :zero_rate_extra %>
+        <div class="input-group">
+          <%= form.number_field :zero_rate_extra, min: 0, step: 1, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text"><%= t('.monthly_payments') %></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t('.downpayment') %></legend>
+    <div class="row">
+
+      <div class="form-group col-12 col-md-5">
+        <%= form.label :downpayment_amount %>
+        <div class="input-group">
+          <%= form.number_field :downpayment_amount, min: 0,  max: @promotion.downpayment_type_percentage? ? 100 : nil, step: 0.01, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <div class="input-group-text input-text-right"><%= @promotion.downpayment_type_percentage? ? "%" : "$" %></div>
+          </div>
+        </div>
+        <small class="form-text text-muted"><%= t('.blank_to_unconsider') %></small>
+      </div>
+
+      <div class="form-group col-12 col-md-5">
+        <%= form.label :downpayment_type %>
+        <%= form.select(:downpayment_type, [[t('.downpayment_types.amount'), "amount"], [t('.downpayment_types.percentage'), "percentage"]], class: "form-control") %>
+      </div>
+
+      <div class="form-group col-12 col-md-2 text-center">
+        <%= form.label :downpayment_editable %>
+        <div>
+          <%= form.check_box :downpayment_editable,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: t('yes_'),
+                                 off: t('not_')
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-5">
+        <%= form.label :max_days_for_first_payment %>
+        <div class="input-group">
+          <%= form.number_field :max_days_for_first_payment, min: 1, step: 1, class: "form-control text-right", disabled: true %>
+          <div class="input-group-append">
+            <span class="input-group-text"><%= t('.days') %></span>
+          </div>
+        </div>
+        <small class="form-text text-muted"><%= t('.blank_to_unconsider') %></small>
+      </div>
+
+      <div class="form-group col-12 col-md-5">
+        <%= form.label :start_installments %>
+        <div class="vertical-align">
+          <div class="input-group">
+            <%= form.number_field :start_installments, value: @promotion.start_installments, min: 1, required: true, class: "form-control", disabled: @promotion.start_installments.nil? %>
+            <div class="input-group-append">
+              <div class="input-group-text input-text-right"><%= t('.months') %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-2 text-center">
+        <%= form.label :down_payment_differ %>
+        <%= check_box_tag "down_payment_differ", @promotion.start_installments, @promotion.start_installments,
+                          data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: t('yes_'),
+                              off: t('not_'),
+                          } %>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t('.advance') %></legend>
+    <div class="row">
+      <div class="form-group col-12 col-md-5">
+        <%= form.label :initialpayment_amount %>
+        <div class="input-group">
+          <%= form.number_field :initialpayment_amount, min: 0, max: @promotion.initialpayment_type_percentage? ? 100 : nil, step: 0.01, class: "form-control text-right" %>
+          <div class="input-group-append" id="initial_payment_sign">
+            <div class="input-group-text input-text-right"><%= @promotion.initialpayment_type_percentage? ? "%" : "$" %></div>
+          </div>
+        </div>
+        <small class="form-text text-muted"><%= t('.blank_to_unconsider') %></small>
+      </div>
+
+      <div class="form-group col-12 col-md-5">
+        <%= form.label :initialpayment_type %>
+        <%= form.select(:initialpayment_type, [[t('.initialpayment_types.amount'), "amount"], [t('.initialpayment_types.percentage'), "percentage"]], class: "form-control") %>
+      </div>
+
+      <div class="form-group col-12 col-md-2 text-center">
+        <%= form.label :initialpayment_editable %>
+        <div>
+          <%= form.check_box :initialpayment_editable,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: t('yes_'),
+                                 off: t('not_')
+                             } %>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <div class="actions py-3">
+    <%= link_to t('buttons.cancel'), promotions_path, class: "btn btn-secondary" %>
+    <%= form.submit t('buttons.save'), class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-binnacle" v-pre="">
+  <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-binnacle" aria-expanded="false" aria-controls="collapse-binnacle">
+    <p class="text-left vertical-align m-0 py-3 color-primary"><%= t('.binnacle') %></p>
+  </div>
+  <div class="collapse" id="collapse-binnacle" data-parent="#accordion-binnacle">
+    <div class="widget-body">
+      <div class="mt">
+        <div class="width-200 float-right">
+        </div>
+        <% if @promotion.versions.empty? %>
+          <p class="pb-3 m-0"><%= t('.not_records_binnacle') %></p>
+        <% end %>
+        <div class="log-container">
+          <% if @promotion.versions.any? %>
+            <h5><%= t('.expedient') %></h5>
+            <% @promotion.versions.each do |log| %>
+              <div class="py-2">
+                <div class="text-center pb-2">
+                  <%= sanitize( t('.attribute_log', user: log.actor.kind_of?(User) ? log.actor.label : t('.server'), date: log.created_at.strftime("%d/%m/%Y"), hour: log.created_at.strftime("%I:%M%p") ) ) %>
+                </div>
+                <div class="table-container-without-height">
+                  <table class="table table-bordered background-white">
+                    <thead>
+                      <tr>
+                        <th width="20%"><%= t('.binnacle_table.field') %></th>
+                        <th width="40%"><%= t('.binnacle_table.old_value') %></th>
+                        <th width="40%"><%= t('.binnacle_table.new_value') %></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% log.changeset.each do |key, values| %>
+                        <tr>
+                          <td><%= Promotion.human_attribute_name(key) %></td>
+
+                          <% if key == "operation" %>
+                            <% old_value = t(".operations.#{values[0]}") if values[0].present? %>
+                            <% new_value = t(".operations.#{values[1]}") if values[1].present? %>
+                          <% elsif key == "downpayment_type" %>
+                            <% old_value = t(".downpayment_types.#{values[0]}") if values[0].present? %>
+                            <% new_value = t(".downpayment_types.#{values[1]}") if values[1].present? %>
+                          <% elsif key == "initialpayment_type" %>
+                            <% old_value = t(".initialpayment_types.#{values[0]}") if values[0].present? %>
+                            <% new_value = t(".initialpayment_types.#{values[1]}") if values[1].present? %>
+                          <% elsif [true, false].include?(values[0]) && [true, false].include?(values[1]) %>
+                            <% old_value = values[0] ? t('on_') : t('off_') %>
+                            <% new_value = values[1] ? t('on_') : t('off_') %>
+                          <% else %>
+                            <% old_value = values[0] %>
+                            <% new_value = values[1] %>
+                          <% end %>
+
+                          <td>
+                            <% if values[0].present? %>
+                              <%= old_value %>
+                            <% else %>
+                              <i><%= t('not_value') %></i>
+                            <% end %>
+                          </td>
+                          <td>
+                            <% if values[1].present? || !values[1].nil? %>
+                              <%= new_value %>
+                            <% else %>
+                              <i><%= t('not_value') %></i>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

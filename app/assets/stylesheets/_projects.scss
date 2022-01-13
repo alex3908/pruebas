@@ -1,0 +1,136 @@
+.project-name {
+  color: #919191;
+  border: 0;
+
+  @media (max-width: 600px) {
+    font-size: 10vw;
+    width: 100%;
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.ol-projects {
+  background-color: transparent;
+  margin: 0;
+}
+
+.logo-title {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  border-radius: 15%;
+  margin-right: 15px;
+}
+
+@media (max-width: 600px) {
+  .project-logo-container {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.button-back,
+.button-contract,
+.button-delete,
+.button-edit,
+.toggle.btn.button-activate,
+.toggle.btn.button-deactivate {
+  background-repeat: no-repeat;
+  background-position-y: center;
+  background-size: 20px;
+  background-position-x: 15px;
+}
+
+.button-back {
+  padding-left: 45px;
+  background-image: image-url('icons/back_white.png');
+}
+
+.button-contract {
+  padding-left: 45px;
+  background-position-x: 17px;
+  background-image: image-url('icons/contract_white.png');
+  background-size: 16px;
+}
+
+.button-delete {
+  padding-left: 45px;
+  background-image: image-url('icons/delete_white.png');
+}
+
+.button-edit {
+  padding-left: 45px;
+  background-image: image-url('icons/edit_white.png');
+}
+
+.button-logo-edit {
+  padding-left: 45px;
+  background-repeat: no-repeat;
+  background-position-x: 15px;
+  background-position-y: center;
+  background-image: image-url('icons/edit_gray.png');
+  background-size: 17px;
+}
+
+.button-logo-delete {
+  padding-left: 45px;
+  background-repeat: no-repeat;
+  background-position-x: 15px;
+  background-position-y: center;
+  background-image: image-url('icons/delete_gray.png');
+  background-size: 15px;
+}
+
+.section-buttons {
+  border-bottom: 2px solid rgba(99, 101, 106, 0.11);
+  padding-bottom: 38px;
+}
+
+section h3 {
+  font-size: 1rem;
+  text-align: left;
+}
+
+.marker-bar-green,
+.marker-bar-gray {
+  height: 1px;
+  margin: 0;
+}
+
+.marker-bar-green {
+  background-color: $primary;
+}
+
+.marker-bar-gray {
+  background-color: $secondary;
+}
+
+.color-container {
+  height: 15px;
+  width: 15px;
+  margin: 3px;
+  margin-right: 15px;
+}
+@include media-breakpoint-down(xl) {
+  .button-activate {
+    background-position-x: 25px;
+  }
+}
+@include media-breakpoint-down(md) {
+  .project-name {
+    text-align: center;
+  }
+}
+
+.logo-index {
+  border: 1px solid black;
+  border-radius: 15%;
+}
+
+.chepina-image {
+  width: 50px;
+  height: auto;
+}

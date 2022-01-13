@@ -1,0 +1,64 @@
+<div class="d-flex flex-wrap justify-content-between pt-3">
+  <h3 class="text-left vertical-align m-0 py-3">Listado de <%= @phase_plural %></h3>
+  <div class="clearfix py-2">
+    <% if can?(:create, Phase) %>
+      <%= link_to "Nueva #{@phase_singular}", new_project_phase_path(@project), class: "btn btn-primary float-right" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col-4 pr-0">
+    <hr class="marker-bar-green">
+  </div>
+  <div class="col-8 pl-0">
+    <hr class="marker-bar-gray">
+  </div>
+</div>
+
+<% if @phases.count == 0 %>
+  <div class="py-5">
+    <p class="text-center h5 leyend mb-5">
+      No se ha encontrado <%= @stage_plural %> en este <%= @project_singular %>.
+      <% if can?(:create, Stage) %>
+        <br> Puedes crear una.
+      <% end %>
+    </p>
+    <% if can?(:create, Stage) %>
+      <div class="text-center mt-3">
+        <%= link_to "Nueva #{@phase_singular}", new_project_phase_path(@project), class: "btn btn-primary jumping" %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="table-container-without-height">
+    <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+      <thead>
+      <tr>
+        <th>Nombre</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody class="<%= "sortable" if can?(:sort, Phase) %>">
+        <% @phases.each_with_sortable_id do |phase, sortable_id| %>
+          <tr id="<%= sortable_id if can?(:sort, Phase) %>">
+            <td class="align-middle">
+              <% if can?(:sort, Phase) %>
+                <i class="fa fa-bars mr-2 text-secondary" aria-hidden="true"></i>
+              <% end %>
+              <b><%= phase.name %></b>
+            </td>
+            <td class="text-right align-middle">
+            <% if can?(:update, Phase) %>
+              <%= link_to "Editar", edit_project_phase_path(@project, phase), class: "btn btn-outline-primary" %>
+            <% end %>
+            <% if can?(:read, Stage) %>
+              <%= link_to @stage_plural, project_phase_stages_path(@project, phase, client: params["client"]), class: "btn btn-outline-secondary text-capitalize" %>
+            <% end %>
+            </td>
+          </tr>
+        <% end %>
+    </table>
+  </div>
+<% end %>

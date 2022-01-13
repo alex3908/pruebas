@@ -1,0 +1,43 @@
+<style>
+    h1, p {
+      text-align: center;
+      color: #63656a;
+    }
+    h1{
+      font-size: 18px;
+      border-bottom: 1px solid transparent;
+    }
+    p{
+      font-size: 12px;
+    }
+    .error-image img{
+      width: 70%;
+      height: auto;
+      position: relative;
+      transform: translate(-50%,-50%);
+      top: 50%;
+      left: 50%;
+    }
+    .error-message div{
+      position: relative;
+      transform: translate(-50%,-50%);
+      top: 50%;
+      left: 50%;
+      width: 90%;
+    }
+
+</style>
+<div class="container">
+  <div class="row">
+      <div class="error-image col-sm-12 col-md-6">
+        <%= image_tag("404.png", class: "p-3 img-fluid") %>
+      </div>
+      <div class="error-message col-sm-12 col-md-6">
+        <div>
+          <h1>¡Oops!</h1>
+          <p>Al parecer ha ocurrido un error, la página no se encuentra disponible o muy probablemente que el enlace esté roto.</p>
+          <p>Te sugerimos intentar nuevamente más tarde y/o revisar tu conexión de Internet. Si eso no funciona verifica que el URL que escribiste o al que intentas acceder sea el correcto.</p>
+        </div>
+      </div>
+  </div>
+</div>

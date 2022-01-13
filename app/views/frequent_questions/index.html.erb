@@ -1,0 +1,93 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Preguntas Frecuentes</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+
+      <% if can?(:create, FrequentQuestion) %>
+
+        <%= link_to "Nueva Pregunta Frecuente", new_frequent_question_path, class: "btn btn-primary" %>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<% if @frequent_questions.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ninguna pregunta frecuente
+        <% if can?(:create, FrequentQuestion) %>
+          <br> Comienza generando una nueva pregunta.
+        <% end %>
+      </p>
+      <% if can?(:create, FrequentQuestion) %>
+        <div class="text-center mt-3">
+          <%= link_to "Nueva Pregunta", new_frequent_question_path, class: "btn btn-primary jumping" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Titulo</th>
+          <th>Contenido</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @frequent_questions.each do |frequent_question| %>
+          <tr>
+            <td class="align-middle"><%= frequent_question.title.truncate(40) %></td>
+            <td class="align-middle"><%= frequent_question.content.truncate(60) %></td>
+            <td class="text-right">
+              <%= link_to frequent_question_path(frequent_question), class: "table-link" do %>
+                <i class="fa fa-eye"></i>
+              <% end %>
+              <% if can?(:edit, FrequentQuestion) %>
+                <%= link_to edit_frequent_question_path(frequent_question), class: "table-link" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:destroy, FrequentQuestion) %>
+                <%= link_to frequent_question, method: :delete, data: { confirm: "\u00BFEst\u00E1s seguro de eliminar este rol?" }, class: "table-link" do %>
+                  <i class="fa fa-trash"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:change_status, FrequentQuestion) %>
+                <%= check_box_tag "complete", frequent_question.released?, frequent_question.released?,
+                  data: {
+                    activate: "toggle",
+                    onstyle: "success",
+                    offstyle: "secondary",
+                    on: "Publicada",
+                    off: "Oculta",
+                    remote: true,
+                    url: change_status_frequent_question_path(frequent_question), method: :patch
+                  } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@frequent_questions, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

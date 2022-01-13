@@ -1,0 +1,35 @@
+<%= form_with(model: frequent_question, local: true, class: "needs-validation") do |form| %>
+  <% if frequent_question.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(frequent_question.errors.count, "error") %> prohibited this frequent_question from being saved:</h2>
+
+      <ul>
+      <% frequent_question.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :title, "Titulo de la pregunta*" %>
+      <%= form.text_field :title, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :link, "Link informativo" %>
+      <%= form.text_field :link, class: "form-control", required: false %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :content, "Contenido*" %>
+      <%= form.text_area :content, class: "form-control", required: true %>
+    </div>
+  </div>
+
+  <div class="actions pt-3">
+    <%= link_to "Cancelar", frequent_questions_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+
+<% end %>

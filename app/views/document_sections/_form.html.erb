@@ -1,0 +1,13 @@
+<%= form_with(model: @document_section, local: true) do |form| %>
+  <div class="row">
+    <div class="form-group col-sm-12">
+      <%= form.label :name, "Nombre" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+  </div>
+
+  <div class="actions pt-3">
+    <%= link_to "Cancelar", document_sections_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

@@ -1,0 +1,150 @@
+<%# TODO: Remove static boolean values when the user wants to activate validation of payment due %>
+<% if @next.present? && (!@overdue || true) %>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="text-center">
+          <%= link_to image_tag("brands/orve-logo-black-green.png", class: "img-fluid w-25"), @home_page, class: "header-image", target: "_blank" %>
+        </div>
+        <div class="d-flex flex-wrap justify-content-between">
+          <h5 class="text-left vertical-align m-0 py-3">Pagos</h5>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-green">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-gray">
+          </div>
+        </div>
+
+        <div>
+          <p class="text-justify">
+            <% if @next[:concept] == Installment::CONCEPT[:FINANCING] %>
+              <% concept_message = "Cargo de mensualidad (#{@next[:number]})" %>
+            <% elsif @next[:concept] == Installment::CONCEPT[:INITIAL_PAYMENT] %>
+              <% concept_message = "Pago de apartado" %>
+            <% elsif @next[:concept] == Installment::CONCEPT[:DOWN_PAYMENT] %>
+              <% concept_message = "Cargo del enganche (#{@next[:number]})" %>
+            <% end %>
+            <%= concept_message %> del <b><%= @lot_singular %> <%= @lot[:name] %></b> de la
+            <span class="text-lowercase"><%= @stage_singular %></span> <b><%= @stage[:name] %></b>
+            de la <span class="text-lowercase"><%= @phase_singular %></span> <b><%= @phase[:name] %></b> del
+            <span class="text-lowercase"><%= @project_singular %></span> <b><%= @project[:name] %></b>
+          </p>
+        </div>
+
+        <div class="py-3 text-justify">
+          “Estimado cliente, le recordamos que es muy importante, por temas fiscales y para su próxima escrituración,
+          realizar su pago desde su cuenta. Así evitaremos algún retraso en el proceso de su escritura definitiva“
+        </div>
+
+        <label class="font-weight-bold">Consultar estado de cuenta:</label>
+        <div class="ml-5 d-flex justify-content-leftr">
+          <%= link_to "Enviar por correo electrónico", mail_account_status_folder_installments_path(@folder), class: "pl-2", remote: true %>
+        </div>
+
+        <% if @coowners.length > 1 %>
+          <%= form_with(method: "GET", local: true) do |form| %>
+            <div class="form-group col-md-12 col-lg-12 mb-3">
+              <%= form.label :coowner, "Seleccionar cliente:" %>
+              <%= form.select :coowner, @coowners.map { |coowner| [encrypt_string(coowner.name), coowner.id] }, { selected: params["coowner"] }, { class: "form-control" } %>
+            </div>
+
+            <div class="actions col-md-12 pt-3">
+              <%= form.submit "Seleccionar", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        <% end %>
+
+        <div class="text-center pt-2">
+          Total: <b><%= number_to_currency(@next[:residue].round(2)) %></b>
+        </div>
+      </div>
+
+      <div class="col-md-6 text-center">
+        <%= form_with(method: "POST", data: { remote: true }, url: create_online_payment_path(@reference, coowner: @client), id: "card-form", multipart: true) do |form| %>
+          <%= hidden_field_tag :folder, @reference %>
+
+          <% if @online_payment_service.environment == "test" %>
+            <h5>Modo de prueba</h5>
+            <span class="mr-2">
+              <%= form.label :test_email, "aprobar" %>
+              <%= form.radio_button :test_email, "accept", checked: true %>
+            </span>
+
+            <span class="mr-2">
+              <%= form.label :test_email, "review 3ds" %>
+              <%= form.radio_button :test_email, "review" %>
+            </span>
+
+            <span class="mr-2">
+              <%= form.label :test_email, "rechazar" %>
+              <%= form.radio_button :test_email, "reject" %>
+            </span>
+          <% end %>
+        <% end %>
+
+        <% if @confirmation.present? %>
+          <div class="text-center d-flex align-items-center justify-content-center">
+            <div class="w-50">
+              <%= link_to image_tag("brands/orve-logo-black-green.png", class: "img-fluid w-50"), @home_page, class: "header-image", target: "_blank" %>
+              <h5 class="m-0 py-3">Procesando pago.</h5>
+              <div class="text-center">Tu pago está siendo procesado. Si no eres redirigido automáticamente, actualiza la
+                página.
+              </div>
+            </div>
+            <% content_for(:start_payload) do %>
+              <%= render partial: "confirm.js.erb", locals: { confirmation: @confirmation } %>
+            <% end %>
+          </div>
+        <% elsif @missing_fields&.empty? || @missing_fields.nil? %>
+          <div id="netpay-form"></div>
+        <% else %>
+          <% content_for(:disable_netpay_button, true) %>
+          <div class="mt-5 p-5 text-danger">
+            <label class="font-weight-bold">Falta información del cliente.</label>
+            Comuníquese con su asesor para completar la siguiente información:
+            <div class="ml-5">
+              <ul>
+                <% @missing_fields.each do |field| %>
+                  <li><%= field %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% elsif @overdue && false %>
+  <div class="container">
+    <div class="text-center d-flex align-items-center justify-content-center">
+      <div class="w-50">
+        <%= link_to image_tag("brands/orve-logo-black-green.png", class: "img-fluid w-50"), @home_page, class: "header-image", target: "_blank" %>
+        <h5 class="m-0 py-3">Saldo vencido</h5>
+        <div class="text-center">Estimado cliente tienes un saldo vencido y por lo cual no podrás pagar por este medio.
+          Acude directamente a nuestras sucursales para realizar tu pago.
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="text-center d-flex align-items-center justify-content-center">
+      <div class="w-50">
+        <%= link_to image_tag("brands/orve-logo-black-green.png", class: "img-fluid w-50"), @home_page, class: "header-image", target: "_blank" %>
+        <h5 class="m-0 py-3">Sin pagos pendientes</h5>
+        <div class="text-center">Si tienes alguna aclaración acude directamente a nuestras sucursales.</div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="container">
+  <p class="mt-5 mb-3 color-primary text-center">
+    <span class="color-gray"><%= t("app.auth.copy", brand: @full_company_name) %></span> |
+    <a href=<%= @privacy_policy %>><%= t("app.auth.privacy_policy") %></a>
+  </p>
+</div>

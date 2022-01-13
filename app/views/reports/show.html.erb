@@ -1,0 +1,348 @@
+<div class="container">
+  <div class="row pb-5">
+    <div class="d-flex align-content-center flex-wrap col-sm-12 col-md-6">
+      <h2 class="project-name vertical-align m-0 p-0">Reportes</h2>
+    </div>
+    <div class="col-sm-12 col-md-6 d-flex flex-middle-right flex-wrap">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row mb-3">
+    <% if can?(:commissions, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to commissions_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-plus fa-2x pr-4 pb-2"></i>
+                <i class="fa fa-usd fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Comisiones</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:folder_users, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to folder_users_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-user-circle fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Responsables</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:payments, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to payments_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-credit-card fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Pagos</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:overdue_balances, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to overdue_balances_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-money fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Cartera Vencida</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:balances_close_to_due, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to balances_close_to_due_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-circle-o-notch fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Cartera por Vencer</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:step, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to step_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-th-list fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Pipeline</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:future_cash_flow, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to future_cash_flow_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-area-chart fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Flujo de Caja Proyectado</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:file_approvals, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to file_approvals_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-file fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Verificaciones</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:delays, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to delays_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-forward fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Prórrogas</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:additional_concept_payments, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to additional_concept_payments_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-list-alt fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Pagos de servicios adicionales</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:commision_dispersion, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to commision_dispersion_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-bar-chart fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Dispersión de comisiones</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:online_payment_tickets, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to online_payment_tickets_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-ticket fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Tickets de pago</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:units, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to units_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-bar-chart fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Unidades</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:folders, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to folders_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-folder fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Expedientes</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:users_kpi, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to users_kpi_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-folder fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">KPI</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:folders, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to sales_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-folder fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Reporte de ventas realizadas</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:quote_logs, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to quote_logs_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-bookmark fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Cotizaciones</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:clients, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to clients_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-user fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Clientes</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:users, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to users_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-user fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Usuarios</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:referred_clients, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to referred_clients_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa fa-users fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Clientes referidos</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:referred_users, :report) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to referred_users_reports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa fa-users fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Usuarios referidos</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if false %>
+    <div class="mt-5 row">
+      <h1 class="pl-5">Ventas en los últimos 3 meses</h1>
+      <div class="col-md-6 offset-md-3">
+        <%= column_chart @sales_chart_data,
+          colors: [["#003f5c", "#bc5", "#ffa"]],
+          prefix: "$",
+          suffix: " MXN",
+          thousands: ",",
+          decimal: ".",
+          round: 2,
+          zeros: true %>
+      </div>
+    </div>
+  <% end %>
+</div>

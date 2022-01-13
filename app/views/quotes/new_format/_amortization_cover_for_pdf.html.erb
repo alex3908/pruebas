@@ -1,0 +1,320 @@
+<div class="pdf-new-bg">
+  <% unless valid_for_folder %>
+    <div class="position-relative">
+      <div class="water-mark">
+        <h1>NO VÁLIDO PARA EXPEDIENTE.</h1>
+      </div>
+    </div>
+  <% end %>
+  <div class="complementary-header float-right">
+    <table style="width:100%">
+      <tr>
+        <td>
+          <h1 class="no-letter-spacing text-bold"><%= name %></h1>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="bg-date m-0 pt-2 pb-1">
+            <p class="text-bold">Fecha: <%= date %></p>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="bg-date m-0 pt-2 pb-1">
+            <p class="text-bold">Plazo: <%= total_payments == 1 ? "Contado" : "#{total_payments} meses" %></p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="conditions-container">
+    <table id="conditions-info" class="text-nowrap">
+      <% if clients.present? %>
+        <% clients.each_with_index do |client, index| %>
+          <tr>
+            <th>
+              Cliente<%= " #{related_index.present? ? related_index + 1 : index + 1}" if clients_count > 1 %>:
+            </th>
+            <td>
+              <%= client.label %> (<%= client.email %>)
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+      <% if user_name.present? && user_email.present? %>
+        <tr>
+          <th>
+            Asesor:
+          </th>
+          <td>
+            <%= user_name %> (<%= user_email %>)
+          </td>
+        </tr>
+      <% end %>
+
+      <% if representative_name.present? && representative_email.present? %>
+        <tr>
+          <th>
+            Representante legal:
+          </th>
+          <td>
+            <%= representative_name %> (<%= representative_email %>)
+          </td>
+        </tr>
+      <% end %>
+
+    </table>
+    <table class="mt-3 mb-3" style="width:100%">
+      <tr>
+        <th>
+          <div class="bg-date text-center m-0 pt-2 pb-1">
+            <p class="text-bold"><span class='text-uppercase'><%= project_name %></span></p>
+          </div>
+        </th>
+      </tr>
+    </table>
+    <div class="margin-20" align=center>
+      <table class="table-infor new_format">
+        <colgroup>
+          <col span="1" class="table-left-column new_format">
+          <col>
+        </colgroup>
+        <% if folio.present? %>
+          <tr>
+            <td>Folio</td>
+            <td><%= folio %></td>
+          </tr>
+        <% end %>
+        <tr>
+          <td>Número de <%= lot_singular %></td>
+          <td><%= stage_name %> / <%= lot_singular %> <%= lot_name %></td>
+        </tr>
+        <tr>
+          <td>Superficie en m<sup>2</sup></td>
+          <td><%= "%.2f" % lot_area %> m<sup>2</sup></td>
+        </tr>
+        <% if show_price %>
+          <tr>
+            <td>Precio m<sup>2</sup></td>
+            <td><%= number_to_currency(total_with_discount / lot_area) %></td>
+          </tr>
+        <% end %>
+        <tr>
+          <td>Precio de lista</td>
+          <td><%= number_to_currency(price) %></td>
+        </tr>
+        <% if price != total_with_discount %>
+          <tr>
+            <td>Descuento</td>
+            <td><%= total_discount %> %</td>
+          </tr>
+          <tr>
+            <td>Total del <%= lot_singular %></td>
+            <td><%= number_to_currency(total_with_discount) %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+    <table class="mt-3 mb-3 w-100">
+      <tr>
+        <th>
+          <div class="bg-date text-center m-0 pt-2 pb-1">
+            <p class="text-bold">ENGANCHE</p>
+          </div>
+        </th>
+      </tr>
+    </table>
+    <div class="margin-20 mt-0" align=center>
+      <table class="table-infor new_format text-center">
+        <colgroup>
+          <col span="1" class="table-left-column new_format">
+          <col>
+        </colgroup>
+        <% if initial_payment > 0 %>
+          <tr>
+            <td>Apartado</td>
+            <td><%= number_to_currency(initial_payment - complement_payment) %></td>
+          </tr>
+        <% end %>
+        <% if complement_payment > 0 %>
+          <tr>
+            <td>Complemento de Apartado</td>
+            <td><%= number_to_currency(complement_payment) %></td>
+          </tr>
+        <% end %>
+        <% if initial_payment > 0 %>
+          <tr>
+            <td>Saldo enganche</td>
+            <td><%= number_to_currency(down_payment_to_differ) %></td>
+          </tr>
+        <% end %>
+        <tr>
+          <td>Total de engache a pagar</td>
+          <td><%= number_to_currency(down_payment) %></td>
+        </tr>
+        <% if down_payment_finance > 1 %>
+          <tr>
+            <td>Mensualidad enganche</td>
+            <td>
+              <b><%= number_to_currency(down_payment_monthly_payments) %></b>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+    <hr class="outer-separator new_format mt-3 p-0">
+    <div align=center>
+      <table class="table-infor new_format m-0">
+        <colgroup>
+          <col span="1" class="table-left-column new_format">
+          <col>
+        </colgroup>
+        <tr>
+          <td scope="col">Porcentaje</td>
+          <td><%= down_payment_percentage %> %</td>
+        </tr>
+        <% if show_payment_dates %>
+        <tr>
+          <td>1er pago de Enganche</td>
+          <td>
+            <b><%= first_down_payment %></b>
+          </td>
+        </tr>
+        <% end %>
+      </table>
+    </div>
+    <hr class="outer-separator new_format mt-3 p-0">
+    <div align=center>
+      <table style="width:100%;">
+        <tr>
+          <td>
+            <table class="table-infor new_format m-0">
+              <colgroup>
+                <col span="1" class="table-left-column new_format">
+                <col>
+              </colgroup>
+              <tr>
+                <td scope="col">Total <%= lot_singular %></td>
+                <td><%= number_to_currency(total_with_discount) %></td>
+              </tr>
+              <% if show_payment_dates %>
+              <tr>
+                <td>1era mensualidad</td>
+                <td><%= first_finance %></td>
+              </tr>
+              <% end %>
+            </table>
+          </td>
+          <td>
+            <table class="table-infor new_format columns-3 m-0" align="right">
+              <colgroup>
+                <col span="1" class="table-left-column new_format">
+              </colgroup>
+              <tr>
+                <td></td>
+                <td>Monto</td>
+                <td>Pagos</td>
+                <% if show_rate %>
+                  <td>Tasa</td>
+                <% end %>
+              </tr>
+              <% down_payments.select {|payment| !payment[:total_payments].zero? }.each do |payment| %>
+                <tr>
+                  <td><%= payment[:concept] %></td>
+                  <td><%= number_to_currency(payment[:payment]) %></td>
+                  <td><%= payment[:total_payments] %></td>
+                  <% if show_rate %>
+                    <td></td>
+                  <% end %>
+                </tr>
+              <% end %>
+
+              <% unless has_custom_installments %>
+                <% interest_payments.each do |payment| %>
+                  <tr>
+                    <td><%= payment[:interest] %></td>
+                    <td><%= number_to_currency(payment[:amount]) %></td>
+                    <td><%= payment[:payments] %></td>
+                    <% if show_rate %>
+                      <td><%= "%.2f" % (payment[:rate] * 100) %>%</td>
+                    <% end %>
+                  </tr>
+                <% end %>
+              <% end %>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <% if @project.show_bank_account %>
+    <table class="mt-3 mb-3 w-100">
+      <tr>
+        <th>
+          <div class="bg-date text-center m-0 pt-2 pb-1">
+            <p class="text-bold">DATOS BANCARIOS</p>
+          </div>
+        </th>
+      </tr>
+    </table>
+    <div>
+      <% if !stp_clabe.blank? %>
+        <table class="text-center table-infor new_format w-100">
+          <colgroup>
+            <col class="table-left-column new_format">
+          </colgroup>
+          <thead>
+          <tr>
+            <th class="w-25">Banco</th>
+            <th class="w-25">Titular</th>
+            <th class="w-25">CLABE</th>
+          </tr>
+          </thead>
+          <tr>
+            <td class="w-25">STP</td>
+            <td class="w-25"><%= enterprise_name %></td>
+            <td class="w-25"><%= stp_clabe %></td>
+          </tr>
+        </table>
+      <% elsif bank_accounts != [] %>
+        <table class="text-center table-infor new_format w-100">
+          <colgroup>
+            <col class="table-left-column new_format">
+          </colgroup>
+          <thead>
+          <tr>
+            <th class="w-25">Banco</th>
+            <th class="w-25">Titular</th>
+            <th class="w-25">Número de cuenta</th>
+            <th class="w-25">CLABE</th>
+          </tr>
+          </thead>
+          <% bank_accounts.each do |bank_account| %>
+            <tr>
+              <td class="w-25"><%= bank_account.bank %></td>
+              <td class="w-25"><%= bank_account.holder %></td>
+              <td class="w-25"><%= bank_account.account_number %></td>
+              <td class="w-25"><%= bank_account.clabe %></td>
+            </tr>
+          <% end %>
+        </table>
+      <% end %>
+      <% if with_signature %>
+        <div style="width:33%;margin-left:34%;margin-top:50px;">
+          <div class="secondary-bar-sign new_format">
+            <p>Firma de conformidad.</p>
+          </div>
+        </div>
+      <% end %>
+      <% if observations&.html_safe.present? %>
+        <p class="footer-text">
+          <span class="header_title new_format">Observaciones:</span><br>
+          <%= observations.html_safe %>
+        </p>
+      <% end %>
+    </div>
+    <% end %>
+  </div>
+
+</div>

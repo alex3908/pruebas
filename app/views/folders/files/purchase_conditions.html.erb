@@ -1,0 +1,15 @@
+<% @folder.clients.each do |client| %>
+  <%= render partial: "folders/files/partials/purchase_conditions_client", locals: {
+    client: client,
+    original: true,
+    with_signature: @with_signature
+  } %>
+  <% if @with_copy %>
+    <%= render partial: "folders/files/partials/purchase_conditions_client", locals: {
+      client: client,
+      original: false,
+      with_signature: @with_signature
+    } %>
+  <% end %>
+
+<% end %>

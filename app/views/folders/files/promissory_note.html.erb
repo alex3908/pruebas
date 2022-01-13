@@ -1,0 +1,77 @@
+<div class="text-justify arial promissory-note">
+  <p class="title-promissory-note">
+    P A G A R É
+  </p>
+  <p class="text-right">
+    <strong>Bueno por  <%= number_to_currency(@payment_total, significant: false) %></strong>
+  </p>
+  <p class="pb-1">
+    Por virtud del presente Pagaré, me obligo y prometo pagar incondicionalmente a la orden de
+    <strong><%= @folder.stage.enterprise.business_name %></strong>, en el domicilio del tenedor
+    ubicado en <%= @folder.stage.enterprise.address_label %>, la cantidad de
+    <strong> <%= number_to_currency(@payment_total) %></strong>
+    (<strong>Son: <%= number_to_currency_text(@payment_total) %></strong>). Suma que será cubierta
+    mediante <strong><%= @folder.payment_scheme.total_payments %>
+    <%= @folder.payment_scheme.total_payments == 1 ? "pago" : "pagos" %></strong>,
+    los cuales se realizarán de la siguiente manera:
+  </p>
+
+  <table width="100%" class="pb-3">
+    <tbody>
+    <% @amr.each do |payment_block| %>
+      <% payment_block.each do |payments| %>
+        <tr>
+          <% payments.each do |payment| %>
+            <td width="5%" class="text-center"><%= payment[:number] %></td>
+            <td width="30%"><%= "#{payment[:date].strftime("%d")} de #{translate_month_name(payment[:date].strftime("%B"))} de #{payment[:date].strftime("%Y")}" %></td>
+            <td width="15%" class="text-center"><%= number_to_currency(payment[:payment]) %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    <% end %>
+    </tbody>
+  </table>
+
+  <div class="no-break mt-3">
+    <div>
+      <p>
+        La suscriptora promete incondicionalmente pagar al acreedor, sin necesidad de previo
+        requerimiento o notificación alguna, los intereses ordinarios sobre la suma principal
+        insoluta durante cada periodo de pago, desde la fecha de suscripción del presente
+        Pagaré hasta la fecha de vencimiento correspondiente.
+      </p>
+      <p>
+        El presente pagaré se encuentra vinculado al contrato de fecha
+        <%= "#{@folder.calc_date.strftime("%d")} de #{translate_month_name(@folder.calc_date.strftime("%B"))} de #{@folder.calc_date.strftime("%Y")}" %>,
+        relativo al <%= @lot_singular %> <%= @folder.lot.name %> de la <%= @stage_singular %> <%= @folder.phase.name %> <%= @folder.stage.name %>.
+      </p>
+      <p>
+        Para todo lo relativo a la interpretación, cumplimiento o requerimiento
+        judicial de las obligaciones contenidas en este Pagaré, la suscriptora
+        se somete expresamente a las leyes aplicables de los Estados Unidos Mexicanos y,
+        a la jurisdicción de los tribunales competentes en la ciudad de Mérida, Yucatán,
+        renunciando a cualquier otra jurisdicción que pudiere corresponderles por razón
+        de sus domicilios presentes o futuros.
+      </p>
+      <p>
+        El presente Pagaré se suscribe el
+        <%= "#{@folder.calc_date.strftime("%d")} de #{translate_month_name(@folder.calc_date.strftime("%B"))} de #{@folder.calc_date.strftime("%Y")}" %>
+        en la ciudad de Mérida, Yucatán.
+      </p>
+    </div>
+    <div class="mt-4">
+      <div style="margin-left: 25%;width: 50%;margin-right: 25%;">
+        <div class="text-center pb-8">
+          Deudor
+        </div>
+        <div class="text-bold text-capitalize text-center" style="border-top: 1px solid black;">
+          <%= @folder.client.label.upcase %>
+        </div>
+        <div class="text-center">
+          <%= @folder.client.physical_client.address_label if @folder.client.person == "physical" && @folder.client.physical_client.present? %>
+          <%= @folder.client.moral_client.address_label if @folder.client.person == "moral" && @folder.client.moral_client.present? %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

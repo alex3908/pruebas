@@ -1,0 +1,97 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title">Cotizar</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to @stage_plural, project_phase_stages_path(@project, @phase, client: params["client"]), class: "text-capitalize" %>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Cotizar</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @stage.blueprint.present? %>
+
+  <div class="container">
+    <div class="text-center mb-3">
+    <% if can?(:quote, :quote) %>
+      <div>
+        <%= link_to_if(enable_stage_button_availibility?(@stage), "Disponibilidad", {controller: 'availability', action: 'lots', slug_project: @stage.project.slug, slug_phase: @stage.phase.slug, slug_stage:@stage.slug, vendedor: encode_base_64(current_user.id)}, class: "btn btn-secondary quotation-button-size text-center", target: "_blank" ) %>
+        <% if !enable_stage_button_availibility?(@stage) %> <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="<%= message_miss_stage_slug_for_url(@stage) %>"></i><% end %>
+      </div>
+    <% end %>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="lot">
+      <%= render("blueprints/blueprint_for_stage",
+      project: @project,
+      phase: @phase,
+      stage: @stage,
+      extras: @extras,
+      selected_lot: nil,
+      sale_map: can?(:reserve, :quote),
+      show_tooltip: true,
+      assignable: false,
+      link: true,
+      texts: false,
+      with_styles: false) %>
+    </div>
+  </div>
+<% else %>
+  <% if @lots.empty? %>
+    <div class="container">
+      No hay <%= @lot_plural %> creados para esta <span class="text-lowercase"><%= @stage_singular %></span>.
+    </div>
+  <% else %>
+    <div class="container">
+      <div class="table-container">
+        <table class="table tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+
+          <thead>
+          <tr>
+            <th><%= @lot_singular %></th>
+            <th>Área</th>
+            <th>Estado</th>
+            <th>Mapa Ilustrativo</th>
+            <th></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @lots.each do |lot| %>
+            <tr>
+              <td><%= lot.name %></td>
+              <td><%= lot.area %>m<sup>2</sup></td>
+              <td><%= lot.status_label_map %></td>
+              <td> <%= image_tag lot.chepina.attached? ? lot.chepina.variant(resize: "50x50") : "no-image.png", class: "chepina-image", alt: "" %></td>
+              <td>
+                <%= link_to("Cotizar", quote_project_phase_stage_lot_path(@project, @phase, @stage, lot, client: params[:client]), class: "btn btn-outline-primary mr-1 ml-1 float-right") if cannot?(:reserve, :quote) && can?(:quote, :quote) %>
+                <%= link_to("Venta", quote_project_phase_stage_lot_path(@project, @phase, @stage, lot, client: params[:client]), class: "btn btn-outline-primary mr-1 ml-1 float-right") if can?(:reserve, :quote) && can?(:quote, :quote) %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <%= will_paginate(@lots, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+
+      <div class="text-center mt-3">
+        <div class="w-25 d-inline-block">
+          Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                  onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

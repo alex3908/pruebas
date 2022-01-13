@@ -1,0 +1,45 @@
+<%= form_with(model: evaluation, local: true, url: evaluation) do |form| %>
+  <% if evaluation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(evaluation.errors.count, "error") %> errores encontrados:</h2>
+
+      <ul>
+        <% evaluation.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :question, "Pregunta" %>
+      <%= form.text_field :question, class: "form-control", required: true, disabled: evaluation.persisted? %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :question_type, "Tipo de Evaluación", class: "text-capitalize" %>
+        <%= form.select(:question_type, options_for_select([ ["Rechazo", "reject"], ["Aprobación", "approve"], ["Cancelación", "cancel"] ], @evaluation.question_type), { include_blank: "Selecciona un tipo de Evaluación" }, class: "form-control", required: true, disabled: evaluation.persisted?) %>
+    </div>
+  </div>
+
+  <% @steps.each do |step| %>
+    <%= form.hidden_field :step_ids, { multiple: true, value: "" } %>
+    <div class="row my-3">
+      <div class="col-3"><%= tag.strong(step.name) %></div>
+      <div class="col text-center">
+        <%= form.check_box :step_ids, { multiple: true, data: {
+          activate: "toggle",
+          onstyle: "success",
+          offstyle: "secondary",
+          on: "Activado",
+          off: "Desactivado"
+        } }, step.id, false %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="actions pt-3">
+    <%= link_to "Cancelar", evaluations_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

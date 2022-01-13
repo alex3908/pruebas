@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="row">
+
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Privadas con <%= @credit_scheme.name %></h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", credit_schemes_path, class: "btn btn-secondary float-right mr-2" %>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="py-5">
+    <ul class="list-group text-center">
+      <% @credit_scheme.stages.each do |stage| %>
+        <%= tag.li stage.full_path(" - "), class: "list-group-item" unless can?(:update, Stage) %>
+        <%= link_to stage.full_path(" - "), edit_project_phase_stage_path(stage.phase.project, stage.phase, stage), class: "list-group-item list-group-item-action" if can?(:update, Stage) %>
+      <% end %>
+    </ul>
+  </div>
+</div>

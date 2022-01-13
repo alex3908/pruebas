@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= @file_name.present? ? @file_name : "CRM Inmobiliario - #{@company_name}" %></title>
+  <meta name="pdfkit-margin_top" content="0">
+  <meta name="pdfkit-margin_right" content="0">
+  <meta name="pdfkit-margin_bottom" content="0">
+  <meta name="pdfkit-margin_left" content="0">
+  <meta name="pdfkit-title" content="<%= @file_name.present? ? @file_name : "CRM Inmobiliario - #{@company_name}" %>">
+  <meta charset="utf-8">
+
+  <%= stylesheet_link_tag "pdf", media: "all" %>
+
+  <style>
+    body{
+        -webkit-print-color-adjust: exact;
+    }
+    .pdf-bg {
+      height: 1320px;
+      background-repeat: repeat-y;
+      background-size: cover;
+      <% if @project.present? && @project.background.attached? %>
+      background-image: url('<%= rails_blob_url(@project.background) %>');
+      <% end %>
+    }
+
+    .pdf-new-bg {
+      height: 1320px;
+      font-family: 'Avenir';
+      background-repeat: repeat-y;
+      background-size: cover;
+      <% if @project.present? && @project.background.attached? %>
+      background-image: url('<%= rails_blob_url(@project.background) %>');
+      <% end %>
+    }
+
+    .pdf-size {
+      height: 1320px;
+    }
+
+    .pdf-bg-image-all-pages {
+      background-repeat: repeat-y;
+      <% if @status == 'email' %>
+      background-size: 100% 1307px;
+      <% else %>
+      background-size: 100% 1320px;
+      <% end %>
+      <% if @project.present? && @project.background.attached? %>
+      background-image: url('<%= rails_blob_url(@project.background) %>');
+      <% end %>
+    }
+
+    .page-break, .page-break-table {
+      page-break-after: always;
+    }
+
+    .page-break-table:last-child {
+      page-break-after: avoid;
+    }
+
+    .table-content:last-child {
+      <% if @status == 'email' %> height: 1307px;
+      <% else %> height: 1320px;
+      <% end %>
+    }
+
+    .table-content {
+      padding-top: 100px;
+    }
+
+    .title-container {
+      text-align: center;
+    }
+
+    .title-container h1, .bar-sign p, .subtitle, .right_col p, .color-primary, .header_title, .down_payment-list, .single-caption-color caption, #sign_text {
+      <% if @project.present? %>
+      color: <%= @project.color %>;
+      <% end %>
+    }
+
+    .inner-separator_content, tr .primary-row{
+      <% if @project.present? %>
+      color: <%= @project.subtitle_color %>;
+      <% end %>
+    }
+
+    .doble-square {
+      <% if @project.present? %>
+      border: 2px solid <%= @project.color %>;
+      <% end %>
+    }
+
+    .inner-separator_content, .division-bar, tr .primary-row, .sign-confirmation::after, .bar-title::after {
+      <% if @project.present? %>
+      background-color: <%= @project.color %>;
+      <% end %>
+    }
+
+    .table-infor {
+      <% if @project.present? %>
+      border: 2px solid <%= @project.lighten_color(0.1) %>;
+      <% end %>
+    }
+
+    .table-infor td {
+      <% if @project.present? %>
+      border-color: <%= @project.lighten_color(0.2) %>;
+      color: <%= @project.font_color %>
+      <% end %>
+    }
+
+    tbody>tr>:nth-child(2){
+      color: grey;
+    }
+
+    .table-infor .table-left-column {
+      <% if @project.present? %>
+      background-color:<%= @project.lighten_color(0.35) %>;
+      <% end %>
+    }
+
+    .no-border td {
+      <% if @project.present? %>
+      border-right: 2px solid <%= @project.lighten_color(0.2) %>;
+      <% end %>
+    }
+
+    .payment_type-box div .square-box, .text-box {
+      <% if @project.present? %>
+      border: 1px solid <%= @project.color %>;
+      <% end %>
+    }
+
+    hr.outer-separator {
+      <% if @project.present? %>
+      border-color: <%= @project.divider_color %>;
+      <% end %>
+    }
+
+    .underline, .underline-sm, .underline-md, .underline-xl {
+      <% if @project.present? %>
+      border-color: <%= @project.color %>;
+      <% end %>
+    }
+
+  </style>
+  <%= yield :head %>
+</head>
+<body>
+  <%= yield %>
+</body>
+</html>

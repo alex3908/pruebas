@@ -1,0 +1,12 @@
+<%= image_tag "successful-payment.png", class: "mx-auto d-block" %>
+<div class="row">
+  <div class="col form-group">
+    <strong>La solicitud ha sido enviada al coordinador y al gerente de tu estructura de <%= @evo_string %>.</strong>
+  </div>
+</div>
+<div class="modal-footer pt-2">
+  <div class="actions">
+    <%= link_to "Ver solicitud", support_sale_folder_path(@folder.id), class: "btn btn-primary" %>
+  </div>
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+</div>

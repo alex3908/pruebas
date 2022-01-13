@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Firmantes</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+        <%= link_to "Regresar", catalogs_path, class: "btn btn-secondary float-right mr-2" %>
+        <%= link_to "Nuevo Firmante", new_signer_path, class: "btn btn-primary float-right mr-2" %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <%= render "filters" %>
+</div>
+
+<% if @signers.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ningún firmante.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th><%= sortable "name", "Nombre" %></th>
+            <th><%= sortable "definition", "Definición" %></th>
+            <th><%= sortable "role", "Rol en empresa" %></th>
+            <th><%= sortable "company", "Empresa" %></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @signers.each do |signer| %>
+            <tr>
+              <td><%= signer.label %></td>
+              <td><%= signer.definition %></td>
+              <td><%= signer.role %></td>
+              <td><%= signer.company %></td>
+              <td class="text-center">
+                <% if can?(:edit, Signer) %>
+                  <%= link_to edit_signer_path(signer), class: "table-link" do %>
+                    <i class="fa fa-pencil-square-o"></i>
+                  <% end %>
+                <% end %>
+                <% if can?(:destroy, Signer) && signer.contracts.nil? %>
+                  <%= link_to signer, class: "table-link", method: :delete, data: { confirm: "¿Estás seguro?" } do %>
+                    <i class="fa fa-trash-o"></i>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

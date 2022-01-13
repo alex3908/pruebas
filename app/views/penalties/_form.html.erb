@@ -1,0 +1,28 @@
+<div class="modal fade" id="penaltyModal" role="dialog" aria-labelledby="reassignClientModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Agregar penalización</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <%= form_with(model:Penalty.new, local: true, url: folder_installments_penalties_path(@folder, @installment)) do |form| %>
+        <div class="modal-body">
+            <div class="row">
+              <div class="form-group col-sm-12 col-md-12">
+                <%= form.label :amount, "Monto de penalización" %>
+                <%= form.number_field :amount, class: "form-control",min:0,value:0 %>
+              </div>
+            </div>
+            <div class="modal-footer pt-2">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <div class="actions py-3">
+                <%= form.submit "Guardar", class: "btn btn-danger" %>
+              </div>
+            </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

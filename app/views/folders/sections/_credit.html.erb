@@ -1,0 +1,134 @@
+<div class="container">
+  <section class="credit">
+    <div class="row">
+      <div class="col-md-1 text-center py-3">
+        <%= image_tag("icons/quotation-down-payment.png", class: "img-fluid") %>
+      </div>
+      <div class="col-md-11">
+        <div class="d-flex justify-content-between">
+          <h3 class="text-left vertical-align m-0 py-3">Crédito</h3>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-green">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-gray">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-4">
+        <label>Plazo del enganche</label>
+        <div class="font-bold">
+          <%= "#{@folder.payment_scheme.down_payment_finance} meses" if @folder.payment_scheme.down_payment_finance > 1 %>
+          <%= "Contado" if @folder.payment_scheme.down_payment_finance == 1 %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <label>Plan de financiamiento:</label>
+        <div class="font-bold"><%= @folder.payment_scheme.name %></div>
+      </div>
+
+      <% if @folder.payment_scheme.discount > 0 %>
+        <div class="form-group col-sm-12 col-md-4">
+          <label>Descuento:</label>
+          <div class="font-bold"><%= @folder.payment_scheme.discount * 100 %> %</div>
+        </div>
+      <% end %>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <label>1era mensualidad de enganche</label>
+        <div class="font-bold"><%= @folder.first_down_payment&.date&.strftime("%d/%m/%Y") %></div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4" id="payment-way-amount-to-pay">
+        <label>Enganche</label>
+        <div class="font-bold">
+          <%= number_to_currency(@quotation.down_payment_total) %>
+          <%= "(#{@quotation.down_payment_percentage} %)" %>
+        </div>
+      </div>
+      <% if @folder.payment_scheme.with_last_payment %>
+        <div class="form-group col-sm-12 col-md-4">
+          <label>Contra entrega</label>
+          <div class="font-bold">
+            <%= number_to_currency(@quotation.last_payment) %>
+            <%= "(#{@quotation.last_payment_percentage} %)" %>
+          </div>
+        </div>
+      <% end %>
+      <% if @folder.payment_scheme.initial_payment > 0 %>
+        <div class="form-group col-sm-12 col-md-4">
+          <label>Apartado</label>
+          <div class="font-bold"><%= number_to_currency(@folder.payment_scheme.lock_payment) %></div>
+        </div>
+      <% end %>
+
+      <% if @folder.payment_scheme.complement_payment > 0 %>
+      <div class="form-group col-sm-12 col-md-4">
+        <label>Complemento de apartado</label>
+        <div class="font-bold"><%= number_to_currency(@folder.payment_scheme.complement_payment) %></div>
+      </div>
+      <% end %>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <label>Saldo del enganche</label>
+        <div class="font-bold"><%= number_to_currency(@folder.payment_scheme.down_payment) %></div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <label>Nombre del contrato:</label>
+        <div class="font-bold">
+          <% if @folder.contract.nil? %>
+            <%= @contract.label if !@contract.nil? %>
+            <%= "No hay contrato" if @contract.nil? %>
+          <% else %>
+            <%= @folder.contract.label %>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @folder.payment_scheme.promotion.present? %>
+        <div class="form-group col-sm-12 col-md-4">
+          <label>Nombre de la promoción:</label>
+          <div class="font-bold"><%= @folder.payment_scheme.promotion.name %></div>
+        </div>
+      <% end %>
+
+      <% if @folder.payment_scheme.coupon.present? %>
+        <div class="form-group col-sm-12 col-md-4">
+          <label>Cupón de descuento:</label>
+          <div class="font-bold"><%= @folder.payment_scheme.coupon.promotion_code %></div>
+        </div>
+      <% end %>
+
+      <% if @folder.payment_scheme.promotion_name.present? %>
+        <div class="form-group col-sm-12 col-md-4">
+          <label>Nombre de la promoción exclusiva:</label>
+          <div class="font-bold"><%= @folder.payment_scheme.promotion_name %></div>
+        </div>
+      <% end %>
+
+      <% if @folder.payment_scheme.total_discount > 0 %>
+        <div class="form-group col-sm-12 col-md-4">
+          <label>Porcentaje acumulado</label>
+          <div class="font-bold"><%= @folder.payment_scheme.total_discount %>%</div>
+        </div>
+      <% end %>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <label>Precio total</label>
+        <div class="font-bold"><%= number_to_currency(@folder.total_sale) %></div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <label>¿Genera comisiones?</label>
+        <div class="font-bold"><%= @folder.payment_scheme.is_commissionable ? "Si" : "No" %></div>
+      </div>
+
+    </div>
+  </section>
+</div>

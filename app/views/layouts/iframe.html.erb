@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CRM Inmobiliario - <%= @company_name %></title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="<%= image_path("brands/apple-touch-icon.png?v=1") %>">
+  <link rel="icon" type="image/png" sizes="32x32" href="<%= image_path("brands/favicon-32x32.png?v=1") %>">
+  <link rel="icon" type="image/png" sizes="16x16" href="<%= image_path("brands/favicon-16x16.png?v=1") %>">
+  <link rel="manifest" href="<%= image_path("site.webmanifest?v=1") %>">
+
+  <link rel="shortcut icon" href="<%= image_path("brands/favicon.ico?v=1") %>">
+  <meta name="apple-mobile-web-app-title" content="CRM Inmobiliario - <%= @company_name %>">
+  <meta name="application-name" content="CRM Inmobiliario - <%= @company_name %>">
+  <meta name="msapplication-TileColor" content="#2d89ef">
+  <meta name="theme-color" content="#ffffff">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <%= stylesheet_link_tag "application", media: "all", 'data-turbolinks-track': "reload" %>
+  <%= javascript_include_tag "availability", 'data-turbolinks-track': "reload" %>
+
+  <% if @google_tag.present? %>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= @google_tag %>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '<%= @google_tag %>');
+    </script>
+  <% end %>
+
+  <%= javascript_pack_tag "application", 'data-turbolinks-track': "reload" %>
+
+  <%= yield :head %>
+</head>
+
+<body>
+
+  <div class="container py-5 application-layout text-center">
+    <%= yield %>
+  </div>
+
+</body>
+</html>

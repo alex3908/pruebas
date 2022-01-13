@@ -1,0 +1,17 @@
+<div class="container">
+<div class="row">
+  <div class="col-sm-12 col-md-6">
+    <h1 class="banner-title vertical-align p-0 m-0">Sección de Documentos</h1>
+  </div>
+  <div class="col-sm-12 col-md-6 flex-middle-right">
+    <ol class="breadcrumb ol-projects">
+      <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+      <li class="breadcrumb-item"><%= link_to "Catálogos", catalogs_path %></li>
+      <li class="breadcrumb-item"><%= link_to "Secciones", document_templates_path %></li>
+      <li class="breadcrumb-item active" aria-current="page">Editar Sección</li>
+    </ol>
+  </div>
+</div>
+<hr class="divider">
+<%= render "form", document_template: @document_template %>
+</div>

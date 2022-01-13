@@ -1,0 +1,255 @@
+<div class="pdf-bg m-0 p-0">
+  <div class="content_purchase_format">
+    <% unless original %>
+        <div class="copy_container">
+            <h1 style="font-family: Arial, serif;">COPIA</h1>
+        </div>
+    <% end %>
+    <div class="title-container">
+      <div class="square-point"></div>
+      <h1>CONDICIONES DE COMPRA</h1>
+      <div class="square-point"></div>
+    </div>
+    <div class="row pt-3">
+      <div class="col-xs-2">
+        <p class="header_title purchase_title">Método de pago</p>
+      </div>
+      <div class="col-xs-3">
+        <div class="row payment_type-box p-0">
+          <div class="col-xs-4 p-0">
+            <p class="header_title credit_title pr-0">Crédito</p>
+          </div>
+          <div class="col-xs-8">
+            <div class="square-box">
+              <div class="square-content">
+                <div>
+                  <% if @folder.payment_scheme.total_payments > 1 %>
+                    <p>x</p>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-3">
+        <div class="row payment_type-box p-0">
+          <div class="col-xs-4 p-0">
+            <p class="header_title credit_title pr-0">Contado</p>
+          </div>
+          <div class="col-xs-8">
+            <div class="square-box">
+              <div class="square-content">
+                <div>
+                  <% if @folder.payment_scheme.total_payments == 1 %>
+                    <p>x</p>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-xs-4">
+        <div class="row date-box p-0">
+          <div class="col-xs-4 p-0">
+            <p class="header_title credit_title pr-0">Fecha</p>
+          </div>
+          <div class="col-xs-8">
+            <div class="square-box">
+              <div class="square-content">
+                <div>
+                  <p><%= Time.now.strftime("%d-%m-%Y") %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="memo_format">
+      <div class="row">
+        <div class="col-xs-12">
+          <p class="header_title pt-2 pb-2">Memoria descriptiva del predio</p>
+        </div>
+      </div>
+      <% if client.label.present? %>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>Nombre del comprador:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.label %></p>
+          </div>
+        </div>
+      <% end %>
+      <% if client.person == 'physical' && client.physical_client %>
+
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>R.F.C:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.physical_client.rfc %></p>
+          </div>
+        </div>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>Ocupación:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.physical_client.occupation %></p>
+          </div>
+        </div>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>Fecha de nacimiento:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.physical_client.birthdate %></p>
+          </div>
+        </div>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>Lugar de nacimiento:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.physical_client.place_birth %></p>
+          </div>
+        </div>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>Estado civil:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.physical_client.civil_status %></p>
+          </div>
+        </div>
+        <% if client.physical_client.civil_status == "Casado" %>
+          <div class="row p-0">
+            <div class="col-xs-3 bar-label">
+              <p>Régimen:</p>
+            </div>
+            <div class="col-xs-9 pl-5 bar-title">
+              <p><%= client.physical_client.regime %></p>
+            </div>
+          </div>
+        <% end %>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>Dirección:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.physical_client.address_label %></p>
+          </div>
+        </div>
+
+      <% elsif client.person == 'moral' && client.moral_client %>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>R.F.C:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.moral_client.rfc_company %></p>
+          </div>
+        </div>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>Dirección:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.moral_client.address_label %></p>
+          </div>
+        </div>
+      <% end %>
+
+      <% if client.main_phone.present? %>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>Teléfono celular:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.formatted_main_phone %></p>
+          </div>
+
+        </div>
+      <% end %>
+
+      <% if client.email.present? %>
+        <div class="row p-0">
+          <div class="col-xs-3 bar-label">
+            <p>Correo electrónico:</p>
+          </div>
+          <div class="col-xs-9 pl-5 bar-title">
+            <p><%= client.email %></p>
+          </div>
+        </div>
+      <% end %>
+      <div class="row p-0">
+        <div class="col-xs-3 bar-label">
+          <p><%= @folder.lot.project.lot_entity_name %>:</p>
+        </div>
+        <div class="col-xs-9 pl-5 bar-title">
+          <p><%= @folder.lot.name %></p>
+        </div>
+      </div>
+      <div class="row p-0">
+        <div class="col-xs-3 bar-label">
+          <p>Área(m<sup>2</sup>):</p>
+        </div>
+        <div class="col-xs-9 pl-5 bar-title">
+          <p><%= @folder.lot.area %>m<sup>2</sup></p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="text_body">
+      <%= @folder.purchase_conditions_formatted.try(:html_safe) %>
+    </div>
+
+    <div class="confirm_sign">
+      <div class="sign_row row mt-5">
+      <div class="row">
+        <div class="col-xs-4"></div>
+        <% if with_signature %>
+          <div class="col-xs-4">
+            <p class="sign-tag-color"><%= client&.sign_tag %></p>
+            <div class="bar-sign">
+              <p>Firma de conformidad.</p>
+            </div>
+          </div>
+        <% else %>
+          <div class="col-xs-4"></div>
+        <% end %>
+        <div class="col-xs-4"></div>
+      </div>
+      <div class="separator"></div>
+      <div class="row">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8">
+          <div class="col-xs-3 bar-label">
+            <p>Nombre:</p>
+          </div>
+          <div class="col-xs-9 sign-confirmation">
+            <p><%= client.label %></p>
+          </div>
+        </div>
+        <div class="col-xs-2"></div>
+      </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12">
+          <p class="add_official_id">*Agregar copia del IFE o pasaporte vigentes y legible, y comprobante de
+            domicilio.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

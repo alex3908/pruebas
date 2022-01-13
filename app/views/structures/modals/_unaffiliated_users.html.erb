@@ -1,0 +1,35 @@
+<div class="modal-header">
+    <h5 class="modal-title">Nueva Afiliación de <%= @structure_label %></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body" data-controller="user-structure">
+    <%= form_with(local: true, url: affiliated_user_structures_path(@ancestry&.id), method: :post, data: { remote: true }) do |form| %>
+    <div class="row">
+        <% disabled = @can_create_structures ? false : true %>
+        <% if disabled %>
+            <div class="col-md-12">
+                <div class="alert alert-warning" role="alert">
+                    <em>
+                        <strong>No es posible crear una nueva afiliación debido a que el nivel ha alcanzado su capacidad máxima.</strong>
+                        Si tienes alguna duda comunícate con tu responsable.
+                    </em>
+
+                </div>
+            </div>
+        <% end %>
+
+        <div class="form-group col-sm-12 col-md-12">
+            <%= form.label :user, "Usuario" %>
+            <%= form.select(:user, @users.collect { |user| ["#{user.label} (#{user.email})", user.id] }, { include_blank: true }, data: { target: "user-structure.user"}, required: true,  disabled: disabled) %>
+        </div>
+    </div>
+    <div class="modal-footer pt-2">
+        <div class="actions py-3">
+            <%= form.submit "Guardar", class: "btn btn-primary", disabled: disabled %>
+        </div>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    </div>
+    <% end %>
+</div>

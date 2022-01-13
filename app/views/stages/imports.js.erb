@@ -1,0 +1,19 @@
+<% if @stage.errors.count > 0 %>
+Swal.fire({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  type: 'error',
+  title: "Hubo un error al intentar hacer el cambio."
+});
+<%else%>
+Swal.fire({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  type: 'success',
+  title: "Los cambios han sido aplicados."
+});
+<%end%>

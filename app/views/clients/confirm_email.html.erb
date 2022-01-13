@@ -1,0 +1,43 @@
+<% if local_assigns.has_key? :error %>
+  <div class="text-center d-flex align-items-center justify-content-center">
+    <div class="w-50">
+      <i class="fa fa-times-circle fa-5x text-danger"></i>
+      <h5 class="m-0 py-3">Error</h5>
+      <div class="text-center">
+        <%= error %>
+      </div>
+    </div>
+  </div>
+<% else %>
+<div class="text-center d-flex align-items-center justify-content-center">
+  <div class="w-50">
+    <div class="row">
+      <div class="col-md-12">
+        <%= image_tag "successful-payment.png", class: "mx-auto d-block" %>
+      </div>
+    </div>
+    <div class="row justify-content-md-center">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-green">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-gray">
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h5 class="m-0 py-3">Confirmación exitosa</h5>
+        <div class="text-center">
+          Tu correo ha sido confirmado con éxito
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<% end %>

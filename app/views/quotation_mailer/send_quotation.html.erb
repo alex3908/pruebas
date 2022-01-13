@@ -1,0 +1,34 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Cotización</span></h1>
+  &nbsp;
+  <p>
+    <span>Estimado <%= @client_name %>, </span></p>
+  <p>
+    <span>
+      Has solicitado información del proyecto <b><%= @project.name %> / <%= @lot.full_name %></b>.
+    </span>
+  </p>
+  <p>
+    <span>
+      Adjunto en este correo encontrarás tu cotización.
+    </span>
+  </p>
+  <p>
+    <span>
+      En breve, el asesor que te fue asignado se pondrá en contacto contigo. Si deseas contactarlo, abajo encontrarás su información:
+    </span>
+    <ul>
+      <li>Nombre del asesor: <b><%= @user.label %></b></li>
+      <li>Teléfono: <b><%= @user.phone %></b></li>
+      <li>Correo electrónico: <b><%= @user.email %></b></li>
+    </ul>
+  </p>
+  <p>
+    <% if @project_phone.present? %>
+      Si tiene preguntas puede contactarnos al teléfono
+      <span style="color: #5e5e5e; font-weight: 600;"><%= number_to_phone(@project_phone) %></span>
+    <% end %>
+    <br>
+    <br> ¡Saludos!
+  </p>
+<% end %>

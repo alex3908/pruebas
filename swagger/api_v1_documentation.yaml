@@ -1,0 +1,4732 @@
+---
+openapi: "3.0.0"
+info:
+  title: "API Adara CRM"
+  description: "Documentation to receive and send data to the Adara CRM application"
+  version: "1.0.0"
+servers:
+- url: "https://crm.grupoorve.mx/api/v1"
+  description: "Lista de servers"
+tags:
+- name: "Customers"
+  description: "Customer information"
+- name: "Folders"
+  description: "Folder information"
+- name: "Lots"
+  description: "Lot information"
+- name: "Phases"
+  description: "Phase information"
+- name: "Projects"
+  description: "Project information"
+- name: "Quotes"
+  description: "Quotes information"
+- name: "Stages"
+  description: "Stages information"
+- name: "Promotions"
+  description: "Promotions information"
+paths:
+  /clients:
+    get:
+      tags:
+      - "Customers"
+      summary: "Allows you to consult the information of all customers"
+      parameters:
+      - name: "search_name"
+        in: "query"
+        description: "search by client name"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "search_email"
+        in: "query"
+        description: "search by client email"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "email_seller"
+        in: "query"
+        description: "search by client email_seller"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "page"
+        in: "query"
+        description: "Page number"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "per_page"
+        in: "query"
+        description: "Amount of rows per page"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Customer infomation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/client"
+              example:
+              - id: 13
+                name: "Fernando "
+                first_surname: "Herrera"
+                second_surname: "Gamboa"
+                main_phone: "+527777777776"
+                optional_phone: "+524326542341"
+                email: "ferherreragambo@gmail.com"
+                gender: "male"
+                origin: "cartera"
+                person: "moral"
+                additional:
+                  id: 1
+                  business_name: "Construcciones SA de CV"
+                  rfc_company: "XIQB891116QE4"
+                  legal_rfc: "KICR630120NX3"
+                  legal_name: "Fernando Herrera Gamboa"
+                  notary_name: "Juliana Rodríguez Ortegón"
+                  state: ""
+                  country: "México"
+                  street: "32 "
+                  house_number: "432"
+                  colony: "Montecristo"
+                  postal_code: "97654"
+                  location: "Merida"
+                  city: ""
+                  curp: "PEGA950613MBCRNL04"
+                  interior_number: "233"
+                  nationality: null
+                  country_nationality: "Estados Unidos"
+                  identification_type: "CÉDULA PROFESIONAL"
+                  company_identification_type: "INE"
+                  identification_number: "35235346234325"
+                  validity_identification: "26/02/2021"
+                  company_validity_identification: "08/04/2021"
+                  constitution_date: "2019-01-01"
+                  birthdate: "1991-03-21"
+                  activity: "Construcción"
+              - id: 12
+                name: "Alondra"
+                first_surname: "Perez"
+                second_surname: "Gonzalez"
+                main_phone: "+528888888881"
+                optional_phone: "+521234567891"
+                email: "alondraperez@gmail.com"
+                gender: "female"
+                origin: "cartera"
+                person: "physical"
+                additional:
+                  id: 2
+                  rfc: "PEGA950613FN9"
+                  place_birth: "baja california sur"
+                  birthdate: "13/06/1995"
+                  nationality: "Mexicana"
+                  civil_status: "Soltero"
+                  regime: null
+                  state: ""
+                  country: "México"
+                  street: "43"
+                  house_number: "342"
+                  colony: ""
+                  postal_code: "97543"
+                  location: "Merida"
+                  occupation: "Docente de primaria"
+                  city: ""
+                  identification_number: "645694495229504545"
+                  curp: "PEGA950613MBCRNL04"
+                  validity_identification: "05/10/2022"
+                  interior_number: ""
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+      security:
+      - ApiKeyAuth: []
+    post:
+      tags:
+      - "Customers"
+      summary: "Save client"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                client:
+                  type: "object"
+                  properties:
+                    name:
+                      type: "string"
+                    first_surname:
+                      type: "string"
+                    second_surname:
+                      type: "string"
+                    email:
+                      type: "string"
+                    main_phone:
+                      type: "string"
+                    optional_phone:
+                      type: "string"
+                    gender:
+                      type: "string"
+                      enum:
+                      - "male"
+                      - "female"
+                    person:
+                      type: "string"
+                      enum:
+                      - "physical"
+                      - "moral"
+                    additional:
+                      type: "object"
+                      discriminator:
+                        propertyName: "person"
+                      oneOf:
+                      - $ref: "#/components/schemas/physical_client"
+                      - $ref: "#/components/schemas/moral_client"
+            example:
+              client:
+                name: "Alexander"
+                first_surname: "Ortega"
+                second_surname: "Ochoa"
+                email: "alexander@gmail.com"
+                main_phone: "9999999991"
+                optional_phone: "8888888887"
+                gender: "male"
+                person: "moral"
+                additional:
+                  identification_type: "PASAPORTE"
+                  company_identification_type: "INE"
+                  identification_number: "1"
+                  company_identification_number: "1"
+                  validity_identification: "19/10/2020"
+                  company_validity_identification: "28/10/2020"
+                  birthdate: "12/10/2020"
+                  country_nationality: "México"
+                  regime: ""
+                  business_name: "MEP"
+                  activity: "www"
+                  constitution_date: "05/10/2020"
+                  rfc_company: "MAR980114GQA"
+                  legal_rfc: "MAR980114GQA"
+                  curp: "UEOA950718HYNRCL04"
+                  legal_name: "Alexis"
+                  notary_name: "prueba"
+                  country: "México"
+                  postal_code: "97173"
+                  state: "Yucatán"
+                  city: "Mérida"
+                  colony: "Altabrisa"
+                  street: 34
+                  location: "Mérida"
+                  house_number: 432
+                  interior_number: ""
+        required: true
+      responses:
+        "200":
+          description: "Folders basic infomation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+              example:
+                message: "Cliente Guardado correctamente"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+      security:
+      - ApiKeyAuth: []
+  /clients/{id}:
+    get:
+      tags:
+      - "Customers"
+      summary: "Allows you to consult the information of a client"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Client id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Success message"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/client"
+              examples:
+                additional_moral:
+                  value:
+                    id: 13
+                    name: "Fernando "
+                    first_surname: "Herrera"
+                    second_surname: "Gamboa"
+                    main_phone: "+527777777776"
+                    optional_phone: "+524326542341"
+                    email: "ferherreragambo@gmail.com"
+                    gender: "male"
+                    origin: "cartera"
+                    person: "moral"
+                    additional:
+                      id: 1
+                      business_name: "Construcciones SA de CV"
+                      rfc_company: "XIQB891116QE4"
+                      legal_rfc: "KICR630120NX3"
+                      legal_name: "Fernando Herrera Gamboa"
+                      notary_name: "Juliana Rodríguez Ortegón"
+                      state: ""
+                      country: "México"
+                      street: "32 "
+                      house_number: "432"
+                      colony: "Montecristo"
+                      postal_code: "97654"
+                      location: "Merida"
+                      city: ""
+                      curp: "PEGA950613MBCRNL04"
+                      interior_number: "233"
+                      nationality: null
+                      country_nationality: "Estados Unidos"
+                      identification_type: "CÉDULA PROFESIONAL"
+                      company_identification_type: "INE"
+                      identification_number: "35235346234325"
+                      validity_identification: "26/02/2021"
+                      company_validity_identification: "08/04/2021"
+                      constitution_date: "2019-01-01"
+                      birthdate: "1991-03-21"
+                      activity: "Construcción"
+                additional_physical:
+                  value:
+                    id: 12
+                    name: "Alondra"
+                    first_surname: "Perez"
+                    second_surname: "Gonzalez"
+                    main_phone: "+528888888881"
+                    optional_phone: "+521234567891"
+                    email: "alondraperez@gmail.com"
+                    gender: "female"
+                    origin: "cartera"
+                    person: "physical"
+                    additional:
+                      id: 2
+                      rfc: "PEGA950613FN9"
+                      place_birth: "baja california sur"
+                      birthdate: "13/06/1995"
+                      nationality: "Mexicana"
+                      civil_status: "Soltero"
+                      regime: null
+                      state: ""
+                      country: "México"
+                      street: "43"
+                      house_number: "342"
+                      colony: ""
+                      postal_code: "97543"
+                      location: "Merida"
+                      occupation: "Docente de primaria"
+                      city: ""
+                      identification_number: "645694495229504545"
+                      curp: "PEGA950613MBCRNL04"
+                      validity_identification: "05/10/2022"
+                      interior_number: ""
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /clients/{id}/upload_files:
+    patch:
+      tags:
+      - "Customers"
+      summary: "Allows uploading one o more files to a client"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Client id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: "object"
+              properties:
+                curp:
+                  type: "string"
+                  description: "Client curp"
+                  format: "binary"
+                official_identification:
+                  type: "string"
+                  description: "Client identification"
+                  format: "binary"
+                address_proof:
+                  type: "string"
+                  description: "Client adress proof"
+                  format: "binary"
+                fiscal_act:
+                  type: "string"
+                  description: "Client fiscal act"
+                  format: "binary"
+      responses:
+        "200":
+          description: "Success message"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+              example:
+                message: "¡Archivo guardado con éxito!"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+                - $ref: "#/components/schemas/NoAuthorizedResource"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+                NoAuthorized:
+                  $ref: "#/components/examples/NoAuthorized"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Unprocessable Entity message (the message may change\
+                      \ depending on the error)."
+              example:
+                message: "Error message"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /folders:
+    get:
+      tags:
+      - "Folders"
+      summary: "Allows you to consult the information of all folders"
+      parameters:
+      - name: "name"
+        in: "query"
+        description: "Search by client name"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "email"
+        in: "query"
+        description: "Search by client email"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "lot"
+        in: "query"
+        description: "Search by lot id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "status"
+        in: "query"
+        description: "Search by folder status"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "project"
+        in: "query"
+        description: "Search by proyect id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "phase"
+        in: "query"
+        description: "Search by phase id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "stage"
+        in: "query"
+        description: "Search by stage id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "branch"
+        in: "query"
+        description: "Search by branch id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "folio"
+        in: "query"
+        description: "Search by folio (folder_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "salesman"
+        in: "query"
+        description: "Search by salesman name"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "from_date"
+        in: "query"
+        description: "Initial date of folder creation"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "to_date"
+        in: "query"
+        description: "Final date of folder creation"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "realtor"
+        in: "query"
+        description: "Search by realtor (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "seller"
+        in: "query"
+        description: "Search by seller (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "coordinator"
+        in: "query"
+        description: "Search by coordinator (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "manager"
+        in: "query"
+        description: "Search by manager (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "vice_director"
+        in: "query"
+        description: "Search by vice_director (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "page"
+        in: "query"
+        description: "Page number"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "per_page"
+        in: "query"
+        description: "Amount of rows per page"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Folders basic infomation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/folder"
+              example:
+              - id: 2
+                adviser_name: "Olivia Gómez Girón"
+                client: "Alberto Montaño Tirado"
+                project_name: "15 años"
+                phase: "Fase 1"
+                stage: "Etapa 1"
+                lot: "2"
+                calc_date: "2020-10-01"
+                payment_scheme:
+                  id: 1
+                  name: "180 meses"
+                  initial_payment: 5000
+                  discount: 0
+                  total_payments: 180
+                  dfp: null
+                  down_payment_finance: "Contado"
+                  down_payment: 2668.927
+                  buy_price: 210
+                  zero_rate: null
+                  down_payment_paid: "No pagado"
+                  first_payment: 8
+                  promotion: 0
+                  promotion_name: null
+                  promotion_operation: "Multiplicativo"
+                  lock_payment: 5000
+                  credit_scheme: "15 años"
+                  immediate_extra_months: 0
+                  opening_commission: 0
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+      security:
+      - ApiKeyAuth: []
+  /folders/{id}/cancel:
+    post:
+      tags:
+      - "Folders"
+      summary: "Cancel folder"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Folder id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Success message"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+              example:
+                message: "Expediente cancelado exitosamente"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Unprocessable Entity message (the message may change\
+                      \ depending on the error)."
+              example:
+                message: "Error message"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /folders/{id}/upload_files:
+    patch:
+      tags:
+      - "Folders"
+      summary: "Allows upload one o more files to a folder"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Folder id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: "object"
+              properties:
+                commission_voucher:
+                  type: "string"
+                  description: "Folder comission voucher file"
+                  format: "binary"
+                commission_receipt:
+                  type: "string"
+                  description: "Folder Commission receipt file"
+                  format: "binary"
+                bank_deposit:
+                  type: "string"
+                  description: "Folder Bank deposit file"
+                  format: "binary"
+                bank_deposit_complement:
+                  type: "string"
+                  description: "Folder Bank deposit complement file"
+                  format: "binary"
+                reserve_receipt:
+                  type: "string"
+                  description: "Folder Reserve receipt file"
+                  format: "binary"
+                down_payment_voucher:
+                  type: "string"
+                  description: "Folder Down payment voucher file"
+                  format: "binary"
+                down_payment_receipt:
+                  type: "string"
+                  description: "Folder Down payment receipt file"
+                  format: "binary"
+                conditions_purchase:
+                  type: "string"
+                  description: "Folder Conditions purchase file"
+                  format: "binary"
+                amortization_table:
+                  type: "string"
+                  description: "Folder amortization table file"
+                  format: "binary"
+                federal_cedula:
+                  type: "string"
+                  description: "Folder federal cedula file"
+                  format: "binary"
+                agree_letter:
+                  type: "string"
+                  description: "Folder Agree  letter file"
+                  format: "binary"
+                marriage_act:
+                  type: "string"
+                  description: "Folder Marriage act file"
+                  format: "binary"
+                purchase_promise:
+                  type: "string"
+                  description: "Folder purchase promise file"
+                  format: "binary"
+                promissory_note:
+                  type: "string"
+                  description: "Folder Promissory note file"
+                  format: "binary"
+      responses:
+        "200":
+          description: "Success message"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+              example:
+                message: "¡Archivo guardado con éxito!"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+                - $ref: "#/components/schemas/NoAuthorizedResource"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+                NoAuthorized:
+                  $ref: "#/components/examples/NoAuthorized"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Unprocessable Entity message (the message may change\
+                      \ depending on the error)."
+              example:
+                message: "Error message"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /folders/folders_payments:
+    get:
+      tags:
+      - "Folders"
+      summary: "Get payments from folders"
+      responses:
+        "200":
+          description: "Payment information"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/folder_payment"
+              example:
+              - folder_id: 5
+                active_payments:
+                - number: 1
+                  date: "10/11/2020"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 107341.27
+                - number: 2
+                  date: "10/12/2020"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 104274.38
+                - number: 3
+                  date: "10/01/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 101207.49
+                - number: 4
+                  date: "10/02/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 98140.59
+                - number: 5
+                  date: "10/03/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 95073.7
+                - number: 6
+                  date: "10/04/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 92006.8
+                - number: 7
+                  date: "10/05/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 88939.91
+                - number: 8
+                  date: "10/06/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 85873.02
+                - number: 9
+                  date: "10/07/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 82806.12
+                - number: 10
+                  date: "10/08/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 79739.23
+                - number: 11
+                  date: "10/09/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 76672.34
+                - number: 12
+                  date: "10/10/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 73605.44
+                - number: 13
+                  date: "10/11/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 70538.55
+                - number: 14
+                  date: "10/12/2021"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 67471.66
+                - number: 15
+                  date: "10/01/2022"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 64404.76
+                - number: 16
+                  date: "10/02/2022"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 61337.87
+                - number: 17
+                  date: "10/03/2022"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 58270.98
+                - number: 18
+                  date: "10/04/2022"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 55204.08
+                - number: 19
+                  date: "10/05/2022"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 52137.19
+                - number: 20
+                  date: "10/06/2022"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 49070.3
+                - number: 21
+                  date: "10/07/2022"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 0
+                  amount: 46003.4
+                nex_payment:
+                  number: 22
+                  date: "10/08/2022"
+                  capital: 3066.8935
+                  interest: 0
+                  payment: 3066.8935
+                  residue: 2739.15
+                  amount: 42936.51
+                cash_flows:
+                - id: 7
+                  client_id: 2
+                  client_name: "Lucia Nieto Colunga"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 7
+                  user_name: "Olivia GómezGirón"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  date: "2020-10-02"
+                  amount: 10000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 8
+                  client_id: 2
+                  client_name: "Lucia Nieto Colunga"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 7
+                  user_name: "Olivia GómezGirón"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-02"
+                  amount: 30000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 9
+                  client_id: 2
+                  client_name: "Lucia Nieto Colunga"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 7
+                  user_name: "Olivia GómezGirón"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  date: "2020-10-02"
+                  amount: 10000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 10
+                  client_id: 2
+                  client_name: "Lucia Nieto Colunga"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 7
+                  user_name: "Olivia GómezGirón"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  date: "2020-10-02"
+                  amount: 1000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 11
+                  client_id: 2
+                  client_name: "Lucia Nieto Colunga"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 7
+                  user_name: "Olivia GómezGirón"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  date: "2020-10-02"
+                  amount: 6000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 12
+                  client_id: 2
+                  client_name: "Lucia Nieto Colunga"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 7
+                  user_name: "Olivia GómezGirón"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-02"
+                  amount: 20000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                restructures:
+                - canceled: false
+                  status: "Activo"
+                  created_at: "02/10/2020"
+                  installment_id: 51
+                  installment_name: "Parcialidad 10"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  client_id: 2
+                  client_name: "Lucia Nieto Colunga"
+                  restructure_id: 2
+                  restructure_name: "Reestructura de saldo"
+                  current_term: 36
+                  current_discount: 0
+                  current_day: null
+                  grace_months: null
+                - canceled: false
+                  status: "Activo"
+                  created_at: "02/10/2020"
+                  installment_id: 54
+                  installment_name: "Parcialidad 13"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  client_id: 2
+                  client_name: "Lucia Nieto Colunga"
+                  restructure_id: 3
+                  restructure_name: "Reestructura de saldo"
+                  current_term: 36
+                  current_discount: 0
+                  current_day: null
+                  grace_months: null
+                - canceled: false
+                  status: "Activo"
+                  created_at: "02/10/2020"
+                  installment_id: 56
+                  installment_name: "Parcialidad 15"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  client_id: 2
+                  client_name: "Lucia Nieto Colunga"
+                  restructure_id: 4
+                  restructure_name: "Reestructura de saldo"
+                  current_term: 36
+                  current_discount: 0
+                  current_day: null
+                  grace_months: null
+              - folder_id: 4
+                active_payments: []
+                cash_flows: []
+                restructures: []
+              - folder_id: 3
+                active_payments:
+                - number: 1
+                  date: "09/11/2020"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 73458.38
+                - number: 2
+                  date: "09/12/2020"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 73048
+                - number: 3
+                  date: "09/01/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 72637.61
+                - number: 4
+                  date: "09/02/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 72227.23
+                - number: 5
+                  date: "31/03/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 71816.85
+                - number: 6
+                  date: "30/04/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 71406.47
+                - number: 7
+                  date: "31/05/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 70996.09
+                - number: 8
+                  date: "30/06/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 70585.7
+                - number: 9
+                  date: "31/07/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 70175.32
+                - number: 10
+                  date: "31/08/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 69764.94
+                - number: 11
+                  date: "30/09/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 69354.56
+                - number: 12
+                  date: "31/10/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 68944.18
+                - number: 13
+                  date: "30/11/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 68533.79
+                - number: 14
+                  date: "31/12/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 68123.41
+                - number: 15
+                  date: "31/01/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 67713.03
+                - number: 16
+                  date: "28/02/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 67302.65
+                - number: 17
+                  date: "31/03/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 66892.27
+                - number: 18
+                  date: "30/04/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 66481.88
+                - number: 19
+                  date: "31/05/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 66071.5
+                - number: 20
+                  date: "30/06/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 65661.12
+                - number: 21
+                  date: "31/07/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 65250.74
+                - number: 22
+                  date: "31/08/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 64840.36
+                - number: 23
+                  date: "30/09/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 64429.97
+                - number: 24
+                  date: "31/10/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 64019.59
+                - number: 25
+                  date: "30/11/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 63609.21
+                - number: 26
+                  date: "31/12/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 63198.83
+                - number: 27
+                  date: "31/01/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 62788.45
+                - number: 28
+                  date: "28/02/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 62378.06
+                - number: 29
+                  date: "31/03/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 61967.68
+                - number: 30
+                  date: "30/04/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 61557.3
+                - number: 31
+                  date: "31/05/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 61146.92
+                - number: 32
+                  date: "30/06/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 60736.54
+                - number: 33
+                  date: "31/07/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 60326.15
+                - number: 34
+                  date: "31/08/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 59915.77
+                - number: 35
+                  date: "30/09/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 59505.39
+                - number: 36
+                  date: "31/10/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 59095.01
+                nex_payment:
+                  number: 37
+                  date: "30/11/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 291.24
+                  amount: 58684.63
+                cash_flows:
+                - id: 1
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-01"
+                  amount: 10000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 2
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  date: "2020-10-01"
+                  amount: 5000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 3
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  date: "2020-10-01"
+                  amount: 4000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 4
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-01"
+                  amount: 3000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 5
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-01"
+                  amount: 100.46
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 6
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-01"
+                  amount: 1000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                restructures:
+                - canceled: false
+                  status: "Activo"
+                  created_at: "01/10/2020"
+                  installment_id: 7
+                  installment_name: "Parcialidad 5"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  restructure_id: 1
+                  restructure_name: "Cambio de fecha"
+                  current_term: 180
+                  current_discount: 0
+                  current_day: 31
+                  grace_months: 0
+              - folder_id: 6
+                active_payments: []
+                cash_flows: []
+                restructures: []
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+                - $ref: "#/components/schemas/NoAuthorizedResource"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+                NoAuthorized:
+                  $ref: "#/components/examples/NoAuthorized"
+      security:
+      - ApiKeyAuth: []
+  /folders/{id}/folder_payments:
+    get:
+      tags:
+      - "Folders"
+      summary: "Get payments from a folder"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Folder id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Folder payment infomation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/folder_payment"
+              example:
+                folder_id: 3
+                active_payments:
+                - number: 1
+                  date: "09/11/2020"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 73458.38
+                - number: 2
+                  date: "09/12/2020"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 73048
+                - number: 3
+                  date: "09/01/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 72637.61
+                - number: 4
+                  date: "09/02/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 72227.23
+                - number: 5
+                  date: "31/03/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 71816.85
+                - number: 6
+                  date: "30/04/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 71406.47
+                - number: 7
+                  date: "31/05/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 70996.09
+                - number: 8
+                  date: "30/06/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 70585.7
+                - number: 9
+                  date: "31/07/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 70175.32
+                - number: 10
+                  date: "31/08/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 69764.94
+                - number: 11
+                  date: "30/09/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 69354.56
+                - number: 12
+                  date: "31/10/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 68944.18
+                - number: 13
+                  date: "30/11/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 68533.79
+                - number: 14
+                  date: "31/12/2021"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 68123.41
+                - number: 15
+                  date: "31/01/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 67713.03
+                - number: 16
+                  date: "28/02/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 67302.65
+                - number: 17
+                  date: "31/03/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 66892.27
+                - number: 18
+                  date: "30/04/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 66481.88
+                - number: 19
+                  date: "31/05/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 66071.5
+                - number: 20
+                  date: "30/06/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 65661.12
+                - number: 21
+                  date: "31/07/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 65250.74
+                - number: 22
+                  date: "31/08/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 64840.36
+                - number: 23
+                  date: "30/09/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 64429.97
+                - number: 24
+                  date: "31/10/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 64019.59
+                - number: 25
+                  date: "30/11/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 63609.21
+                - number: 26
+                  date: "31/12/2022"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 63198.83
+                - number: 27
+                  date: "31/01/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 62788.45
+                - number: 28
+                  date: "28/02/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 62378.06
+                - number: 29
+                  date: "31/03/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 61967.68
+                - number: 30
+                  date: "30/04/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 61557.3
+                - number: 31
+                  date: "31/05/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 61146.92
+                - number: 32
+                  date: "30/06/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 60736.54
+                - number: 33
+                  date: "31/07/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 60326.15
+                - number: 34
+                  date: "31/08/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 59915.77
+                - number: 35
+                  date: "30/09/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 59505.39
+                - number: 36
+                  date: "31/10/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 0
+                  amount: 59095.01
+                nex_payment:
+                  number: 37
+                  date: "30/11/2023"
+                  capital: 410.382
+                  interest: 0
+                  payment: 410.382
+                  residue: 291.24
+                  amount: 58684.63
+                cash_flows:
+                - id: 1
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-01"
+                  amount: 10000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 2
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  date: "2020-10-01"
+                  amount: 5000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 3
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  date: "2020-10-01"
+                  amount: 4000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 4
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-01"
+                  amount: 3000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 5
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-01"
+                  amount: 100.46
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                - id: 6
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  user_id: 1
+                  user_name: "Mayte RosasMaestas"
+                  payment_method_id: 1
+                  payment_method_name: "Efectivo"
+                  bank_account_id: 1
+                  bank_account_name: "HSBC"
+                  date: "2020-10-01"
+                  amount: 1000
+                  status: "active"
+                  canceled_by: null
+                  cash_back: false
+                restructures:
+                - canceled: false
+                  status: "Activo"
+                  created_at: "01/10/2020"
+                  installment_id: 7
+                  installment_name: "Parcialidad 5"
+                  branch_id: 1
+                  branch_name: "Matriz"
+                  client_id: 5
+                  client_name: "Alberto Montaño Tirado"
+                  restructure_id: 1
+                  restructure_name: "Cambio de fecha"
+                  current_term: 180
+                  current_discount: 0
+                  current_day: 31
+                  grace_months: 0
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+                - $ref: "#/components/schemas/NoAuthorizedResource"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+                NoAuthorized:
+                  $ref: "#/components/examples/NoAuthorized"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /folders/balances_close_to_due:
+    get:
+      tags:
+      - "Folders"
+      summary: "Get payments from a folder"
+      parameters:
+      - name: "name"
+        in: "query"
+        description: "Search by client name"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "email"
+        in: "query"
+        description: "Search by client email"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "lot"
+        in: "query"
+        description: "Search by lot id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "status"
+        in: "query"
+        description: "Search by folder status"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "project"
+        in: "query"
+        description: "Search by proyect id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "phase"
+        in: "query"
+        description: "Search by phase id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "stage"
+        in: "query"
+        description: "Search by stage id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "branch"
+        in: "query"
+        description: "Search by branch id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "folio"
+        in: "query"
+        description: "Search by folio (folder_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "salesman"
+        in: "query"
+        description: "Search by salesman name"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "from_date"
+        in: "query"
+        description: "Initial date of folder creation"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "to_date"
+        in: "query"
+        description: "Final date of folder creation"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      - name: "realtor"
+        in: "query"
+        description: "Search by realtor (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "seller"
+        in: "query"
+        description: "Search by seller (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "coordinator"
+        in: "query"
+        description: "Search by coordinator (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "manager"
+        in: "query"
+        description: "Search by manager (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "vice_director"
+        in: "query"
+        description: "Search by vice_director (user_id)"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Balances close to due"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/balance_close_to_due"
+              example:
+              - folder_id: 5
+                approved_date: "02/10/2020"
+                client_name: "Lucia Nieto Colunga"
+                project_name: "Convencional"
+                phase_name: "Fase 1"
+                stage_name: "Etapa 1"
+                lot_name: "5"
+                lot_area: 557.617
+                total_with_discount: 122675.74
+                count_of_installments_paid: 23
+                date_of_the_last_paid: "2022-07-10T15:06:52.896-05:00"
+                amount_paid: 77000
+                count_of_overdue_payments: 0
+                overdue_amount: 0
+                director: "Esteban CarrilloLedesma"
+                vice_director: "Elena CamachoDelacrúz"
+                manager: "Guillermina FríasDelrío"
+                coordinator: "Vicente SaldañaArenas"
+                salesman: "Olivia GómezGirón"
+                realtor: null
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+                - $ref: "#/components/schemas/NoAuthorizedResource"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+                NoAuthorized:
+                  $ref: "#/components/examples/NoAuthorized"
+      security:
+      - ApiKeyAuth: []
+  /folders/{id}/folder_balances_close_to_due:
+    get:
+      tags:
+      - "Folders"
+      summary: "Get balances close to due"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Folder id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Folder payment infomation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/balance_close_to_due"
+              example:
+                folder_id: 5
+                approved_date: "02/10/2020"
+                ient_name: "Lucia Nieto Colunga"
+                project_name: "Convencional"
+                phase_name: "Fase 1"
+                stage_name: "Etapa 1"
+                lot_name: "5"
+                lot_area: 557.617
+                total_with_discount: 122675.74
+                count_of_installments_paid: 23
+                date_of_the_last_paid: "2022-07-10T15:06:52.896-05:00"
+                amount_paid: 77000
+                count_of_overdue_payments: 0
+                overdue_amount: 0
+                director: "Esteban CarrilloLedesma"
+                vice_director: "Elena CamachoDelacrúz"
+                manager: "Guillermina FríasDelrío"
+                coordinator: "Vicente SaldañaArenas"
+                salesman: "Olivia GómezGirón"
+                realtor: null
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+                - $ref: "#/components/schemas/NoAuthorizedResource"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+                NoAuthorized:
+                  $ref: "#/components/examples/NoAuthorized"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /folders/folders_information:
+    get:
+      tags:
+      - "Folders"
+      summary: "Folders information"
+      responses:
+        "200":
+          description: "Folder infomation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/folder_information"
+              example:
+              - folder_id: 3
+                created_at: "2020-10-01"
+                approved_date: "2020-10-01"
+                operation_days: 0
+                contract_active: "NO ACTIVA"
+                project_name: "15 años"
+                phase_name: "Fase 1"
+                stage_name: "Etapa 1"
+                lot_name: "4"
+                lot_area: "390.84"
+                buy_price: 210
+                discount: 0
+                scheme_name: "180 meses"
+                total_with_discount: 82076.4
+                client_name: "Alberto Montaño Tirado"
+                client_email: "vernon_rodriguez@champlin.org"
+                client_name_2: null
+                client_email_2: null
+                client_name_3: null
+                client_email_3: null
+                client_name_4: null
+                client_email_4: null
+                client_name_5: null
+                client_email_5: null
+                client_name_6: null
+                client_email_6: null
+                status_label: "Finalizado"
+                branch_name: "Matriz"
+                state: null
+                financed_type: "Financiamiento"
+                payment_scheme_name: "180 meses"
+                down_payment_type: "Enganche de contado"
+                down_payment: 8207.64
+                down_payment_finance: 1
+                lot_reference: "000000R004"
+                promotion_name: null
+                first_amount: 410.382
+                first_payments: 51
+                second_amount: 732.257555
+                second_payments: 69
+                third_amount: 783.132774
+                third_payments: 60
+                scheme_promotion: 0
+                operation_label: "Multiplicativo"
+                director_name: "Esteban CarrilloLedesma"
+                director_email: "lee@barton-bergnaum.info"
+                vice_director_name: "Elena CamachoDelacrúz"
+                vice_director_email: "margaret@krajcik-gorczany.io"
+                manager_name: "Guillermina FríasDelrío"
+                manager_email: "maxwell.beahan@schoen.com"
+                coordinator_name: "Vicente SaldañaArenas"
+                coordinator_email: "lida.terry@rosenbaum.org"
+                salesman_name: "Olivia GómezGirón"
+                salesman_email: "corrine@stracke.org"
+                realtor_name: null
+                realtor_email: null
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+                - $ref: "#/components/schemas/NoAuthorizedResource"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+                NoAuthorized:
+                  $ref: "#/components/examples/NoAuthorized"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Unprocessable Entity message (the message may change\
+                      \ depending on the error)."
+              example:
+                message: "Error message"
+      security:
+      - ApiKeyAuth: []
+  /folders/{id}/folder_information:
+    get:
+      tags:
+      - "Folders"
+      summary: "Get folder information"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Folder id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Folder infomation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/folder_information"
+              example:
+                folder_id: 3
+                created_at: "2020-10-01"
+                approved_date: "2020-10-01"
+                operation_days: 0
+                contract_active: "NO ACTIVA"
+                project_name: "15 años"
+                phase_name: "Fase 1"
+                stage_name: "Etapa 1"
+                lot_name: "4"
+                lot_area: "390.84"
+                buy_price: 210
+                discount: 0
+                scheme_name: "180 meses"
+                total_with_discount: 82076.4
+                client_name: "Alberto Montaño Tirado"
+                client_email: "vernon_rodriguez@champlin.org"
+                client_name_2: null
+                client_email_2: null
+                client_name_3: null
+                client_email_3: null
+                client_name_4: null
+                client_email_4: null
+                client_name_5: null
+                client_email_5: null
+                client_name_6: null
+                client_email_6: null
+                status_label: "Finalizado"
+                branch_name: "Matriz"
+                state: null
+                financed_type: "Financiamiento"
+                payment_scheme_name: "180 meses"
+                down_payment_type: "Enganche de contado"
+                down_payment: 8207.64
+                down_payment_finance: 1
+                lot_reference: "000000R004"
+                promotion_name: null
+                first_amount: 410.382
+                first_payments: 51
+                second_amount: 732.257555
+                second_payments: 69
+                third_amount: 783.132774
+                third_payments: 60
+                scheme_promotion: 0
+                operation_label: "Multiplicativo"
+                director_name: "Esteban CarrilloLedesma"
+                director_email: "lee@barton-bergnaum.info"
+                vice_director_name: "Elena CamachoDelacrúz"
+                vice_director_email: "margaret@krajcik-gorczany.io"
+                manager_name: "Guillermina FríasDelrío"
+                manager_email: "maxwell.beahan@schoen.com"
+                coordinator_name: "Vicente SaldañaArenas"
+                coordinator_email: "lida.terry@rosenbaum.org"
+                salesman_name: "Olivia GómezGirón"
+                salesman_email: "corrine@stracke.org"
+                realtor_name: null
+                realtor_email: null
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+                - $ref: "#/components/schemas/NoAuthorizedResource"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+                NoAuthorized:
+                  $ref: "#/components/examples/NoAuthorized"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Unprocessable Entity message (the message may change\
+                      \ depending on the error)."
+              example:
+                message: "Error message"
+      security:
+      - ApiKeyAuth: []
+  /projects/{project_id}/phases/{phase_id}/stages/{stage_id}/lots:
+    get:
+      tags:
+      - "Lots"
+      summary: "Allows you to consult the information of all lots"
+      parameters:
+      - name: "project_id"
+        in: "path"
+        description: "Project id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "phase_id"
+        in: "path"
+        description: "Phase id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "stage_id"
+        in: "path"
+        description: "Stage id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "status"
+        in: "query"
+        description: "Lot status"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+          enum:
+          - "FOR_SALE"
+          - "RESERVED"
+          - "SOLD"
+      - name: "page"
+        in: "query"
+        description: "Page number"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "per_page"
+        in: "query"
+        description: "Amount of rows per page"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Lots basic infomation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/lot"
+              example:
+              - id: 1
+                name: "1"
+                depth: 30.557
+                front: 12.154
+                area: 365.187
+                price: 0
+                status: "reserved"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /projects/{project_id}/phases:
+    get:
+      tags:
+      - "Phases"
+      summary: "Allows you to consult the information of all phases"
+      parameters:
+      - name: "project_id"
+        in: "path"
+        description: "Project id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "page"
+        in: "query"
+        description: "Page number"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "per_page"
+        in: "query"
+        description: "Amount of rows per page"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Phase basic infomation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/phase"
+              example:
+              - id: 1
+                name: "Fase 1"
+                start_date: "2020-01-01"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /projects:
+    get:
+      tags:
+      - "Projects"
+      summary: "Allows you to consult the information of all projects"
+      parameters:
+      - name: "page"
+        in: "query"
+        description: "Page number"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "per_page"
+        in: "query"
+        description: "Amount of rows per page"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Project basic infomation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/project"
+              example:
+              - id: 1
+                name: "15 años"
+                email: "contacto@demo.com"
+                phone: "9999999999"
+                quotation: "new"
+                logo: "no-image.png"
+              - id: 2
+                name: "Convencional"
+                email: "contacto@demo.com"
+                phone: "9999999999"
+                quotation: "conventional"
+                logo: "no-image.png"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+      security:
+      - ApiKeyAuth: []
+  /projects/{project_id}/phases/{phase_id}/stages/{stage_id}/lots/{id}/quote:
+    get:
+      tags:
+      - "Quotes"
+      summary: "Allows to generate quotes"
+      parameters:
+      - name: "project_id"
+        in: "path"
+        description: "Project id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "phase_id"
+        in: "path"
+        description: "Phase id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "stage_id"
+        in: "path"
+        description: "Stage id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "id"
+        in: "path"
+        description: "Lot id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "payment_way"
+        in: "query"
+        description: "Type of payment way"
+        required: true
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+          enum:
+          - "amount"
+          - "percentaje"
+      - name: "down_payment_amount"
+        in: "query"
+        description: "Down payment amount, it depends on the unit selected in the payment_way parameter, it can be a monetary amount or a percentage"
+        required: true
+        style: "form"
+        explode: true
+        schema:
+          type: "number"
+      - name: "total_payments"
+        in: "query"
+        description: "Financing term in months"
+        required: true
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "promotion"
+        in: "query"
+        description: "Promotion id"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "integer"
+      - name: "promotion_code"
+        in: "query"
+        description: "Promotion code"
+        required: false
+        style: "form"
+        explode: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "Quotation infomation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/quote"
+              example:
+                quotation:
+                  project_singular: Proyecto
+                  phase_singular: Fase
+                  phase_name: Fase 1
+                  stage_singular: Etapa
+                  stage_name: Etapa 1
+                  lot: '1'
+                  area: '365.187'
+                  interest_free_period: 36
+                  total_payments: 37
+                  chepina: http://localhost:3000/rails/active_storage/blobs/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBEUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--0fe1d4f15ccc37191da11a60c05e57f4aacd0178/dojo.jpg
+                  discounts:
+                    applicable_discount: 0
+                    list_price: 76689.27
+                    saving: 0
+                    final_price: 76689.27
+                  down_payment:
+                    amount: 7668.93
+                    percentage: 10
+                    initial_payment: 0
+                    to_differ: 7668.93
+                    first_payment: 8
+                  payments:
+                    updates: []
+                    down_payments:
+                    - number: A
+                      date: 23/02/2021
+                      total: 0
+                    - number: 1
+                      date: 23/02/2021
+                      total: 7668.93
+                    amortizations:
+                      monthly_payments:
+                      - payment_number: 1
+                        date: 23/03/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 67154.93
+                      - payment_number: 2
+                        date: 23/04/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 65289.51
+                      - payment_number: 3
+                        date: 23/05/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 63424.1
+                      - payment_number: 4
+                        date: 23/06/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 61558.68
+                      - payment_number: 5
+                        date: 23/07/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 59693.27
+                      - payment_number: 6
+                        date: 23/08/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 57827.85
+                      - payment_number: 7
+                        date: 23/09/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 55962.44
+                      - payment_number: 8
+                        date: 23/10/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 54097.02
+                      - payment_number: 9
+                        date: 23/11/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 52231.61
+                      - payment_number: 10
+                        date: 23/12/2021
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 50366.19
+                      - payment_number: 11
+                        date: 23/01/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 48500.78
+                      - payment_number: 12
+                        date: 23/02/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 46635.36
+                      - payment_number: 13
+                        date: 23/03/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 44769.95
+                      - payment_number: 14
+                        date: 23/04/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 42904.54
+                      - payment_number: 15
+                        date: 23/05/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 41039.12
+                      - payment_number: 16
+                        date: 23/06/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 39173.71
+                      - payment_number: 17
+                        date: 23/07/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 37308.29
+                      - payment_number: 18
+                        date: 23/08/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 35442.88
+                      - payment_number: 19
+                        date: 23/09/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 33577.46
+                      - payment_number: 20
+                        date: 23/10/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 31712.05
+                      - payment_number: 21
+                        date: 23/11/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 29846.63
+                      - payment_number: 22
+                        date: 23/12/2022
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 27981.22
+                      - payment_number: 23
+                        date: 23/01/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 26115.8
+                      - payment_number: 24
+                        date: 23/02/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 24250.39
+                      - payment_number: 25
+                        date: 23/03/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 22384.98
+                      - payment_number: 26
+                        date: 23/04/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 20519.56
+                      - payment_number: 27
+                        date: 23/05/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 18654.15
+                      - payment_number: 28
+                        date: 23/06/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 16788.73
+                      - payment_number: 29
+                        date: 23/07/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 14923.32
+                      - payment_number: 30
+                        date: 23/08/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 13057.9
+                      - payment_number: 31
+                        date: 23/09/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 11192.49
+                      - payment_number: 32
+                        date: 23/10/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 9327.07
+                      - payment_number: 33
+                        date: 23/11/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 7461.66
+                      - payment_number: 34
+                        date: 23/12/2023
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 5596.24
+                      - payment_number: 35
+                        date: 23/01/2024
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 3730.83
+                      - payment_number: 36
+                        date: 23/02/2024
+                        capital: 1865.414595
+                        update: 0
+                        payment: 1865.414595
+                        amount: 1865.41
+                      totals:
+                        capital_total: 67154.925405
+                        interest_total: 0
+                        payment_total: 67154.925405
+                  discounts:
+                  - lower_limit: 1
+                    upper_limit: 36
+                    discount_percentaje: 0
+                  simple_quotations:
+                  - payment_number: Contado
+                    amortization_1: 69020.34
+                    lot_price: 69020.34
+                  - payment_number: 2 meses
+                    amortization_1: 34510.17
+                    lot_price: 69020.34
+                  - payment_number: 3 meses
+                    amortization_1: 23006.78
+                    lot_price: 69020.34
+                  - payment_number: 4 meses
+                    amortization_1: 17255.085
+                    lot_price: 69020.34
+                  - payment_number: 5 meses
+                    amortization_1: 13804.068
+                    lot_price: 69020.34
+                  - payment_number: 6 meses
+                    amortization_1: 11503.39
+                    lot_price: 69020.34
+                  - payment_number: 7 meses
+                    amortization_1: 9860.048571
+                    lot_price: 69020.34
+                  - payment_number: 8 meses
+                    amortization_1: 8627.5425
+                    lot_price: 69020.34
+                  - payment_number: 9 meses
+                    amortization_1: 7668.926667
+                    lot_price: 69020.34
+                  - payment_number: 10 meses
+                    amortization_1: 6902.034
+                    lot_price: 69020.34
+                  - payment_number: 11 meses
+                    amortization_1: 6274.576364
+                    lot_price: 69020.34
+                  - payment_number: 12 meses
+                    amortization_1: 5751.695
+                    lot_price: 69020.34
+                  - payment_number: 13 meses
+                    amortization_1: 5309.256923
+                    lot_price: 69020.34
+                  - payment_number: 14 meses
+                    amortization_1: 4930.024286
+                    lot_price: 69020.34
+                  - payment_number: 15 meses
+                    amortization_1: 4601.356
+                    lot_price: 69020.34
+                  - payment_number: 16 meses
+                    amortization_1: 4313.77125
+                    lot_price: 69020.34
+                  - payment_number: 17 meses
+                    amortization_1: 4060.02
+                    lot_price: 69020.34
+                  - payment_number: 18 meses
+                    amortization_1: 3834.463333
+                    lot_price: 69020.34
+                  - payment_number: 19 meses
+                    amortization_1: 3632.649474
+                    lot_price: 69020.34
+                  - payment_number: 20 meses
+                    amortization_1: 3451.017
+                    lot_price: 69020.34
+                  - payment_number: 21 meses
+                    amortization_1: 3286.682857
+                    lot_price: 69020.34
+                  - payment_number: 22 meses
+                    amortization_1: 3137.288182
+                    lot_price: 69020.34
+                  - payment_number: 23 meses
+                    amortization_1: 3000.884348
+                    lot_price: 69020.34
+                  - payment_number: 24 meses
+                    amortization_1: 2875.8475
+                    lot_price: 69020.34
+                  - payment_number: 25 meses
+                    amortization_1: 2760.8136
+                    lot_price: 69020.34
+                  - payment_number: 26 meses
+                    amortization_1: 2654.628462
+                    lot_price: 69020.34
+                  - payment_number: 27 meses
+                    amortization_1: 2556.308889
+                    lot_price: 69020.34
+                  - payment_number: 28 meses
+                    amortization_1: 2465.012143
+                    lot_price: 69020.34
+                  - payment_number: 29 meses
+                    amortization_1: 2380.011724
+                    lot_price: 69020.34
+                  - payment_number: 30 meses
+                    amortization_1: 2300.678
+                    lot_price: 69020.34
+                  - payment_number: 31 meses
+                    amortization_1: 2226.462581
+                    lot_price: 69020.34
+                  - payment_number: 32 meses
+                    amortization_1: 2156.885625
+                    lot_price: 69020.34
+                  - payment_number: 33 meses
+                    amortization_1: 2091.525455
+                    lot_price: 69020.34
+                  - payment_number: 34 meses
+                    amortization_1: 2030.01
+                    lot_price: 69020.34
+                  - payment_number: 35 meses
+                    amortization_1: 1972.009714
+                    lot_price: 69020.34
+                  - payment_number: 36 meses
+                    amortization_1: 1917.231667
+                    lot_price: 69020.34
+                  invalid_rules:
+                  - El plazo máximo de financiamiento son 36 meses.
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /projects/{project_id}/phases/{phase_id}/stages/{stage_id}/lots/{id}/reserve:
+    post:
+      tags:
+      - "Quotes"
+      summary: "Allows to reserve"
+      parameters:
+      - name: "project_id"
+        in: "path"
+        description: "Project id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "phase_id"
+        in: "path"
+        description: "Phase id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "stage_id"
+        in: "path"
+        description: "Stage id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "id"
+        in: "path"
+        description: "Lot id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                client:
+                  type: "integer"
+                total_payments:
+                  type: "number"
+                down_payment_finance:
+                  type: "integer"
+                payment_way:
+                  type: "string"
+                down_payment_amount:
+                  type: "number"
+                initial_payment:
+                  type: "integer"
+                first_payment:
+                  type: "integer"
+                project_id:
+                  type: "integer"
+                phase_id:
+                  type: "integer"
+                stage_id:
+                  type: "integer"
+                id:
+                  type: "integer"
+            example:
+              client: "11"
+              total_payments: "180"
+              down_payment_finance: "1"
+              payment_way: "amount"
+              down_payment_amount: "7668.927"
+              initial_payment: "5000.0"
+              first_payment: "8"
+              project_id: "1"
+              phase_id: "1"
+              stage_id: "1"
+              id: "1"
+        required: true
+      responses:
+        "200":
+          description: "Success message"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+              example:
+                message: "¡Expediente guardado con éxito!"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /projects/{project_id}/phases/{phase_id}/stages/{stage_id}/lots/{id}/blueprint:
+    post:
+      tags:
+      - "Lots"
+      summary: "Allows to reserve"
+      parameters:
+      - name: "project_id"
+        in: "path"
+        description: "Project id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "phase_id"
+        in: "path"
+        description: "Phase id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "stage_id"
+        in: "path"
+        description: "Stage id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "id"
+        in: "path"
+        description: "Lot id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                client:
+                  type: "integer"
+                total_payments:
+                  type: "number"
+                down_payment_finance:
+                  type: "integer"
+                payment_way:
+                  type: "string"
+                down_payment_amount:
+                  type: "number"
+                initial_payment:
+                  type: "integer"
+                first_payment:
+                  type: "integer"
+                project_id:
+                  type: "integer"
+                phase_id:
+                  type: "integer"
+                stage_id:
+                  type: "integer"
+                id:
+                  type: "integer"
+            example:
+              client: "11"
+              total_payments: "180"
+              down_payment_finance: "1"
+              payment_way: "amount"
+              down_payment_amount: "7668.927"
+              initial_payment: "5000.0"
+              first_payment: "8"
+              project_id: "1"
+              phase_id: "1"
+              stage_id: "1"
+              id: "1"
+        required: true
+      responses:
+        "200":
+          description: "Success message"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+              example:
+                message: "¡Expediente guardado con éxito!"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /projects/{project_id}/phases/{phase_id}/stages:
+    get:
+      tags:
+      - "Stages"
+      summary: "Allows to generate quotes"
+      parameters:
+      - name: "project_id"
+        in: "path"
+        description: "Project id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "phase_id"
+        in: "path"
+        description: "Phase id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Stage infomation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/stage"
+              example:
+              - id: 2
+                name: "Etapa 1"
+                enterprise:
+                  id: 1
+                  business_name: "Empresa Demo"
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /projects/{project_id}/phases/{phase_id}/stages/{stage_id}:
+    get:
+      tags:
+      - "Stages"
+      summary: "Allows to generate quotes"
+      parameters:
+      - name: "project_id"
+        in: "path"
+        description: "Project id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "phase_id"
+        in: "path"
+        description: "Phase id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "stage_id"
+        in: "path"
+        description: "Stage id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Stage infomation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/stage_object"
+              example:
+                phase:
+                  id: 1
+                  name: Fase 1
+                  blueprint_url: http://localhost:3000/disponibilidad.svg?fase=MQ==
+                stage:
+                  id: 1
+                  name: Etapa 1
+                  blueprint_url: http://localhost:3000/disponibilidad.svg?etapa=MQ==
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+        "404":
+          description: "Record no found"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  message:
+                    type: "string"
+                    description: "Record no found."
+                  status:
+                    type: "integer"
+                    description: "Response code"
+              example:
+                message: "No encontrado."
+                status: 404
+      security:
+      - ApiKeyAuth: []
+  /projects/{project_id}/phases/{phase_id}/stages/{id}/promotions:
+    get:
+      tags:
+      - "Promotions"
+      summary: "Allows to get all promotions"
+      parameters:
+      - name: "project_id"
+        in: "path"
+        description: "Project id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "phase_id"
+        in: "path"
+        description: "Phase id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      - name: "id"
+        in: "path"
+        description: "Stage id"
+        required: true
+        style: "simple"
+        explode: false
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Detailed promotion information"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/promotions"
+              example:
+                - id: 2
+                  name: preba 2
+                - id: 1
+                  name: Promocion prueba
+        "401":
+          description: "Invalid Credentials"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/UnauthorizedError"
+                - $ref: "#/components/schemas/NoToken"
+                - $ref: "#/components/schemas/NoAuthorizedResource"
+              examples:
+                Notoken:
+                  $ref: "#/components/examples/Notoken"
+                InvalidCredentials:
+                  $ref: "#/components/examples/InvalidCredentials"
+                NoAuthorized:
+                  $ref: "#/components/examples/NoAuthorized"
+      security:
+      - ApiKeyAuth: []
+components:
+  schemas:
+    physical_client_response:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        rfc:
+          type: "string"
+        place_birth:
+          type: "string"
+        birthdate:
+          type: "string"
+        nationality:
+          type: "string"
+        civil_status:
+          type: "string"
+        regime:
+          type: "string"
+        state:
+          type: "string"
+        country:
+          type: "string"
+        street:
+          type: "string"
+        house_nuber:
+          type: "string"
+        colony:
+          type: "string"
+        postal_code:
+          type: "string"
+        location:
+          type: "string"
+        occupation:
+          type: "string"
+        city:
+          type: "string"
+        identification_number:
+          type: "string"
+        curp:
+          type: "string"
+        validity_identification:
+          type: "string"
+        interior_number:
+          type: "string"
+    moral_client_response:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        business_name:
+          type: "string"
+        rfc_company:
+          type: "string"
+        legal_rfc:
+          type: "string"
+        legal_name:
+          type: "string"
+        notary_name:
+          type: "string"
+        state:
+          type: "string"
+        country:
+          type: "string"
+        street:
+          type: "string"
+        house_number:
+          type: "string"
+        colony:
+          type: "string"
+        postal_code:
+          type: "string"
+        location:
+          type: "string"
+        city:
+          type: "string"
+        curp:
+          type: "string"
+        interior_number:
+          type: "string"
+        nationality:
+          type: "string"
+        country_nationality:
+          type: "string"
+        identification_type:
+          type: "string"
+        company_identification_type:
+          type: "string"
+        identification_number:
+          type: "string"
+        validity_identification:
+          type: "string"
+        company_validity_identification:
+          type: "string"
+        constitution_date:
+          type: "string"
+        birthdate:
+          type: "string"
+        activity:
+          type: "string"
+    physical_client:
+      type: "object"
+      properties:
+        identification_type:
+          type: "string"
+        identification_number:
+          type: "string"
+        validity_identification:
+          type: "string"
+        rfc:
+          type: "string"
+        place_birth:
+          type: "string"
+        birthdate:
+          type: "string"
+        occupation:
+          type: "string"
+        nationality:
+          type: "string"
+        civil_status:
+          type: "string"
+        regime:
+          type: "string"
+        state:
+          type: "string"
+        city:
+          type: "string"
+        country:
+          type: "string"
+        street:
+          type: "string"
+        house_number:
+          type: "string"
+        interior_number:
+          type: "string"
+        colony:
+          type: "string"
+        postal_code:
+          type: "integer"
+        location:
+          type: "string"
+        curp:
+          type: "string"
+    moral_client:
+      type: "object"
+      properties:
+        business_name:
+          type: "string"
+        rfc_company:
+          type: "string"
+        legal_rfc:
+          type: "string"
+        legal_name:
+          type: "string"
+        notary_name:
+          type: "string"
+        state:
+          type: "string"
+        city:
+          type: "string"
+        country:
+          type: "string"
+        street:
+          type: "string"
+        house_number:
+          type: "string"
+        interior_number:
+          type: "string"
+        colony:
+          type: "string"
+        postal_code:
+          type: "string"
+        location:
+          type: "string"
+        curp:
+          type: "string"
+        nationality:
+          type: "string"
+        country_nationality:
+          type: "string"
+        identification_type:
+          type: "string"
+        identification_number:
+          type: "string"
+        validity_identification:
+          type: "string"
+        company_identification_type:
+          type: "string"
+        company_identification_number:
+          type: "string"
+        company_validity_identification:
+          type: "string"
+        constitution_date:
+          type: "string"
+        activity:
+          type: "string"
+        birthdate:
+          type: "string"
+    client:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        name:
+          type: "string"
+        first_surname:
+          type: "string"
+        second_surname:
+          type: "string"
+        main_phone:
+          type: "string"
+        optional_phone:
+          type: "string"
+        email:
+          type: "string"
+        gender:
+          type: "string"
+        origin:
+          type: "string"
+        person:
+          type: "string"
+          enum:
+          - "physical"
+          - "moral"
+        additional:
+          type: "object"
+          discriminator:
+            propertyName: "person"
+          oneOf:
+          - $ref: "#/components/schemas/physical_client_response"
+          - $ref: "#/components/schemas/moral_client_response"
+    folder:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "Folder id"
+        adviser_name:
+          type: "string"
+          description: "Adviser name"
+        client:
+          type: "string"
+          description: "Client name"
+        project_name:
+          type: "string"
+          description: "Project name"
+        phase:
+          type: "string"
+          description: "Phase name"
+        stage:
+          type: "string"
+          description: "Stage name"
+        lot:
+          type: "string"
+          description: "Lot name"
+        calc_date:
+          type: "string"
+          description: "Folder creation date"
+        payment_scheme:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+            name:
+              type: "string"
+            initial_payment:
+              type: "number"
+            discount:
+              type: "number"
+            total_payments:
+              type: "integer"
+            dfp:
+              type: "number"
+            down_payment_finance:
+              type: "string"
+            down_payment:
+              type: "number"
+            buy_price:
+              type: "number"
+            zero_rate:
+              type: "integer"
+            down_payment_paid:
+              type: "string"
+            first_payment:
+              type: "integer"
+            promotion:
+              type: "number"
+            promotion_name:
+              type: "string"
+            promotion_operation:
+              type: "string"
+            lock_payment:
+              type: "number"
+            credit_scheme:
+              type: "string"
+            immediate_extra_months:
+              type: "integer"
+            opening_commission:
+              type: "number"
+    lot:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "Lot id"
+        name:
+          type: "string"
+          description: "Lot name"
+        depth:
+          type: "number"
+          description: "Lot depth"
+        front:
+          type: "number"
+          description: "Lot front"
+        area:
+          type: "number"
+          description: "Lot area"
+        price:
+          type: "number"
+          description: "Lot price"
+        status:
+          type: "string"
+          description: "Lot status"
+    phase:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "Phase id"
+        name:
+          type: "string"
+          description: "Phase name"
+        start_date:
+          type: "string"
+          description: "Phase date"
+    project:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          description: "Proyect id"
+        name:
+          type: "string"
+          description: "Proyect name"
+        email:
+          type: "string"
+          description: "Proyect date"
+        phone:
+          type: "string"
+          description: "Proyect phone"
+        logo:
+          type: "string"
+          description: "Proyect date"
+    quote:
+      type: "object"
+      properties:
+        quotation:
+          type: "object"
+          properties:
+            project_singular: 
+              type: "string"
+            phase_singular: 
+              type: "string"
+            phase_name: 
+              type: "string"
+            stage_singular: 
+              type: "string"
+            stage_name: 
+              type: "string"
+            lot: 
+              type: "string"
+            area: 
+              type: "number"
+            interest_free_period: 
+              type: "integer"
+            total_payments: 
+              type: "integer"
+            chepina:
+              type: "string"
+            discounts:
+              type: "object"
+              properties:
+                applicable_discount:
+                  type: "number"
+                list_price: 
+                  type: "number"
+                saving: 
+                  type: "number"
+                final_price: 
+                  type: "number"
+            down_payment:
+              type: "object"
+              properties:
+                amount:
+                  type: "number"
+                percentage:
+                  type: "number"
+                initial_payment:
+                  type: "integer"
+                to_differ:
+                  type: "number"
+                first_payment:
+                  type: "integer"
+            payments:
+              type: "object"
+              properties:
+                    updates:
+                      type: "array"
+                      items:
+                        type: "object"
+                        properties:
+                          update:
+                            type: "string"
+                          amount:
+                            type: "number"
+                          payments:
+                            type: "string"
+                    down_payments:
+                            type: "array"
+                            items:
+                              type: "object"
+                              properties:
+                                number:
+                                  type: "integer"
+                                date:
+                                  type: "string"
+                                total:
+                                  type: "number"
+
+                    amortizations:
+                            type: "object"
+                            properties:
+                              monthly_payments:
+                                type: "array"
+                                items:
+                                  type: "object"
+                                  properties:
+                                    payment_number:
+                                      type: "integer"
+                                    date:
+                                      type: "string"
+                                    capital:
+                                      type: "number"
+                                    update:
+                                      type: "number"
+                                    payment:
+                                      type: "number"
+                                    amount: 
+                                      type: "number"
+                              totals:
+                                type: "object"
+                                properties:
+                                  capital_total:
+                                    type: "number"
+                                  interest_total:
+                                    type: "number"
+                                  payment_total:
+                                    type: "number"
+            discounts:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  lower_limit:
+                    type: "integer"
+                  upper_limit:
+                    type: "integer"
+                  discount_percentaje:
+                    type: "number"
+                                    
+
+            simple_quotations:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  payment_number:
+                    type: "string"
+                  amortization_1:
+                    type: "number"
+                  lot_price:
+                    type: "number"
+            invalid_rules:
+              type: "array"
+              items:
+                type: "object"
+    stage:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        name:
+          type: "string"
+        enterprise:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+            business_name:
+              type: "string"
+    stage_object:
+      type: "object"
+      properties:
+        phase:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+            name:
+              type: "string"
+            blueprint_url:
+              type: "string"
+        stage:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+            name:
+              type: "string"
+            blueprint_url:
+              type: "string"
+    folder_payment:
+      type: "object"
+      properties:
+        folder_id:
+          type: "integer"
+        active_payments:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              number:
+                type: "integer"
+              date:
+                type: "string"
+              capital:
+                type: "number"
+              interest:
+                type: "number"
+              payment:
+                type: "number"
+              residue:
+                type: "number"
+              amount:
+                type: "number"
+        next_payment:
+          type: "object"
+          properties:
+            number:
+              type: "integer"
+            date:
+              type: "string"
+            capital:
+              type: "number"
+            interest:
+              type: "number"
+            payment:
+              type: "number"
+            residue:
+              type: "number"
+            amount:
+              type: "number"
+        cash_flows:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              id:
+                type: "integer"
+              client_id:
+                type: "integer"
+              branch_id:
+                type: "string"
+              branch_name:
+                type: "string"
+              user_id:
+                type: "integer"
+              user_name:
+                type: "string"
+              payment_method_id:
+                type: "integer"
+              payment_method_name:
+                type: "string"
+              date:
+                type: "string"
+              amount:
+                type: "number"
+              status:
+                type: "string"
+              canceled_by:
+                type: "string"
+              cash_back:
+                type: "string"
+        restructures:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              canceled:
+                type: "boolean"
+              status:
+                type: "string"
+              created_at:
+                type: "string"
+              installment_id:
+                type: "integer"
+              installment_name:
+                type: "string"
+              branch_id:
+                type: "integer"
+              branch_name:
+                type: "string"
+              client_id:
+                type: "integer"
+              client_name:
+                type: "string"
+              restructure_id:
+                type: "integer"
+              restructure_name:
+                type: "string"
+              current_term:
+                type: "string"
+              current_discount:
+                type: "number"
+              current_day:
+                type: "integer"
+              grace_months:
+                type: "integer"
+    balance_close_to_due:
+      type: "object"
+      properties:
+        folder_id:
+          type: "integer"
+        approved_date:
+          type: "string"
+        client_name:
+          type: "string"
+        project_name:
+          type: "string"
+        phase_name:
+          type: "string"
+        stage_name:
+          type: "string"
+        lot_name:
+          type: "string"
+        lot_area:
+          type: "number"
+        total_with_discount:
+          type: "number"
+        count_of_installments_paid:
+          type: "integer"
+        date_of_the_last_paid:
+          type: "string"
+        amount_paid:
+          type: "number"
+        count_of_overdue_payments:
+          type: "string"
+        overdue_amount:
+          type: "integer"
+        director:
+          type: "string"
+        vice_director:
+          type: "string"
+        manager:
+          type: "string"
+        coordinator:
+          type: "string"
+        salesman:
+          type: "string"
+        realtor:
+          type: "string"
+    folder_information:
+      type: "object"
+      properties:
+        folder_id:
+          type: "integer"
+        created_at:
+          type: "string"
+        approved_date:
+          type: "string"
+        operation_days:
+          type: "integer"
+        contract_active:
+          type: "string"
+        project_name:
+          type: "string"
+        phase_name:
+          type: "string"
+        stage_name:
+          type: "string"
+        lot_name:
+          type: "string"
+        lot_area:
+          type: "string"
+        buy_price:
+          type: "string"
+        discount:
+          type: "number"
+        scheme_name:
+          type: "string"
+        total_with_discount:
+          type: "number"
+        client_name:
+          type: "number"
+        client_email:
+          type: "number"
+        client_name_2:
+          type: "number"
+        client_email_2:
+          type: "number"
+        client_name_3:
+          type: "number"
+        client_email_3:
+          type: "number"
+        status_label:
+          type: "string"
+        branch_name:
+          type: "string"
+        financed_type:
+          type: "string"
+        payment_scheme_name:
+          type: "string"
+        down_payment_type:
+          type: "string"
+        down_payment:
+          type: "string"
+        down_payment_finance:
+          type: "number"
+        lot_reference:
+          type: "string"
+        promotion_name:
+          type: "string"
+        first_amount:
+          type: "number"
+        first_payments:
+          type: "integer"
+        second_amount:
+          type: "number"
+        second_payments:
+          type: "integer"
+        third_amount:
+          type: "number"
+        third_payments:
+          type: "integer"
+        scheme_promotion:
+          type: "number"
+        operation_label:
+          type: "string"
+        director_name:
+          type: "string"
+        director_email:
+          type: "string"
+        vice_director_name:
+          type: "string"
+        vice_director_email:
+          type: "string"
+        manager_name:
+          type: "string"
+        manager_email:
+          type: "string"
+        coordinator_name:
+          type: "string"
+        coordinator_email:
+          type: "string"
+        salesman_name:
+          type: "string"
+        salesman_email:
+          type: "string"
+        realtor_name:
+          type: "string"
+        realtor_email:
+          type: "string"
+    get_lots:
+      type: "object"
+      properties:
+        proyect:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+            name:
+              type: "string"
+            logo:
+              type: "string"
+            active:
+              type: "string"
+            currency:
+              type: "string"
+            email:
+              type: "string"
+            phone:
+              type: "string"
+            quotation:
+              type: "string"
+            reference:
+              type: "string"
+        phase:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+            name:
+              type: "string"
+            start_date:
+              type: "string"
+            reference:
+              type: "string"
+        stage:
+          type: "object"
+          properties:
+            id:
+              type: "integer"
+            price:
+              type: "number"
+            name:
+              type: "string"
+            active:
+              type: "string"
+            enterprise:
+              type: "object"
+              properties:
+                id:
+                  type: "integer"
+                business_name:
+                  type: "string"
+                short_business_name:
+                  type: "string"
+                rfc:
+                  type: "string"
+                state:
+                  type: "string"
+                country:
+                  type: "string"
+                location:
+                  type: "string"
+                street:
+                  type: "string"
+                outdoor_number:
+                  type: "string"
+                indoor_number:
+                  type: "string"
+                colony:
+                  type: "string"
+                postal_code:
+                  type: "string"
+                online_payments_enabled:
+                  type: "string"
+            release_date:
+              type: "string"
+            stage_type:
+              type: "string"
+            min_down_payment:
+              type: "string"
+            order:
+              type: "string"
+            initial_payment:
+              type: "string"
+            initial_payment_expiration:
+              type: "string"
+            formula:
+              type: "string"
+            max_finance:
+              type: "string"
+            reference:
+              type: "string"
+            down_payment_expiration:
+              type: "string"
+            start_installments:
+              type: "string"
+            min_capital_payment:
+              type: "string"
+            payment_expiration:
+              type: "string"
+            payment_email:
+              type: "string"
+            lock_payment:
+              type: "string"
+            credit_schemes:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                name:
+                  type: "string"
+                status:
+                  type: "string"
+            immediate_extra_months:
+              type: "string"
+            max_percent_immediate_lots_sold:
+              type: "string"
+            min_down_payment_advance:
+              type: "string"
+            payment_receptor_emails:
+              type: "string"
+            lot_description:
+              type: "string"
+            show_full_name:
+              type: "string"
+            active_annexes:
+              type: "string"
+            start_date_by:
+              type: "string"
+            show_price:
+              type: "string"
+            show_rate:
+              type: "string"
+            opening_commission:
+              type: "string"
+            max_grace_months:
+              type: "string"
+            active_commissions:
+              type: "string"
+        lots:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+              name:
+                type: "string"
+              depth:
+                type: "string"
+              front:
+                type: "string"
+              area:
+                type: "string"
+              price:
+                type: "string"
+              status:
+                type: "string"
+              adjoining_north:
+                type: "string"
+              adjoining_south:
+                type: "string"
+              adjoining_east:
+                type: "string"
+              adjoining_west:
+                type: "string"
+              north:
+                type: "string"
+              south:
+                type: "string"
+              east:
+                type: "string"
+              west:
+                type: "string"
+              description:
+                type: "string"
+    promotions:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        name: 
+          type: "string"
+    UnauthorizedError:
+      type: "object"
+      properties:
+        message:
+          type: "string"
+          description: "Invalid credentials."
+        status:
+          type: "integer"
+          description: "Response code"
+    NoToken:
+      type: "object"
+      properties:
+        errors:
+          type: "string"
+          description: "No credentials."
+    NoAuthorizedResource:
+      type: "object"
+      properties:
+        errors:
+          type: "string"
+          description: "No credentials."
+  responses:
+    NoFound:
+      description: "Record no found"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Record no found."
+              status:
+                type: "integer"
+                description: "Response code"
+          example:
+            message: "No encontrado."
+            status: 404
+    UnProcessable:
+      description: "Unprocessable Entity"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                description: "Unprocessable Entity message (the message may change\
+                  \ depending on the error)."
+          example:
+            message: "Error message"
+  examples:
+    Notoken:
+      value:
+        errors: "Ingese un método de autentificación"
+    InvalidCredentials:
+      value:
+        message: "Ficha de autenticación invalida."
+        status: 401
+    NoAuthorized:
+      value:
+        errors: "Usted no está autorizado para usar este recurso."
+  securitySchemes:
+    ApiKeyAuth:
+      type: "apiKey"
+      name: "X-API-KEY"
+      in: "header"

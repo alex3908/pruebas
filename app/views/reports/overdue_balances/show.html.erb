@@ -1,0 +1,84 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Reporte de cartera vencida</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Reportes", reports_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Cartera Vencida</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<%= form_tag(overdue_balances_reports_path, method: :post, data: { controller: "export", 'target': "export.form", 'export-url': export_overdue_balances_folders_url(format: :json) }) do %>
+  <%= hidden_field_tag :direction, params[:direction] %>
+  <%= hidden_field_tag :sort, params[:sort] %>
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :from_date, "Buscar desde la fecha:" %>
+        <%= text_field_tag :from_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker", value: params[:from_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :to_date, "Buscar hasta la fecha:" %>
+        <%= text_field_tag :to_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker disabled", value: params[:to_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :folio, "Buscar por folio:" %>
+        <%= text_field_tag :folio, params[:folio], class: "form-control" %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :email, "Buscar por correo:" %>
+        <%= text_field_tag :email, params[:email], class: "form-control" %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :name, "Buscar por cliente:" %>
+        <%= text_field_tag :name, params[:name], class: "form-control" %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :lot_number, "Buscar por número de unidad:" %>
+        <%= number_field_tag :lot_number, params[:lot_number], class: "form-control" %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :lot_label, "Buscar por clasificador de unidad:" %>
+        <%= text_field_tag :lot_label, params[:lot_label], class: "form-control" %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :salesman, "Buscar por asesor:" %>
+        <%= text_field_tag :salesman, params[:salesman], class: "form-control" %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :project do %> Buscar por <span class="text-lowercase"><%= @project_singular %>: </span>
+        <% end %>
+        <%= select_tag :project, options_for_select(@projects.map { |project| [project.name, { "data-phases" => project.phases.select(:id, :name).to_json(include: { stages: { only: [:id, :name] } }) }, project.id] }, selected: params["project"].to_s), { class: "form-control", include_blank: ("Todos") } %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :phase do %> Buscar por <span class="text-lowercase"><%= @phase_singular %>: </span>
+        <% end %>
+        <%= select_tag :phase, options_for_select([["Todas", ""]]), class: "form-control input-white bg-input-disabled", disabled: true %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :stage do %> Buscar por <span class="text-lowercase"><%= @stage_singular %>: </span>
+        <% end %>
+        <%= select_tag :stage, options_for_select([["Todas", ""]]), class: "form-control input-white bg-input-disabled", disabled: true %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :user, "Buscar por usuario: " %>
+        <%= select_tag :user, options_for_select(@users.map { |user| [user.email, {}, user.id] }), { class: "form-control", include_blank: ("Todos") } %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :folder_user_concept_id, "Tipo de Responsabilidad" %>
+        <%= select_tag :folder_user_concept_id, options_for_select(@folder_user_concepts.map { |s| [s.name, s.id] }), { class: "form-control", include_blank: ("Todos") } %>
+      </div>
+      <div class="col-md-12 col-lg-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

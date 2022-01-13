@@ -1,0 +1,17 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Actualización exitosa</span></h1>
+  &nbsp;
+
+  <p>
+    <span>
+      ¡Tus datos bancarios fueron actualizados exitosamente!
+      <br>
+      Sus pagos han sido domiciliados para cargo a su cuenta los días <b><%= @payment_day %></b> de cada mes, mismos que podrá visualizar en sus estados de cuenta bancarios.
+      <b><%= "#{@project.name}, #{@stage.name}, #{@project.lot_entity_name} #{@lot.name}" %></b>
+    </span>
+  </p>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <%= image_tag("successful-payment.png") %>
+<% end %>

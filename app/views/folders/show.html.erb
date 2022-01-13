@@ -1,0 +1,420 @@
+<div class="container">
+  <div class="row">
+    <div class="d-flex align-content-center col-sm-12 col-md-6">
+      <h1 class="project-name"><%= @project.name %></h1>
+    </div>
+    <div class="col-sm-12 col-md-6 d-flex flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to "Expedientes", folders_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Expediente</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3 text-center">
+      Folio: <b><%= @folder.id %></b>
+    </div>
+    <div class="col-md-3 text-center">
+      <%= @lot_singular %>: <b><%= @folder.lot.name %></b>
+    </div>
+    <div class="col-md-3 text-center">
+      <%= @folder.phase.name %> - <%= @folder.stage.name %>
+    </div>
+
+    <div class="col-md-3 text-center">
+      <span>
+        Estado: <b><%= @folder.status_label %></b>
+        <%= tag.i("", class: "fa fa-info-circle", "aria-hidden": "true", "data-toggle": "tooltip", "data-placement": "top",
+                  "title": time_in_step(@folder)) if @folder.active? && @folder.step.present? && @folder.step_logs.present? %>
+        </span>
+    </div>
+
+    <div class="col-md-3 text-center">
+      Fecha de inicio: <b><%= @folder.calc_date.strftime("%d/%m/%Y") %></b>
+    </div>
+
+    <% if @folder.active? && @folder.step == Step.last_step && @folder.approved_date.present? %>
+      <div class="col-md-3 text-center">
+        Fecha de finalización: <b><%= @folder.approved_date.strftime("%d/%m/%Y") %></b>
+        <%= link_to("<i class='fa fa-pencil-square-o' aria-hidden='true'></i>".html_safe, "#editFolderModal", 'data-toggle': "modal") if can?(:update, Folder) %>
+      </div>
+    <% end %>
+
+    <% if can?(:create_custom, Contract) || can?(:update_custom, Contract) %>
+      <div class="col-md-3 text-center">
+        Contrato:
+        <% if @folder.contract.present? %>
+          <span class="badge badge-info">Personalizado</span>
+        <% elsif @contract.present? %>
+          <span class="badge badge-secondary">Plantilla</span>
+        <% else %>
+          <span class="badge badge-warning">Sin contrato</span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="col-md-3 text-center">
+      Tiempo de operación:
+      <b>
+        <% if @folder.approved_date.nil? %>
+          <%= distance_of_time_in_words(Time.zone.now, @folder.calc_date, { accumulate_on: :days, highest_measure_only: true }) %>
+        <% else %>
+          <%= distance_of_time_in_words(@folder.approved_date, @folder.calc_date, { accumulate_on: :days, highest_measure_only: true }) %>
+        <% end %>
+      </b>
+    </div>
+
+    <% if can?(:set_ready_state, Folder) %>
+      <div class="col-md-3 text-center">
+        Promesa de compra:
+        <% if @folder.ready? %>
+          <span class="badge badge-success">Activa</span>
+        <% else %>
+          <span class="badge badge-secondary">No activa</span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @folder&.step&.folders_expires && @expiration_date.present? && @folder.stage.is_expirable %>
+      <div class="col-md-3 text-center">
+        Tiempo restante antes de expirar:
+        <vac :end-time="new Date('<%= @expiration_date.to_s %>').getTime()">
+          <template
+            v-slot:process="{ timeObj }">
+            <span class="font-weight-bold">{{ `${timeObj.d}:${timeObj.h}:${timeObj.m}:${timeObj.s}` }}</span>
+          </template>
+          <template
+            v-slot:finish>
+              <span></span>
+          </template>
+        </vac>
+        por falta del <%= @expiration_reason %>
+      </div>
+    <% end %>
+
+    <% if @folder&.purchase_promise_signatures.any? %>
+      <% last_digital_signature_label = @folder&.last_digital_signature_label %>
+      <div class="col-md-12">
+        <span>
+        Estatus del contrato: <b><%= last_digital_signature_label[:signature_label] %></b>
+        <%= tag.i("", class: "fa fa-info-circle", "aria-hidden": "true", "data-toggle": "tooltip", "data-placement": "top",
+                  "title": last_digital_signature_label[:error_description])  if last_digital_signature_label[:error] %>
+        </span>
+      </div>
+    <% end %>
+  </div>
+
+</div>
+
+<div class="container">
+  <div class="pb-3">
+    <% if @rejected_ev_folder.present? && @rejected_ev_folder.any? %>
+      <div class="text-center text-danger">
+        <% @rejected_ev_folder.each_with_index do |evaluation_folder, index| %>
+          <%= evaluation_folder.evaluation.question %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="btn-group" role="group">
+      <%= link_to "Regresar", folders_path, class: "btn btn-secondary custom-button-size vertical-align" %>
+      <% if (@step_role&.send_by_whatsapp? || @step_role&.send_by_email? || @step_role&.copy_to_clipboard?) && @can_pay_online && !@folder.canceled? %>
+        <b-button v-b-modal.modal-window variant="info" class="vertical-align">Pagar</b-button>
+      <% end %>
+      <%= link_to("Cobranza", payments_folder_installments_path(@folder), class: "btn btn-secondary custom-button-size vertical-align") if can_pay_on_this_step(@folder, @step_role&.can_make_installments?) %>
+      <%= link_to("Cuotas Personalizadas", custom_installments_folder_installments_path(@folder), class: "btn btn-secondary custom-button-size vertical-align") if can?(:custom_installments, Folder) || @step_role&.can_manage_custom_installments? %>
+     <%= link_to("Editar Financiamiento", quote_project_phase_stage_lot_path(@project, @phase, @stage, @lot, folder: @folder.id), class: "btn btn-secondary custom-button-size vertical-align") if @folder_without_active_payments && @step_role&.update_financial? && !@folder.canceled? %>
+      <%= link_to("Cancelar Expediente", "#cancelFolderModal", 'data-toggle': "modal", class: "btn btn-warning custom-button-size") if can_cancel_folder? %>
+      <% if @downloadable_files_ids&.any? || @lot.chepina.attached? %>
+        <% if !ready_to_download?(@folder, @contract, @stage, @lot, @downloadable_files_ids) %>
+          <%= button_tag(unavailable_files_button, class: "btn btn-secondary custom-button-size disabled", style: "cursor: not-allowed") %>
+        <% else %>
+          <div class="btn-group" role="group">
+            <button id="folderFiles" type="button" class="btn btn-secondary custom-button-size dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Archivos
+            </button>
+            <div class="dropdown-menu" aria-labelledby="folderFiles">
+              <% if @folder.ready? && can_download?(@downloadable_files_ids, :purchase_promise) %>
+                <% if @contract.present? %>
+                  <%= form_tag("#", data: { controller: "export", 'target': "export.form", 'export-url': purchase_promise_folder_url(@folder, format: :json) }) do -%>
+                    <%= button_tag("Promesa de compra con Anexos", type: "button", class: "dropdown-item", style: "border-radius: 0", data: { action: "export#generate" }) %>
+                  <% end %>
+
+                  <%= link_to("Promesa de compra sin Anexos", purchase_promise_only_folder_url(@folder, format: :pdf), class: "dropdown-item", target: "_blank") %>
+                <% else %>
+                  <%= button_tag("Sin Contrato", class: "dropdown-item disabled", style: "cursor: not-allowed") %>
+                <% end %>
+              <% end %>
+
+              <% if can_download?(@downloadable_files_ids, :annexe_1) %>
+                <%= link_to(@stage.phase_description_title, annexe_1_folder_url(@folder, format: :pdf), class: "dropdown-item", target: "_blank") %>
+              <% end %>
+
+              <% if can_download?(@downloadable_files_ids, :annexe_2) %>
+                <%= link_to(@stage.stage_description_title, annexe_2_folder_url(@folder, format: :pdf), class: "dropdown-item", target: "_blank") %>
+              <% end %>
+
+              <% if can_download?(@downloadable_files_ids, :annexe_3) %>
+                <%= link_to(@stage.lot_description_title, annexe_3_folder_url(@folder, format: :pdf), class: "dropdown-item", target: "_blank") %>
+              <% end %>
+
+              <% if  @folder.ready? && can_download?(@downloadable_files_ids, :purchase_promise_attached) %>
+                <%= link_to("Anexo PLD", purchase_promise_attached_folder_url(@folder, format: :pdf), class: "dropdown-item", target: "_blank") %>
+              <% end %>
+
+              <% if can_download?(@downloadable_files_ids, :amortization_cover) %>
+                <%= link_to("Amortización (Carátula)", amortization_cover_folder_url(@folder, format: :pdf), class: "dropdown-item", target: "_blank") %>
+              <% end %>
+
+              <% if @lot.chepina.attached? && can_download?(@downloadable_files_ids, :chepina) %>
+                <%= link_to("Chepina", rails_blob_path(@lot.chepina), class: "dropdown-item", target: "_blank") %>
+              <% end %>
+
+              <% if can_download?(@downloadable_files_ids, :deposit_format) %>
+                <%= link_to("Ficha de Depósito", deposit_format_folder_url(@folder.id, format: :pdf), class: "dropdown-item", target: "_blank") %>
+              <% end %>
+
+              <% if can_download?(@downloadable_files_ids, :down_payment_receipt) %>
+                <%= link_to("Recibo de Apartado", down_payment_receipt_folder_url(@folder.id, format: :pdf, type: :initial_payment), class: "dropdown-item", target: "_blank") %>
+                <% if @folder.payment_scheme.complement_payment > 0 %>
+                  <%= link_to("Recibo de Com. de Apartado", down_payment_receipt_folder_url(@folder.id, format: :pdf, type: :complement_payment), class: "dropdown-item", target: "_blank") %>
+                <% end %>
+                <%= link_to("Recibo de Enganche", down_payment_receipt_folder_url(@folder.id, format: :pdf, type: :down_payment), class: "dropdown-item", target: "_blank") %>
+                <% if @folder.payment_scheme.opening_commission > 0 %>
+                  <%= link_to("Recibo de Cuota por Apertura", down_payment_receipt_folder_url(@folder.id, format: :pdf, type: :opening_commission), class: "dropdown-item", target: "_blank") %>
+                <% end %>
+              <% end %>
+
+              <% if can_download?(@downloadable_files_ids, :purchase_conditions) %>
+                <%= link_to @folder.coowner? ? "Condiciones de Compra (Copropietario)" : "Condiciones de Compra", purchase_conditions_folder_url(@folder.id, format: :pdf), class: "dropdown-item", target: "_blank" %>
+              <% end %>
+
+              <% if can_download?(@downloadable_files_ids, :amortization_table) %>
+                <%= link_to("Tabla de Amortización", amortization_table_folder_url(@folder.id, format: :pdf), class: "dropdown-item", target: "_blank") %>
+              <% end %>
+
+              <% if can_download?(@downloadable_files_ids, :promissory_note) %>
+                <%= link_to("Pagaré", promissory_note_folder_url(@folder.id, format: :pdf), class: "dropdown-item", target: "_blank") %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
+      <% if can?(:extend, Folder) && @folder.stage.sudden_death.present? %>
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-secondary custom-button-size dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Muerte súbita
+          </button>
+          <div class="dropdown-menu" aria-labelledby="btnGroupDropActions">
+            <% if @folder.payment_scheme.initial_payment > 0 %>
+              <% if @folder.initial_payment_sudden_death.nil? %>
+                <%= link_to("Apartado", extend_folder_path(@folder, type: :initial_payment),
+                            data: {
+                                remote: "true",
+                                method: "patch",
+                                confirm: "¿Deseas continuar? Con esta acción se le dará a este expediente #{@folder.stage.sudden_death} horas extra para cargar el comprobante de apartado." },
+                            class: "dropdown-item"
+                    ) %>
+              <% else %>
+                <%= tag.div("Apartado", class: "dropdown-item is-disabled") %>
+              <% end %>
+            <% end %>
+
+            <% if @folder.down_payment_sudden_death.nil? %>
+              <%= link_to("Enganche", extend_folder_path(@folder, type: :down_payment),
+                          data: {
+                              remote: "true",
+                              method: "patch",
+                              confirm: "¿Deseas continuar? Con esta acción se le dará a este expediente #{@folder.stage.sudden_death} horas extra para cargar el comprobante de enganche." },
+                          class: "dropdown-item"
+                  ) %>
+            <% else %>
+              <%= tag.div("Enganche", class: "dropdown-item is-disabled") %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if can?(:download_templates, Folder) && @project.templates.attached? %>
+        <div class="btn-group" role="group">
+          <button id="projectTemplates" type="button" class="btn btn-secondary custom-button-size dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Plantillas
+          </button>
+          <div class="dropdown-menu" aria-labelledby="projectTemplates">
+            <% @project.templates.each do |template| %>
+              <%= link_to(template.filename, rails_blob_path(template, disposition: :attachment), class: "dropdown-item") %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+      <% if @folder.active? && !verify_documents(@folder, @folder.next_step) %>
+        <button type="button" class="btn btn-warning custom-button-size" data-toggle="modal" data-target="#missingFilesModal">
+          Archivos pendientes
+        </button>
+      <% end %>
+      <% if (@folder.active? && @can_request_support || @active_support_sale || @step_role&.can_approve? || @step_role&.can_reject? || @step_role&.can_soft_reject? || can?(:custom_create, Contract) || can?(:custom_update, Contract) || (can?(:set_ready_state, Folder) && !@folder.ready?)) || can?(:update, Folder) %>
+        <div class="btn-group" role="group" id="folder-actions">
+          <button id="btnGroupDropActions" type="button" class="btn btn-secondary custom-button-size dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Acciones
+          </button>
+          <div class="dropdown-menu" aria-labelledby="btnGroupDropActions">
+            <%= link_to("Activar Promesa de Compra", set_ready_state_folder_path(@folder), data: { remote: "true", method: "patch", confirm: "¿Deseas continuar? Con esta acción se activara la promesa de compra." }, class: "dropdown-item") if can?(:set_ready_state, Folder) && !@folder.ready? %>
+
+            <% if @folder.not_finished? && verify_documents(@folder, @step.next_step) && @step_role&.can_approve? %>
+              <%= link_to("Enviar a #{@step.next_step.name}", accept_folder_url(@folder), data: { method: "patch", confirm: "¿Deseas continuar? Con esta acción se enviará el expediente un paso adelante en el flujo." }, class: "dropdown-item") unless @approve_questions.present? %>
+              <%= link_to("Enviar a #{@step.next_step.name}", "#acceptFolderModal", 'data-toggle': "modal", class: "dropdown-item") if @approve_questions.present? %>
+            <% elsif @folder.not_finished? && @step_role&.can_approve? %>
+              <%= link_to("Enviar a #{@step.next_step.name}", folder_path(@folder), data: { title: "Aún hay archivos faltantes." }, class: "dropdown-item is-disabled") %>
+            <% end %>
+
+            <% if @folder.under_revision? %>
+              <%= link_to("Regresar a #{@step.prev_step.name}", soft_reject_folder_path(@folder), data: { remote: "true", method: "patch", confirm: "¿Deseas continuar? Con esta acción se enviará el expediente un paso atrás en el flujo." }, class: "dropdown-item") if @step_role&.can_soft_reject? %>
+              <%= link_to("Rechazar a #{@step.reject_step.name}", reject_folder_path(@folder), data: { method: "patch", confirm: "¿Deseas continuar? Con esta acción se enviará el expediente a #{@step.reject_step.name}" }, class: "dropdown-item") if @step_role&.can_reject? && !@reject_questions.present? %>
+              <%= link_to("Rechazar a #{@step.reject_step.name}", "#rejectFolderModal", 'data-toggle': "modal", class: "dropdown-item") if @step_role&.can_reject? && @reject_questions.present? %>
+            <% end %>
+
+            <% if @active_support_sale.present? && @active_support_sale.user_involved?(current_user) %>
+              <%= link_to("Ver solicitud de soporte", support_sale_folder_path(@folder.id), class: "dropdown-item") %>
+            <% elsif @can_request_support && current_user.structure.present? %>
+              <%= link_to("Solicitar soporte", "#supportModal", class: "dropdown-item", data: { toggle: "modal" }) %>
+            <% end %>
+
+            <%= link_to("Crear contrato", new_contract_path(folder: @folder, contract: @contract), class: "dropdown-item") if can?(:custom_create, Contract) && @folder.contract.nil? %>
+            <%= link_to("Editar contrato", edit_contract_path(@folder.contract), class: "dropdown-item") if can?(:custom_update, Contract) && @folder.contract.present? %>
+          </div>
+        </div>
+      <% end %>
+      <% if @can_show_signatures_section %>
+        <div class="btn-group" role="group" id="trato-actions">
+          <button id="btnGroupTrato" type="button" class="btn btn-secondary custom-button-size dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <%= image_tag "trato-white.svg", style: "width: 100px;" %>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="btnGroupTrato">
+            <% if @ready_for_sign %>
+              <% if @tags_without_value.any? %>
+                <button type="button" class="dropdown-item dropdown-item-warning" data-toggle="modal" data-target="#missingTagInformationModal" title="Hacen falta información en el contrato">
+                  Firmar Promesa de compra
+                </button>
+              <% else %>
+                <% if @folder&.has_pending_purchase_promise_signatures? %>
+                      <%= link_to("Enviar firma de promesa de compra a los clientes",folder_path(@folder),data: { toggle: "tooltip" }, title: "Hay un proceso de firma en curso" , class: "dropdown-item is-disabled") %>
+
+                      <% if @step_role&.show_clients_signature_links? %>
+                        <b-button ref="client_signature" class="dropdown-item" v-on:click="openModal('showSignLinksModal', 'client')">Ver enlaces de firma de clientes</b-button>
+                      <% end %>
+
+                      <% if @step_role&.show_signers_signature_links? %>
+                        <b-button ref="representative_signature" class="dropdown-item" v-on:click="openModal('showSignLinksModal', 'representative')">Ver enlaces de firma de representantes</b-button>
+                      <% end %>
+
+                <% elsif @folder&.completed_purchase_promise_signatures? %>
+                  <% if @step_role&.can_resend_sign_files? %>
+                    <%= render partial: "signature_actions", locals: {confirmed_emails:@confirmed_emails, folder: @folder } %>
+                  <% else %>
+                      <%= link_to("Enviar firma de promesa de compra a los clientes",folder_path(@folder),data: { toggle: "tooltip" }, title: "No tiene permisos para volver a firmar el documento" , class: "dropdown-item is-disabled") %>
+                  <% end %>
+                <% else %>
+                  <%= render partial: "signature_actions", locals: {confirmed_emails:@confirmed_emails, folder: @folder } %>
+                <% end %>
+              <% end %>
+            <% else %>
+              <%= link_to("Enviar firma de promesa de compra a los clientes ",folder_path(@folder),data: { toggle: "tooltip" }, title: "El envio a firma no está habilitado, no hay servicios de firma configurados o no se cumplen las condiciones para el envio del contrato", class: "dropdown-item is-disabled") %>
+            <% end %>
+
+            <% if @step_role&.can_send_to_cancel_sign_purchase_promise? && @folder&.has_pending_purchase_promise_signatures? %>
+              <%= link_to("Cancelar firma de Promesa de compra",cancel_purchase_promise_to_sign_folder_path(@folder), data: { remote: "true", method: "patch", confirm: "¿Deseas continuar? Con esta acción se cancelará el proceso de firma digital." }, class: "dropdown-item bg-warning") %>
+            <% end %>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="container mb-3 section-buttons"></div>
+</div>
+
+<div class="container">
+  <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="btn-group mr-2" role="group" aria-label="First group">
+      <% if @step_role&.update_coowners? %>
+        <% if @folder.client_2_id.nil? && @folder.client_3_id.nil? && @folder.client_4_id.nil? && @folder.client_5_id.nil? && @folder.client_6_id.nil? %>
+          <%= link_to "Propietario", "/folders/#{@folder.id}/buyer/owner", method: :post, class: @folder.owner? ? "btn btn-primary cursor-normal is-disabled" : "btn btn-secondary" %>
+        <% end %>
+        <%= link_to "Copropietario", "/folders/#{@folder.id}/buyer/coowner", method: :post, class: @folder.coowner? ? "btn btn-primary cursor-normal is-disabled" : "btn btn-secondary" %>
+      <% else %>
+        <div class="btn <%= @folder.owner? ? "btn-primary" : "btn-secondary" %> cursor-normal is-disabled">Propietario</div>
+        <div class="btn <%= @folder.coowner? ? "btn-primary" : "btn-secondary" %> cursor-normal is-disabled">Copropietario</div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Sections -->
+<%= render "folders/sections/clients" %>
+<%= render "folders/sections/salesman" %>
+<%= render "folders/sections/credit" %>
+<%= render "folders/sections/files" %>
+<%= render "folders/sections/payments" %>
+<%= render partial: "cash_backs/log", locals: { cash_backs: @cash_backs, can_cancel_cashbacks: can?(:cancel, CashBack) } %>
+<% if @can_see_folder_users %>
+  <div class="container" id="folder-users-table">
+    <%= render "folders/sections/folder_users" %>
+  </div>
+<% end %>
+<div class="container" id="comments-table">
+  <%= render "folders/sections/comments" %>
+</div>
+<%= render "step_logs" if can?(:read_step_log, Step) %>
+<%= render "logs" if can?(:see_binnacle, Folder) %>
+<%= render "signature_logs" if can?(:show_digital_signature_logs, Folder) %>
+
+<% if @folder.canceled? %>
+  <%= render "folders/sections/canceled_description" %>
+<% end %>
+
+<!-- Modals -->
+<%= render "folders/modals/add_coowner" %>
+<%= render "folders/modals/add_folder_users" if @step_role&.can_add_folder_user? || can?(:create, FolderUser) || can?(:create_only_hidden, FolderUser) && @folder.not_active? %>
+<%= render "folders/modals/add_comment" if @step_role&.can_comment? %>
+<%= render "folders/modals/reassign_user" if @step_role&.can_reassign_seller? %>
+<%= render "folders/modals/reassign_client" if @step_role&.can_reassign_client? %>
+<% if @folder.not_finished? && verify_documents(@folder, @step.next_step) %>
+  <%= render "folders/modals/accept_folder" if @approve_questions.present? %>
+  <%= render "folders/modals/reject_folder" if @reject_questions.present? %>
+<% else %>
+  <%= render "folders/modals/missing_files" %>
+<% end %>
+<%= render "folders/modals/cancel_folder" if can_cancel_folder? %>
+<%= render "folders/modals/edit" if can?(:update, Folder) %>
+<%= render "folders/modals/request_support" if can?(:request_support, Folder) && @active_support_sale.nil? && current_user.structure.present? %>
+<%= render "folders/modals/missing_tag_information" if @tags_without_value && @tags_without_value.any? %>
+
+<div id="modal-window" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+
+<% if (@step_role&.send_by_whatsapp? || @step_role&.send_by_email? || @step_role&.copy_to_clipboard?) && @can_pay_online && !@folder.canceled? %>
+  <div>
+    <payment-gateways :folder-id="<%= @folder.id %>" />
+  </div>
+<% end %>
+
+<% if @step_role&.show_clients_signature_links? || @step_role&.show_signers_signature_links? %>
+  <div>
+    <sign-links :folder-id="<%= @folder.id %>" />
+  </div>
+<% end %>

@@ -1,0 +1,28 @@
+<% if @contract.errors.count > 0 %>
+Swal.fire({
+  showConfirmButton: true,
+  type: 'error',
+  title: 'Hubo un error al intentar hacer el cambio.'
+});
+<% elsif @duplicated && @status %>
+<%# ('[data-id=< @stage.id >] [data-toggle]').addClass('off'); %>
+
+Swal.fire({
+  showConfirmButton: true,
+  type: 'warning',
+  title: 'Contrato duplicado',
+  text: '<%= @message.html_safe %>'
+}).then(function(result) {
+  Turbolinks.visit(window.location);
+})
+
+<% else %>
+Swal.fire({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  type: 'success',
+  title: '<%= @message %>'
+});
+<% end %>

@@ -1,0 +1,67 @@
+<div class="container">
+  <section class="clients py-2">
+    <div class="row">
+      <div class="col-md-1 text-center py-3">
+        <%= image_tag("icons/clients_gray.png", class: "img-fluid", style: "width: 44px") %>
+      </div>
+      <div class="col-md-11">
+        <div class="d-flex flex-wrap justify-content-between">
+          <h3 class="text-left vertical-align m-0 py-3">Clientes</h3>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-green">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-gray">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if @clients.length == 0 %>
+      <p>No hay clientes.</p>
+    <% else %>
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th colspan="3"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @clients.each do |client| %>
+          <tr>
+            <td><%= client.label %></td>
+            <td><%= client.formatted_main_phone %></td>
+            <td><%= client.email %></td>
+            <td class="text-right">
+              <% if can? :quote, :quote %>
+                <%= link_to "Cotizar", projects_path(client: client), class: "btn btn-enter enter-icon" %>
+              <% end %>
+              <% if can?(:update, Client) %>
+                <%= link_to client, class: "table-link" do %>
+                  <i class="fa fa-eye"></i>
+                <% end %>
+                <%= link_to edit_client_path(client), class: "table-link" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= will_paginate(@clients, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+      <div class="text-center">
+        <div class="w-25 d-inline-block">
+          Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                  onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+        </div>
+      </div>
+    <% end %>
+  </section>
+</div>

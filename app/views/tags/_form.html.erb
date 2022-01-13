@@ -1,0 +1,33 @@
+<%= form_with(model: tag, local: true, url: tag) do |form| %>
+  <% if tag.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(tag.errors.count, "error") %> errores encontrados:</h2>
+
+      <ul>
+        <% tag.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :name, "Título" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :key, "Llave" %>
+      <%= form.text_field :key, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :related_to, "Tipo" %>
+      <%= form.select :related_to, options_for_select([[ "Todos", "all"], ["Unidades", "lots"], ["Contratos", "contracts"]], @tag.related_to), class: "form-control", required: true %>
+    </div>
+  </div>
+
+  <div class="actions pt-3">
+    <%= link_to "Cancelar", tags_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

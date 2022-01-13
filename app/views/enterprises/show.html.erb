@@ -1,0 +1,55 @@
+<div class="container">
+  <h3 class="text-center py-3">Empresa</h3>
+  <div class="row pb-4">
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>Razón Social:</strong>
+      <%= @enterprise.business_name %>
+    </div>
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>Nombre Comercial:</strong>
+      <%= @enterprise.short_business_name %>
+    </div>
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>R.F.C:</strong>
+      <%= @enterprise.rfc %>
+    </div>
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>Estado:</strong>
+      <%= @enterprise.state %>
+    </div>
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>País:</strong>
+      <%= @enterprise.country %>
+    </div>
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>Localidad:</strong>
+      <%= @enterprise.location %>
+    </div>
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>Calle:</strong>
+      <%= @enterprise.street %>
+    </div>
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>Número:</strong>
+      <% if @enterprise.outdoor_number != "" %>
+        Exterior: <%= @enterprise.outdoor_number %>
+      <% end %>
+      <% if @enterprise.indoor_number != "" %>
+        Interior: <%= @enterprise.indoor_number %>
+      <% end %>
+    </div>
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>Colonia:</strong>
+      <%= @enterprise.colony %>
+    </div>
+    <div class="col-sm-12 col-md-6 py-2">
+      <strong>Código Postal:</strong>
+      <%= @enterprise.postal_code %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <%= link_to "Regresar", enterprises_path, class: "btn btn-secondary" %>
+  <%= link_to "Editar", edit_enterprise_path(@enterprise), class: "btn btn-primary" if can?(:update, Enterprise) %>
+</div>

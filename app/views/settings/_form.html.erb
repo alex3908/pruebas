@@ -1,0 +1,108 @@
+<%= form_with(model: setting, local: true) do |form| %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :label, "Etiqueta" %>
+      <%= form.text_field :label, class: "form-control", required: true, disabled:  @setting.persisted? %>
+    </div>
+
+    <% if can?(:view_hidden, Setting) %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :hidden, "Oculto" %>
+        <div>
+          <%= form.check_box :hidden,
+                            data: {
+                                activate: "toggle",
+                                onstyle: "success",
+                                offstyle: "secondary",
+                                on: "Si",
+                                off: "No",
+                            } %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @setting.new_record? %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :concept, "Concepto" %>
+        <%= form.select :concept, options_for_select(Setting::CONCEPTS.map { |concept| [concept[1], {}, concept[0]] }, @setting&.concept),
+                        { include_blank: "Selecciona un cliente" }, class: "form-control", required: true %>
+      </div>
+    <% end %>
+
+    <% if @setting.new_record? %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :data_type, "Tipo de dato" %>
+        <%= form.select(:data_type, options_for_select(Setting::TYPE_LABELS.map { |concept| [concept[1], {}, concept[0]] }, @setting&.data_type),
+        { include_blank: "Selecciona un tipo de dato." }, class: "form-control", required: true, disabled: @setting.persisted?) %>
+      </div>
+    <% end %>
+
+    <% if @setting.persisted? %>
+      <% if @setting.data_type == "integer" %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :value, "Valor" %>
+        <div class="input-group">
+          <%= form.number_field :value, class: "form-control text-right", min: 0, step: 1 %>
+        </div>
+      </div>
+      <% elsif @setting.data_type == "percentage" %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :value, "Valor" %>
+        <div class="input-group">
+          <%= form.number_field :value, step: 0.01, class: "form-control text-right", max: 100, min: 0 %>
+          <div class="input-group-append">
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+      </div>
+      <% elsif @setting.data_type == "float" %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :value, "Valor" %>
+        <div class="input-group">
+          <%= form.number_field :value, class: "form-control text-right", min: 0, step: 0.001 %>
+        </div>
+      </div>
+      <% elsif @setting.data_type == "string" %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :value, "Valor" %>
+        <div class="input-group">
+          <%= form.text_field :value, class: "form-control" %>
+        </div>
+      </div>
+      <% elsif @setting.data_type == "boolean" %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :value, "Valor" %>
+          <div>
+          <%= form.check_box :value,
+                            data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: "Si",
+                              off: "No",
+                            } %>
+          </div>
+      </div>
+      <% elsif @setting.data_type == "csv" %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :value, "Valor" %>
+        <div class="input-group">
+          <%= form.text_field :value, class: "form-control" %>
+        </div>
+      </div>
+      <% elsif @setting.data_type == "html" %>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :value, "Valor" %>
+        <%= form.text_area :value, class: "tinymce", "v-pre": '' %>
+      </div>
+      <% end %>
+    <% end %>
+
+  </div>
+
+  <div class="actions py-3">
+    <%= link_to "Cancelar", settings_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

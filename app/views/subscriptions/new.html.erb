@@ -1,0 +1,119 @@
+<% content_for :side do %>
+  <div>
+    <p class="text-justify">
+    Domiciliación del <b><%= @project.lot_entity_name %> <%= @lot.name %></b> de la
+    <span class="text-lowercase"><%= @project.stage_entity_name %></span> <b><%= @stage.name %></b>
+    de la <span class="text-lowercase"><%= @project.phase_entity_name %></span> <b><%= @phase.name %></b> del
+    <span class="text-lowercase"><%= @project.project_entity_name %></span> <b><%= @project.name %></b>
+    </p>
+  </div>
+
+  <div class="py-3 text-justify">
+    “Estimado cliente, le recordamos que es muy importante, por temas fiscales y para su próxima escrituración,
+    realizar su pago desde su cuenta. Así evitaremos algún retraso en el proceso de su escritura definitiva“
+  </div>
+
+  <p class="mt-2 text-center font-weight-bold">Plan de la suscripción</p>
+  <div class="text-justify">
+    Tu suscripción contemplará los siguientes pagos:
+  </div>
+
+  <table class="text-center table-striped w-100 table-font-size">
+    <colgroup>
+      <col class="table-left-column">
+    </colgroup>
+    <thead>
+      <tr>
+          <th class="color-primary w-25 p-3"></th>
+          <th class="color-primary w-25 p-3">Monto</th>
+          <th class="color-primary w-25 p-3">Número de pagos</th>
+          <th class="color-primary w-25 p-3">Fecha de inicio</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @subscription_plans.each_with_index do |plan, index| %>
+        <tr>
+          <td class='w-25 py-3'>
+            Actualización <%= index + 1 %>
+            <br>
+            <%= SubscriptionPlan.human_attribute_name(plan.concept_description) %>
+          </td>
+          <td class='w-25 p-3'><%= plan.amount %></td>
+          <td class='w-25 p-3'><%= plan.payments_count %></td>
+          <td class='w-25 p-3'><%= plan.start_date.strftime("%d/%m/%Y") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<% if @subscription.present? && !@subscription.card_updatable? %>
+  <div class="text-center d-flex align-items-center justify-content-center">
+    <div class="w-50">
+      <%= image_tag "successful-payment.png", class: "mx-auto d-block" %>
+      <h5 class="m-0 py-3">Suscripción activa</h5>
+      <div class="text-center">
+        Ya cuentas con una subscripción activa para este expediente.
+      </div>
+    </div>
+  </div>
+<% elsif local_assigns[:subscription_response].present? %>
+  <script type="text/javascript" src="https://docs.netpay.mx/cdn/v1.3/netpay.js"></script>
+  <div data-controller="netpay" data-netpay-subscription-response="<%= local_assigns[:subscription_response] %>">
+    <div class="text-center d-flex align-items-center justify-content-center">
+      <div class="w-50">
+        <%= image_tag "successful-payment.png", class: "mx-auto d-block" %>
+        <h5 class="m-0 py-3">Suscripción activa</h5>
+        <div class="text-center">
+          Ya cuentas con una subscripción activa para este expediente.
+        </div>
+      </div>
+    </div>
+  </div>
+<% elsif local_assigns[:update_response].present? && update_response == :success %>
+  <div class="text-center d-flex align-items-center justify-content-center">
+    <div class="w-50">
+      <%= image_tag "successful-payment.png", class: "mx-auto d-block" %>
+      <h5 class="m-0 py-3">Suscripción activa</h5>
+      <div class="text-center">
+        Ya cuentas con una subscripción activa para este expediente.
+      </div>
+    </div>
+  </div>
+<% elsif local_assigns[:update_response].present? && update_response != :success %>
+  <div class="text-center d-flex align-items-center justify-content-center">
+    <div class="w-50">
+      <i class="fa fa-times-circle fa-5x text-danger"></i>
+      <h5 class="m-0 py-3">Error al actualizar los datos</h5>
+      <div class="text-center">
+        <%= local_assigns[:message] %>
+      </div>
+    </div>
+  </div>
+<% elsif @client.nil? && @clients.present? %>
+  <div class="mt-5 pt-5">
+  <%= form_with(method: "GET", local: true) do |form| %>
+    <div class="form-group m-3">
+      <%= form.label :client_id, "Selecciona un cliente:" %>
+      <%= form.select :client_id, @clients.map { |coowner| [encrypt_string(coowner.name), coowner.id] }, {}, { class: "form-control" } %>
+    </div>
+
+    <div class="pt-3 d-flex justify-content-center m-auto">
+      <%= form.submit "Continuar", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+  </div>
+<% elsif @client.present? %>
+    <script type="text/javascript" src="<%= @online_payment_service.test? ? "https://docs.netpay.mx/cdn/js/dev/netpay.154.js" : "https://docs.netpay.mx/cdn/v1.3/netpay.min.js" %>"></script>
+  <div class="mt-5" data-controller="netpay" data-netpay-api-key="<%= @online_payment_service.properties["loop_public_key"] %>" data-netpay-env="<%= @online_payment_service.environment %>">
+    <%= form_with(scope: :subscription, method: @subscription&.card_updatable? ? "PUT" : "POST", url: @subscription&.card_updatable? ? update_subscription_path(folder_id: @folder.id) : create_subscription_path(folder_id: @folder.id), data: { target: "netpay.paymentForm" }, multipart: true) do |form| %>
+      <%= form.hidden_field :token_id, data: { target: "netpay.tokenField" } %>
+      <%= form.hidden_field :client_id, value: @client.id unless @subscription&.card_updatable? %>
+    <% end %>
+    <%= content_tag :div, "", id: "netpay-form" %>
+    <div class="d-none text-center" data-target="netpay.loadingWheel">
+      <i class="fa fa-circle-o-notch fa-spin fa-5x"></i>
+      <p class="text-small">Su pago está siendo procesado, por favor no cierre esta ventana</p>
+    </div>
+  </div>
+<% end %>

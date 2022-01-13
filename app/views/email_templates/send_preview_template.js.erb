@@ -1,0 +1,27 @@
+<% if @error.present?  %>
+  Swal.fire({
+    title: 'Error',
+    text: 'Ocurrió un error al intentar enviar la previsualización de la plantilla, por favor comunícate con tu administrador.',
+    type: 'error',
+    confirmButtonText: 'Continuar'
+  });
+<% elsif @email_template.errors.size > 0 %>
+  Swal.fire({
+    title: '<h5>No se pudo enviar la previsualización por <%= pluralize_without_count(@email_template.errors.count, "la siguiente razón", "las siguientes razones") %>: </h5>',
+    text: "<%= @email_template.errors.full_messages.join(", ") %>.",
+    type: 'warning',
+    confirmButtonText: 'Continuar',
+    footer: 'Por favor corrobora los datos. Si tienes alguna duda comunícate con tu responsable.'
+  })
+<% else %>
+  Swal.fire({
+    title: '¡Previsualización de plantilla enviada con éxito!',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  });
+<% end %>

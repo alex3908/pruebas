@@ -1,0 +1,95 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Cuentas de Banco</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", enterprises_path, class: "btn btn-outline-secondary mr-2" %>
+      <% if can?(:create, BankAccount) %>
+        <%= link_to "Nueva Cuenta de Banco", new_enterprise_bank_account_path(@parent), class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @bank_accounts.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se encontraron cuentas bancarias.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>Titular</th>
+          <th>Banco</th>
+          <th>Datos</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @bank_accounts.each do |bank_account| %>
+          <tr>
+            <td class="align-middle"><%= bank_account.holder %></td>
+            <td class="align-middle"><%= bank_account.bank %></td>
+            <td class="align-middle">
+              Número de cuenta: <b><%= bank_account.account_number %></b>
+              <% if bank_account.clabe.present? %>
+                <br>
+                CLABE: <b><%= bank_account.clabe %></b>
+              <% end %>
+            </td>
+            <td class="text-center">
+              <% if can?(:change_status, BankAccount) %>
+                <div class="p-2">
+                <%= check_box_tag "complete", bank_account.active, bank_account.active,
+                                  data: {
+                                    activate: "toggle",
+                                    onstyle: "success",
+                                    offstyle: "secondary",
+                                    on: "Activada",
+                                    off: "Desactivada",
+                                    remote: true,
+                                    url: change_status_enterprise_bank_account_path(@parent, bank_account), method: :patch
+                                  } %>
+                </div>
+              <% end %>
+              <% if bank_account.cash_flows.count < 1 %>
+                <%= link_to edit_enterprise_bank_account_path(@parent, bank_account), class: "btn" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:read, BankAccount) %>
+                <%= link_to enterprise_bank_account_path(@parent, bank_account), class: "table-link" do %>
+                  <i class="fa fa-eye"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:change, BankAccount) %>
+                <%= link_to edit_enterprise_bank_accounts_path(@parent, bank_account), class: "table-link" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <%= will_paginate(@branches, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+  <div class="text-center mt-3">
+    <div class="w-25 d-inline-block">
+      Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                               onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+    </div>
+  </div>
+<% end %>

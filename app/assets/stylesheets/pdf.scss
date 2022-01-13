@@ -1,0 +1,1912 @@
+@import './bootstrap_variables';
+@import 'bootstrap/scss/bootstrap';
+@import url('https://fonts.googleapis.com/css?family=Poppins:200,400,500|Montserrat&display=swap');
+
+@font-face {
+  font-family: 'Avenir';
+  src: asset-data-url('avenir.ttc');
+}
+
+// CUSTOM STYLES
+.blank-space-with-lines {
+  * {
+    position: relative;
+  }
+
+  * span {
+    background-color: white;
+  }
+
+  p:after,
+  li:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0.5em;
+    border-top: 1px dashed black;
+    bottom: 3px;
+    z-index: -1;
+  }
+
+  p {
+    font-size: initial;
+  }
+}
+
+.subtitle {
+  font-size: 24px;
+  text-align: center;
+  margin: 30px;
+  color: $primary-pdf;
+}
+
+.d-block {
+  color: black;
+  font-weight: normal;
+}
+
+.first-block {
+  font-weight: bold;
+}
+
+.title-container {
+  text-align: center;
+
+  h1 {
+    font-size: 35px;
+    display: inline;
+    letter-spacing: 3px;
+    color: $pdf-title;
+  }
+
+  .square-point {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin: 0 10px;
+    background: #63656a;
+  }
+}
+
+.subtitle-primary {
+  padding-top: 20px;
+
+  h2 {
+    font-size: 20px;
+    display: inline;
+    color: $primary-pdf;
+    letter-spacing: 3px;
+  }
+}
+
+p {
+  font-size: 14px;
+  margin: 1px;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.footer-text {
+  color: $footer-text;
+}
+
+.division-bar {
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-top: 10%;
+  margin-bottom: 5%;
+  height: 3px;
+  border: 0;
+  background-color: $primary-pdf;
+}
+
+.logo-pst {
+  position: relative;
+  transform: translate(-50%, 0%);
+  top: 100px;
+  left: 50%;
+  height: 340px;
+  -ms-transform: translate(-50%, -50%); /* IE 9 */
+  -webkit-transform: translate(-50%, -50%); /* Safari */
+}
+
+.content_format {
+  width: 100%;
+  position: absolute;
+  top: 300px;
+  left: 0;
+}
+
+.content-space {
+  display: block;
+  border: 2px solid;
+}
+
+.lh-2 {
+  line-height: 30px;
+}
+
+.height-8 {
+  height: 80px;
+}
+
+.sign-bar {
+  margin-left: 20px;
+  margin-right: 20px;
+  height: 2px;
+  border: 0;
+}
+
+.right_col p {
+  text-align: right;
+  font-size: 20px;
+  color: $primary-pdf;
+  &.new_format {
+    color: black;
+  }
+}
+
+.left_col p {
+  font-size: 20px;
+}
+
+.center_col p {
+  font-size: 20px;
+  text-align: center;
+}
+
+/*
+ * Bootstrap v3.4.0 (https://getbootstrap.com/)
+ * Copyright 2011-2018 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+*/
+
+.col-xs-1,
+.col-sm-1,
+.col-md-1,
+.col-lg-1,
+.col-xs-2,
+.col-sm-2,
+.col-md-2,
+.col-lg-2,
+.col-xs-3,
+.col-sm-3,
+.col-md-3,
+.col-lg-3,
+.col-xs-4,
+.col-sm-4,
+.col-md-4,
+.col-lg-4,
+.col-xs-5,
+.col-sm-5,
+.col-md-5,
+.col-lg-5,
+.col-xs-6,
+.col-sm-6,
+.col-md-6,
+.col-lg-6,
+.col-xs-7,
+.col-sm-7,
+.col-md-7,
+.col-lg-7,
+.col-xs-8,
+.col-sm-8,
+.col-md-8,
+.col-lg-8,
+.col-xs-9,
+.col-sm-9,
+.col-md-9,
+.col-lg-9,
+.col-xs-10,
+.col-sm-10,
+.col-md-10,
+.col-lg-10,
+.col-xs-11,
+.col-sm-11,
+.col-md-11,
+.col-lg-11,
+.col-xs-12,
+.col-sm-12,
+.col-md-12,
+.col-lg-12 {
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.col-xs-1,
+.col-xs-2,
+.col-xs-3,
+.col-xs-4,
+.col-xs-5,
+.col-xs-6,
+.col-xs-7,
+.col-xs-8,
+.col-xs-9,
+.col-xs-10,
+.col-xs-11,
+.col-xs-12 {
+  float: left;
+}
+
+.col-xs-12 {
+  width: 100%;
+}
+
+.col-xs-11 {
+  width: 91.66666667%;
+}
+
+.col-xs-10 {
+  width: 83.33333333%;
+}
+
+.col-xs-9 {
+  width: 75%;
+}
+
+.col-xs-8 {
+  width: 66.66666667%;
+}
+
+.col-xs-7 {
+  width: 58.33333333%;
+}
+
+.col-xs-6 {
+  width: 50%;
+}
+
+.col-xs-5 {
+  width: 41.66666667%;
+}
+
+.col-xs-4 {
+  width: 33.33333333%;
+}
+
+.col-xs-3 {
+  width: 25%;
+}
+
+.col-xs-2 {
+  width: 16.66666667%;
+}
+
+.col-xs-1 {
+  width: 8.33333333%;
+}
+
+.col-xs-offset-2 {
+  margin-left: 16.66666667%;
+}
+
+.col-xs-offset-3 {
+  margin-left: 25%;
+}
+
+.col-xs-offset-4 {
+  margin-left: 33.33333333%;
+}
+
+/*------------CO-OWNER CONDITIONS-------------- */
+.content_format {
+  position: absolute;
+  margin: 3% 10%;
+  width: 80%;
+  top: 135px;
+}
+
+.content_format p {
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+.content_format h1 {
+  text-align: center !important;
+}
+
+.second_page {
+  position: absolute;
+  top: 1320px;
+  width: 100%;
+}
+
+.gray-title {
+  font-size: 14px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.square-box {
+  position: relative;
+  width: 120px;
+  height: 20px;
+  overflow: hidden;
+  border: 1px solid;
+}
+
+.square-box:before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+.square-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  div {
+    display: table;
+    width: 100%;
+    height: 100%;
+  }
+
+  p {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+.inner-separator {
+  position: relative;
+  height: 30px;
+  overflow: hidden;
+  background-color: $bg-color;
+
+  &.new_format {
+    background-color: white !important;
+    color: black !important;
+    margin-top: 80px;
+  }
+
+  &.mini {
+    height: 13px;
+  }
+}
+
+.inner-separator:before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+.inner-separator_content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: $bg-color;
+  color: white;
+
+  &.new_format {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  div {
+    display: table;
+    width: 100%;
+    height: 100%;
+  }
+
+  p {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
+
+hr.yellow-line {
+  border: 1px solid;
+}
+
+.table-infor {
+  border-collapse: collapse;
+  border: 2px solid $table-border;
+  width: 80%;
+  table,
+  tr,
+  td,
+  th,
+  tbody,
+  thead,
+  tfoot {
+    text-align: center;
+  }
+
+  &.new_format {
+    border-color: #a3b3b4;
+    table,
+    tr,
+    td,
+    th,
+    tbody,
+    thead,
+    tfoot {
+      border-color: #a3b3b4;
+      color: gray;
+    }
+  }
+
+  table {
+    page-break-after: auto;
+  }
+
+  table tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  table td {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  table thead {
+    display: table-header-group;
+    margin-top: 50px;
+  }
+
+  table tfoot {
+    display: table-footer-group;
+  }
+
+  td,
+  th {
+    border: 1px solid;
+    width: 50%;
+    font-size: 12px;
+    padding-left: 5px;
+
+    &.w-25 {
+      width: 25% !important;
+    }
+  }
+
+  td {
+    border-color: $table-border;
+    color: $table-text;
+    &.w-25 {
+      width: 25%;
+    }
+    &.w-33 {
+      width: 33.33%;
+    }
+  }
+
+  caption {
+    font-weight: bold;
+    font-size: 20px;
+    caption-side: top;
+    text-align: center;
+    padding-top: 0;
+    margin-top: 0;
+    color: $primary-pdf;
+  }
+
+  .table-left-column {
+    background-color: $primary-lighter;
+    &.new_format {
+      background-color: $primary-gray;
+    }
+  }
+
+  &.columns-3 {
+    .table-left-column {
+      width: 40%;
+    }
+
+    td,
+    th {
+      width: 30%;
+    }
+  }
+
+  &.columns-4 {
+    .table-left-column {
+      width: 40%;
+    }
+    .table-second-column {
+      width: 30%;
+    }
+
+    td,
+    th {
+      width: 15%;
+    }
+  }
+
+  tr .primary-row {
+    background-color: $bg-color;
+    color: white;
+  }
+}
+
+.doble-square {
+  border: 2px solid $header-border;
+
+  &.bottom {
+    border-top: 0;
+  }
+}
+
+.content-space {
+  height: 200px;
+}
+
+.format_to_fill {
+  position: absolute;
+  top: 130px;
+  width: 100%;
+}
+
+.date_format {
+  text-align: end;
+  font-weight: bold;
+  margin-right: 15px !important;
+}
+
+#memo {
+  text-align: left;
+}
+
+.sign_name_format hr {
+  margin-bottom: 10px;
+  margin-top: 0;
+  margin-left: 20%;
+  width: 80%;
+}
+
+.add_official_id {
+  text-align: end;
+  color: black;
+  padding-top: 30px;
+}
+
+.observations_space {
+  position: absolute;
+  top: 750px;
+  width: 100%;
+}
+
+.black-bar-2 {
+  width: 79%;
+  margin-left: 21%;
+  margin-right: 0;
+  height: 1px;
+  border: 0;
+}
+
+.black-bar-3 {
+  width: 79%;
+  margin-right: 21%;
+  margin-left: 0;
+  height: 1px;
+  border: 0;
+}
+
+.hide_element {
+  visibility: hidden;
+}
+
+#sign_bar {
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+#sign_text {
+  text-align: center;
+  color: $primary-pdf;
+}
+
+#estado_civil {
+  padding-left: 10px;
+}
+
+.copy_container {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  color: gray;
+}
+
+.copy_container h1 {
+  font-size: 200px;
+}
+
+.water-mark {
+  position: absolute;
+  top: 600px;
+  width: 100%;
+  text-align: center;
+
+  h1 {
+    color: #9c9c9c;
+    font-size: 50px;
+    transform: rotate(50deg);
+    -ms-transform: rotate(50deg);
+    -webkit-transform: rotate(50deg);
+    -moz-transform: rotate(50deg);
+    -o-transform: rotate(50deg);
+    position: relative;
+    z-index: 99;
+    opacity: 0.5;
+  }
+}
+
+.black_bar_container {
+  height: 20px;
+}
+
+.black_bar_container hr {
+  position: absolute;
+  top: -18px;
+}
+
+/*-------- END OF CO-OWNER CONDITIONS---------- */
+
+/*------------PURCHASE CONDITIONS-------------- */
+
+.content_purchase_format {
+  position: relative;
+  padding-top: 15%;
+  margin: 10%;
+  width: 80%;
+  page-break-after: always;
+}
+
+.header_title {
+  font-size: 15px;
+  font-weight: bold;
+  color: $primary-pdf;
+  &.new_format {
+    color: black;
+  }
+}
+
+.credit_title {
+  text-align: end !important;
+  color: $primary-pdf;
+}
+
+.purchase_title {
+  font-size: 12px;
+  color: gray;
+}
+
+.credit_box {
+  display: block;
+  border: 1px solid #000000;
+  height: 25px;
+}
+
+.memo_format {
+  width: 100%;
+  height: 350px;
+}
+
+.memo_format p {
+  font-size: 12px;
+  margin: 0;
+}
+
+.month-box {
+  width: 100%;
+  height: 50px;
+  border: 1px solid;
+  font-size: 15px;
+  text-align: center;
+}
+
+.memo_format .black-bar-3 {
+  width: 90%;
+  margin-right: 10%;
+  margin-left: 0;
+  height: 1px;
+  background-color: black;
+  border: 0;
+}
+
+.bar-title {
+  margin: 0 0 5px;
+  padding: 0 0 1px;
+  position: relative;
+
+  &::after {
+    bottom: 0;
+    content: '';
+    display: block;
+    height: 1px;
+    position: absolute;
+    width: 90%;
+    background-color: $primary-pdf;
+  }
+}
+
+#tdd_sign {
+  padding-left: 180px !important;
+}
+
+.bank_pdf_logo {
+  height: 100px;
+  width: 130px;
+  margin: 20px 0;
+}
+
+.empty-bar {
+  border-bottom: 1px solid #000;
+  height: 16px;
+}
+
+.sign-confirmation {
+  margin: 0 0 1px;
+  padding: 0 0 1px;
+  position: relative;
+  color: black;
+
+  &::after {
+    bottom: 15px;
+    content: '';
+    display: block;
+    height: 1px;
+    position: absolute;
+    width: 90%;
+    background-color: $primary-pdf;
+  }
+}
+
+.sign_format {
+  padding-top: 15%;
+}
+
+.bar-sign {
+  margin: 0 0 1px;
+  padding: 0 0 1px;
+  position: relative;
+
+  p {
+    color: $primary-pdf;
+  }
+
+  &::after {
+    background-color: black;
+    top: 0;
+    content: '';
+    display: block;
+    height: 1px;
+    position: absolute;
+    width: 90%;
+    right: 0;
+    left: 0;
+    margin: 0 auto 15px;
+  }
+}
+
+.sign-tag-color {
+  color: white;
+}
+
+.signers-height {
+  height: 110px;
+}
+
+.sign-space {
+  height: 100px;
+  vertical-align: bottom;
+}
+
+.bar-sign {
+  height: 50px;
+}
+
+.secondary-bar-sign {
+  margin: 0 0 1px;
+  padding: 0 0 1px;
+  position: relative;
+
+  p {
+    text-align: center;
+    color: gray;
+  }
+
+  &::after {
+    background-color: $secondary-bar-sign;
+    top: 0;
+    content: '';
+    display: block;
+    height: 1px;
+    position: absolute;
+    width: 90%;
+  }
+  &.new_format {
+    &::after {
+      background-color: black;
+    }
+  }
+}
+
+.text_body {
+  width: 100%;
+}
+
+.text_body p {
+  font-size: 12px;
+  text-align: justify;
+}
+
+.confirm_sign {
+  width: 100%;
+}
+
+.confirm_sign p {
+  font-size: 12px;
+}
+
+.confirm_sign .add_official_id {
+  text-align: center;
+}
+
+.sign_row {
+  div {
+    height: 40px;
+  }
+
+  p {
+    text-align: center;
+  }
+}
+
+.sign_name_row div {
+  height: 40px;
+}
+
+.confirm_sign #sign_bar {
+  position: absolute;
+  top: 20px;
+}
+
+#last_bar {
+  width: 90%;
+  position: absolute;
+  left: 15px;
+}
+
+/*-----------END OF PURCHASE CONDITIONS-------- */
+
+/*-----------START OF DOWN PAYMENT RECEIPT-------- */
+.underline {
+  border-bottom: solid 1px;
+  width: 130px;
+  display: inline-block;
+  text-align: center;
+  border-color: $primary-pdf;
+}
+
+.underline-sm {
+  border-bottom: solid 1px;
+  display: inline-block;
+  width: 250px;
+  border-color: $primary-pdf;
+}
+
+.underline-md {
+  border-bottom: solid 1px;
+  display: inline-block;
+  width: 460px;
+  border-color: $primary-pdf;
+}
+
+.underline-xl {
+  border-bottom: solid 1px;
+  display: inline-block;
+  width: 600px;
+  border-color: $primary-pdf;
+}
+
+.pt-10 {
+  padding-top: 100px;
+}
+
+.text-box {
+  border: 1px solid $primary-pdf;
+  display: inline-block;
+  width: 100%;
+}
+
+.down_payment-list {
+  font-size: 12px;
+  color: $primary;
+  font-weight: bold;
+}
+
+/*-----------END OF DOWN PAYMENT RECEIPT-------- */
+
+.payment_type-box div {
+  .square-box {
+    border: 1px solid $primary-pdf;
+  }
+}
+
+.date-box div {
+  .square-box {
+    border: 1px solid gray;
+  }
+}
+
+.dashboard-flex-counters {
+  display: flex;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.dashboard-flex-counters > div {
+  height: 100px;
+  flex-grow: 1;
+  margin: 10px;
+}
+
+.dashboard-counter {
+  font-size: 2em;
+  line-height: normal;
+  color: #63656a;
+}
+
+.dashboard-title {
+  font-size: 1em;
+  line-height: normal;
+  color: #63656a;
+}
+
+.dashboard-card {
+  border-radius: 10px;
+  border: solid 1px rgba(153, 153, 153, 0.29);
+  background-color: #ffffff;
+}
+
+.image-container {
+  width: 100px;
+  height: 60px;
+  border-radius: 2px;
+}
+
+.vertical-line {
+  border-right: 2px solid #efefef;
+}
+
+.border-radius-10 {
+  border-radius: 10px;
+}
+
+.progress {
+  display: inline-flex;
+  height: 0.6rem;
+}
+
+.project-logo-bg {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.color-primary {
+  color: $primary-pdf;
+}
+
+.info-quotation {
+  margin: 0 10px;
+}
+
+.write-label {
+  position: relative;
+}
+
+.write-label span {
+  background-color: white;
+  padding-right: 10px;
+}
+
+.write-label:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.5em;
+  border-bottom: 1px solid black;
+  z-index: -1;
+}
+
+.primary-background {
+  background-color: $primary-light;
+  border-radius: 10px;
+  color: #ffffff;
+  margin: 0 10px;
+}
+
+.secondary-background {
+  background-color: #63656a;
+  border-radius: 10px;
+  color: #ffffff;
+  padding: 10px;
+  margin: 0 10px;
+}
+
+.primary-divider {
+  border-top: 3px solid $primary-light;
+  margin: 15px 0;
+}
+
+.row .h4 {
+  font-size: 1.2rem;
+}
+
+.rectangle-container {
+  border-radius: 10px;
+  background-color: #f4f4f4;
+  padding: 15px;
+  border: 5px solid #ffffff;
+}
+
+.secondary-divider {
+  border-top: 3px solid #63656a;
+  margin: 0;
+  margin: 0 10px;
+}
+
+table.table-quotation tr,
+table.table-quotation td {
+  border: 1px solid #63656a;
+  border-top: 1px solid #63656a;
+  padding: 0.4rem;
+}
+
+.table-quotation td:first-child {
+  background-color: #f4f4f4;
+}
+
+table.table-quotation .no-border {
+  border: 0;
+  background-color: #ffffff;
+}
+
+.no-border {
+  td {
+    border-top: 2px solid white;
+    border-right: 2px solid $primary-light;
+    &.new_format {
+      border-right: 2px solid #63656a;
+    }
+  }
+
+  .white-border {
+    border-right: 2px solid white;
+  }
+}
+
+.gray-light-row {
+  background-color: #ebecec;
+}
+
+.white-bg {
+  background-color: #ffffff;
+  border: 0 !important;
+}
+
+.text-container {
+  margin: 0 10px;
+  padding: 10px;
+  border: solid 1px rgba(99, 101, 106, 0.32);
+}
+
+.tiny-letters {
+  font-size: 12px;
+}
+
+.margin-10 {
+  margin: 0 10px;
+}
+
+.margin-20 {
+  margin: 0 20px;
+}
+
+.payments-table {
+  margin: 0 10px;
+  border: 2px solid white;
+
+  tr.engagement-rows:nth-child(even) {
+    background-color: rgba($primary-light, 40%);
+  }
+
+  tr.engagement-rows:nth-child(odd) {
+    background-color: #ebecec;
+  }
+
+  .engagement-rows {
+    td {
+      border: white 2px solid;
+    }
+
+    .primary-row {
+      background-color: rgba($primary-light, 40%);
+    }
+  }
+}
+
+.primary-row {
+  border: white 2px solid white;
+  background-color: $primary-pdf;
+}
+
+.header-title {
+  text-align: center;
+
+  h1 {
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  h2 {
+    font-size: 25px;
+    text-decoration: underline;
+    color: $primary-pdf;
+    text-decoration-color: currentColor;
+  }
+
+  .square-marker {
+    margin-top: 3px;
+    width: 14px;
+    height: 14px;
+    border: 1px solid black;
+  }
+}
+
+.sign-promise {
+  text-align: justify;
+  position: relative;
+  top: 150px;
+  &-single-page {
+    text-align: justify;
+    position: relative;
+    top: 50px;
+    h1 {
+      font-weight: bold;
+    }
+    p {
+      margin: 0 auto;
+    }
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  p,
+  li {
+    font-size: 18px;
+  }
+
+  .name-sign {
+    border-bottom: 1px solid;
+    height: 30px;
+  }
+  &.new_format {
+    position: relative;
+    top: 200px;
+  }
+}
+
+.gray-row,
+.green-row {
+  background-color: #dcddde;
+  color: black;
+  &.w-25 {
+    width: 25%;
+  }
+}
+
+.green-row {
+  background-color: #34d02c;
+}
+
+.payments-table table tr:first-child {
+  background-color: #63656a !important;
+  color: #ffffff;
+}
+
+.payments-table-green table tr:first-child {
+  background-color: #34d02c !important;
+  color: #000000;
+}
+
+.payments-table table tr:first-child th {
+  vertical-align: middle;
+  color: $payments-table-headers;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.down-payment-title {
+  transform: rotate(270deg);
+  width: 0;
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.down-payment-header {
+  background-color: #7ab76b !important;
+}
+
+.col-xs-5ths,
+.col-sm-5ths,
+.col-md-5ths,
+.col-lg-5ths {
+  position: relative;
+  min-height: 1px;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.col-xs-5ths {
+  width: 20%;
+  float: left;
+}
+
+@media (min-width: 768px) {
+  .col-sm-5ths {
+    width: 20%;
+    float: left;
+  }
+}
+
+@media (min-width: 992px) {
+  .col-md-5ths {
+    width: 20%;
+    float: left;
+  }
+}
+
+@media (min-width: 1200px) {
+  .col-lg-5ths {
+    width: 20%;
+    float: left;
+  }
+}
+
+.italic {
+  font-style: italic;
+}
+
+.lot-quotation {
+  margin-top: 10px;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.padding-top-50 {
+  padding-top: 50px;
+}
+
+.padding-top-70 {
+  padding-top: 70px;
+}
+
+.padding-top-80 {
+  padding-top: 80px;
+}
+
+div.squashed-container {
+  display: flex;
+  justify-content: center;
+  min-height: 905px;
+  position: relative;
+}
+
+table.squashed {
+  float: left;
+  width: 48%;
+  margin: 0 8px 0;
+
+  font-size: 8px;
+  text-align: center;
+
+  th,
+  td {
+    padding: 0.25rem !important;
+  }
+}
+
+table.table-payments tr,
+table.table-payments td {
+  padding: 0.4rem;
+}
+
+td.normal-header {
+  padding: 1.1rem !important;
+  color: black;
+  background-color: #ebecec;
+}
+
+.bar-title p {
+  min-height: 15px;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+.pb-200 {
+  padding-bottom: 200px;
+}
+
+.p-75 {
+  padding: 75px;
+}
+
+.letter-spacing-5 {
+  letter-spacing: 5pt;
+}
+
+.pb-8 {
+  padding-bottom: 80px;
+}
+
+.pb-16 {
+  padding-bottom: 160px;
+}
+
+.pb-3 {
+  padding-bottom: 30px;
+}
+
+.bg-yellow {
+  background-color: yellow;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.align-middle,
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.mt-2 {
+  margin-top: 20px;
+}
+
+.branches-list {
+  padding-top: 100px;
+
+  .branch-element {
+    min-height: 100px;
+  }
+
+  .branch-name {
+    color: $primary-pdf;
+    font-size: 15px;
+    text-align: center;
+  }
+
+  .branch-address {
+    font-size: 10px;
+    text-align: justify;
+  }
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.marker-bar-primary,
+.marker-bar-secondary {
+  height: 1px;
+  margin: 0;
+}
+
+.marker-bar-primary {
+  background-color: $primary-light;
+}
+
+.marker-bar-secondary {
+  background-color: gray;
+}
+
+.background-gray {
+  background-color: #efefef;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+tr .primary-row {
+  background-color: $primary-pdf;
+  &.new_format {
+    background-color: #dcddde;
+  }
+}
+
+tr .danger-row {
+  background-color: $danger;
+}
+
+tr .warning-row {
+  background-color: $warning;
+}
+
+.primary-color {
+  color: $primary;
+}
+
+.account-status {
+  th,
+  td {
+    font-size: 15px;
+    font-weight: bold;
+  }
+}
+
+.primary-light-background {
+  background-color: $primary;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+hr.accent-line {
+  border-color: $accent;
+  margin: 0;
+}
+
+.table-payments td {
+  color: $payments-table-data;
+}
+
+.bar-label p {
+  color: black;
+}
+
+hr.outer-separator {
+  border-color: $secondary-bar-sign;
+  &.new_format {
+    border-color: black;
+  }
+}
+
+.purchase_promise {
+  [class*='col-'] {
+    padding-top: 8px;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+  }
+
+  .purchase_promise-input {
+    // color: $primary-pdf;
+    color: $pdf-input-text;
+    border-bottom: 1px solid $primary-pdf;
+    text-align: center;
+    min-height: 30px;
+  }
+
+  .single-page-purchase_promise {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &-title {
+      text-align: left;
+      margin: 0;
+      padding: 0 auto;
+      h1 {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 12px;
+        margin: 0 auto;
+      }
+    }
+    &-input {
+      min-height: 20px;
+      color: $pdf-input-text;
+      border-bottom: 1px solid $primary-pdf;
+      text-align: center;
+      h1 {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+.arial {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.times-new-roman {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.tahoma {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.title-promissory-note {
+  color: #000;
+  font-size: 18px;
+  text-align: center;
+}
+
+.no-break {
+  display: inline-block;
+  page-break-inside: avoid;
+  page-break-after: avoid;
+}
+
+.promissory-note {
+  table tr {
+    width: 100%;
+    height: 17px;
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  table td {
+    font-size: 13px;
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+}
+
+.mh-100 {
+  min-height: 150px;
+}
+
+/* New format for files */
+.complementary-header {
+  margin: 75px 55px;
+  white-space: nowrap;
+
+  h1 {
+    font-size: 37px;
+    letter-spacing: 6px;
+    margin-bottom: 0;
+  }
+
+  h1.no-letter-spacing {
+    letter-spacing: 0px;
+  }
+
+  .square {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: 25px;
+    height: 25px;
+    overflow: hidden;
+    border: 1px solid;
+    display: inline-block;
+  }
+
+  p.header-text {
+    position: absolute;
+    font-size: 18px;
+    display: inline-block;
+    margin-left: 10px;
+  }
+}
+
+.new-complementary-header {
+  margin: 100px 390px;
+
+  h1 {
+    font-size: 37px;
+    letter-spacing: 6px;
+    margin-bottom: 0;
+  }
+
+  h1.no-letter-spacing {
+    letter-spacing: 0px;
+  }
+
+  .square {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: 25px;
+    height: 25px;
+    overflow: hidden;
+    border: 1px solid;
+    display: inline-block;
+  }
+
+  p.header-text {
+    position: absolute;
+    font-size: 13px;
+    display: inline-block;
+    margin-right: 70px;
+    margin-top: 50px;
+    text-align: justify;
+    letter-spacing: 0px;
+  }
+}
+
+.new-format {
+  position: absolute;
+  margin: 8% 5%;
+  top: 135px;
+
+  .h6 {
+    font-size: 18px;
+  }
+
+  .underline {
+    border-bottom: groove 1px;
+    width: 130px;
+    text-align: center;
+    border-color: $boxes-border-color;
+  }
+
+  .underline-sm {
+    border-bottom: groove 1px;
+    width: 180px;
+    text-align: center;
+    border-color: $boxes-border-color;
+  }
+
+  .underline-md {
+    border-bottom: groove 1px;
+    width: 460px;
+    border-color: $boxes-border-color;
+  }
+
+  .underline-xl {
+    border-bottom: groove 1px;
+    width: 650px;
+    border-color: $boxes-border-color;
+  }
+
+  .purchase_title {
+    font-size: 18px;
+    color: $new-format-text-pdf;
+  }
+
+  .text-box {
+    top: 198px;
+    border: 1px solid $boxes-border-color;
+    padding: 2%;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .division-bar {
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 10%;
+    margin-bottom: 5%;
+    height: 1px;
+    border: 0;
+    background-color: $new-format-text-pdf;
+    opacity: 0.8;
+  }
+
+  .avenir-bold {
+    font-family: 'Avenir-Bold';
+  }
+
+  .down_payment-list {
+    font-size: 15px;
+    color: $new-format-text-pdf;
+
+    li {
+      margin-bottom: 2%;
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-weight: normal;
+    font-size: 18px;
+  }
+
+  th,
+  td {
+    border: 1px solid;
+    border-color: $boxes-border-color;
+    text-align: center;
+  }
+
+  th {
+    background-color: #a3b3b4;
+    height: 40px;
+    padding: 0;
+    vertical-align: bottom;
+  }
+
+  td.digits {
+    letter-spacing: 1px;
+  }
+}
+
+.bg-date {
+  background-color: #a3b3b4;
+  margin: 0 2%;
+  text-align: right;
+  padding-right: 2%;
+
+  &-green {
+    background-color: #34d02c;
+  }
+}
+
+.w-half {
+  width: 50%;
+}
+
+/* PURCHASE CONDITIONS NEW FORMAT */
+
+.conditions-container {
+  margin: 0% 5%;
+  padding-top: 20%;
+  h6 {
+    font-size: 20px;
+    white-space: nowrap;
+  }
+
+  .conditions-text p {
+    font-size: 13px;
+    text-align: justify;
+    margin-bottom: 0;
+  }
+}
+
+.conditions-text + .container {
+  margin-top: 6%;
+
+  .division-bar {
+    background-color: $new-format-text-pdf;
+  }
+}
+
+.copy-container {
+  position: relative;
+  top: 500px;
+  width: 100%;
+  text-align: center;
+  color: gray;
+  h1 {
+    z-index: 0;
+    font-size: 170px;
+  }
+}
+
+table#conditions-info {
+  white-space: nowrap;
+  width: 910px;
+  table-layout: fixed;
+  overflow: hidden;
+  border-collapse: separate;
+  th {
+    font-weight: normal;
+    padding-right: 2%;
+    &.new_format {
+      width: 33.3%;
+    }
+  }
+  td {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 80%;
+    border-bottom: groove 1px;
+    text-align: left;
+    padding-left: 2%;
+    border-color: $boxes-border-color;
+    &.new_format {
+      width: 33.3%;
+      text-align: left;
+    }
+  }
+}
+
+.required-data {
+  white-space: nowrap;
+  width: 910px;
+  table-layout: fixed;
+  overflow: hidden;
+  border-collapse: inset;
+  th {
+    font-weight: normal;
+    padding-right: 2%;
+    .square-box {
+      width: 100%;
+    }
+    table {
+      margin-left: 100px;
+    }
+  }
+  td {
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: groove 1px;
+    text-align: left;
+    padding-left: 2%;
+    border-color: $boxes-border-color;
+    min-width: 50px;
+    height: 25.5px;
+  }
+  &.conditions-info th {
+    width: 25%;
+  }
+}
+
+span#pre-wrap {
+  width: 100%;
+  white-space: pre-wrap;
+}
+
+.general-info {
+  border: 1px solid black;
+  border-bottom: 3px solid black;
+  td,
+  th {
+    border: 1px solid black;
+  }
+}
+
+.table-border {
+  td,
+  th {
+    border: 1px solid black;
+  }
+}
+
+.w-1 {
+  width: 1%;
+}
+
+.separator {
+  height: 50px;
+}
+
+.twocol {
+  column-count: 2;
+  text-align: justify;
+}

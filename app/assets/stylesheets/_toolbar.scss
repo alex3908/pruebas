@@ -1,0 +1,52 @@
+.toolbar {
+  background-color: #f1f1f1;
+  @include media-breakpoint-down(sm) {
+    display: none;
+  }
+  .toolbar-items {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    padding: 0;
+    justify-content: center;
+    @include media-breakpoint-down(sm) {
+      flex-direction: column;
+    }
+    .item {
+      flex-basis: 0;
+      -webkit-box-flex: 1;
+      flex-grow: 1;
+      font-family: $font-family-logo;
+      max-width: 166px;
+      @include media-breakpoint-down(sm) {
+        max-width: auto;
+      }
+      a {
+        height: 70px;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #1a3762;
+        font-size: 16px;
+        font-weight: 400;
+        transition: all 0.3s ease;
+        @include media-breakpoint-down(sm) {
+          height: 50px;
+        }
+        @include media-breakpoint-only(md) {
+          font-size: 14px;
+        }
+      }
+
+      &:hover,
+      &.active {
+        a {
+          color: #fff;
+          background-color: $primary;
+        }
+      }
+    }
+  }
+}

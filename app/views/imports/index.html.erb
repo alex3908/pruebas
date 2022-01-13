@@ -1,0 +1,141 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Importadores</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-secondary float-right mr-2" %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+<div class="table-container">
+    <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+    <thead>
+        <tr>
+        <th>Nombre</th>
+        <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+      <% if can?(:import_amortization, Folder) %>
+        <tr>
+          <td>Tablas de amortización</td>
+          <td>
+            <%= form_tag(template_amortization_table_imports_path, method: :get, class: "", data: { "controller": "export", "target": "export.form", "export-url": template_amortization_table_imports_path(format: :json) }) do %>
+              <%= button_tag("Descargar plantilla", type: "button", class: "btn btn-outline-primary mr-1 ml-1 float-right", data: { action: "export#generate" }) %>
+            <% end %>
+          </td>
+          <td class="text-center" data-controller="import" data-import-url="<%= import_amortization_table_imports_path(format: :json) %>">
+              <input type="file" class="d-none" id="importInstallmentsFile" data-target="import.input" data-action="import#upload">
+              <label class="btn btn-outline-primary mr-1 ml-1 float-right" for="importInstallmentsFile">
+              Importar
+              </label>
+          </td>
+        </tr>
+      <% end %>
+      <% if can?(:import, CashFlow) %>
+        <tr>
+        <td>Flujos de caja</td>
+          <td>
+            <%= form_tag(template_cash_flow_imports_path, method: :get, class: "", data: { "controller": "export", "target": "export.form", "export-url": template_cash_flow_imports_path(format: :json) }) do %>
+              <%= button_tag("Descargar plantilla", type: "button", class: "btn btn-outline-primary mr-1 ml-1 float-right", data: { action: "export#generate" }) %>
+            <% end %>
+          </td>
+          <td class="text-center" data-controller="import" data-import-url="<%= import_cash_flow_imports_path(format: :json) %>">
+              <input type="file" class="d-none" id="importCashFlowFile" data-target="import.input" data-action="import#upload">
+              <label class="btn btn-outline-primary mr-1 ml-1 float-right" for="importCashFlowFile">
+              Importar
+              </label>
+          </td>
+        </tr>
+      <% end %>
+      <% if can?(:import, ClientUser) %>
+        <tr>
+        <td>Responsables de clientes</td>
+          <td>
+            <%= form_tag(template_client_user_imports_path, method: :get, class: "", data: { "controller": "export", "target": "export.form", "export-url": template_client_user_imports_path(format: :json) }) do %>
+              <%= button_tag("Descargar plantilla", type: "button", class: "btn btn-outline-primary mr-1 ml-1 float-right", data: { action: "export#generate" }) %>
+            <% end %>
+          </td>
+          <td class="text-center" data-controller="import" data-import-url="<%= import_client_user_imports_path(format: :json) %>">
+              <input type="file" class="d-none" id="importCashFlowFile" data-target="import.input" data-action="import#upload">
+              <label class="btn btn-outline-primary mr-1 ml-1 float-right" for="importCashFlowFile">
+              Importar
+              </label>
+          </td>
+        </tr>
+      <% end %>
+
+      <% if can?(:import, Client) %>
+        <tr>
+        <td>Importes de clientes</td>
+          <td>
+            <%= form_tag(template_client_user_imports_path, method: :get, class: "", data: { "controller": "export", "target": "export.form", "export-url": template_client_user_imports_path(format: :json) }) do %>
+            <%= link_to("Descargar plantilla", download_import_template_imports_path, class: "btn btn-outline-primary mr-1 ml-1 float-right", target: "_blank") %>
+            <% end %>
+          </td>
+          <td class="text-center" data-controller="import" data-import-url="<%= import_client_imports_url(format: :json) %>">
+              <input type="file" class="d-none" id="importClientFile" data-target="import.input" data-action="import#upload">
+              <label class="btn btn-outline-primary mr-1 ml-1 float-right" for="importClientFile">
+              Importar
+              </label>
+          </td>
+        </tr>
+      <% end %>
+
+      <% if can?(:import, ClientUser) %>
+        <tr>
+        <td>Correcciones</td>
+          <td>
+            <%= form_tag(template_client_user_imports_path, method: :get, class: "", data: { "controller": "export", "target": "export.form", "export-url": template_client_user_imports_path(format: :json) }) do %>
+            <%= link_to "Descargar plantilla", download_corrections_imports_path, class: "btn btn-outline-primary mr-1 ml-1 float-right" , target: "_blank" %>
+            <% end %>
+          </td>
+          <td>
+            <button class="btn btn-outline-primary mr-1 ml-1 float-right" data-toggle="modal" data-target="#correctionsModal"> Importar </button>
+          </td>
+        </tr>
+      <% end %>
+
+      <% if can?(:import, ClientUser) %>
+        <tr>
+        <td>Pagos iniciales</td>
+          <td>
+            <%= form_tag(template_client_user_imports_path, method: :get, class: "", data: { "controller": "export", "target": "export.form", "export-url": template_client_user_imports_path(format: :json) }) do %>
+            <%= link_to "Descargar plantilla", download_charges_imports_path, class: "btn btn-outline-primary mr-1 ml-1 float-right" , target: "_blank" %>
+            <% end %>
+          </td>
+          <td>
+            <button class="btn btn-outline-primary mr-1 ml-1 float-right" data-toggle="modal" data-target="#initialPaymentsModal"> Importar </button>
+          </td>
+        </tr>
+      <% end %>
+
+      <% if can?(:import, Folder) %>
+        <tr>
+        <td>Expedientes</td>
+          <td>
+            <%= form_tag(template_folder_imports_path, method: :get, class: "", data: { "controller": "export", "target": "export.form", "export-url": template_folder_imports_path(format: :json) }) do %>
+              <%= button_tag("Descargar plantilla", type: "button", class: "btn btn-outline-primary mr-1 ml-1 float-right", data: { action: "export#generate" }) %>
+            <% end %>
+          </td>
+            <td class="text-center" data-controller="import" data-import-url="<%= import_folders_imports_url(format: :json) %>">
+              <input type="file" class="d-none" id="importFolderFile" data-target="import.input" data-action="import#upload">
+              <label class="btn btn-outline-primary mr-1 ml-1 float-right" for="importFolderFile">
+                Importar
+              </label>
+            </td>
+        </tr>
+      <% end %>
+    </tbody>
+    </table>
+    <%= render partial: 'imports/import_corrections' %>
+    <%= render partial: 'imports/initial_payments' %>
+</div>
+</div>

@@ -1,0 +1,73 @@
+<%= form_with(model: [support_sale.folder, support_sale], local: true, class: "needs-validation") do |form| %>
+  <% if support_sale.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(lead_source.errors.count, "error") %> prohibited this lead_source from being saved:</h2>
+      <ul>
+        <% support_sale.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if view == "support_manager" && support_sale.rejected? %>
+    <h3 class="text-warning">Haz denegado la solicitud.</h3>
+  <% else %>
+    <fieldset <%= "disabled" if support_sale.canceled? %>>
+      <% if support_sale.canceled? %>
+        <h3 class="text-center text-warning"> Esta solicitud ha sido cancelada por el gerente, por lo que no se pueden realizar más cambios </h3>
+      <% end %>
+      <div class="row">
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label "Solicitante" %>
+          <%= form.text_field :name, class: "form-control", value: support_sale.requester.label, disabled: true %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :support_manager_id, "Gerente soporte" %>
+          <%= form.collection_select :support_manager_id, support_managers || [], :id, :label, { prompt: true },
+            { disabled: (!support_sale.rejected? && support_sale.support_manager.present?) || !(view == "request_manager") } %>
+        </div>
+        <% if view == "request_manager" && !(support_sale.canceled?) %>
+          <div class="form-group col-sm-12 col-md-6">
+            <%= form.label :status, "¿Cancelar solicitud?" %>
+            <div>
+              <%= link_to "Cancelar", folder_support_sale_path(support_sale.folder, support_sale, support_sale: { status: "canceled" }), method: :patch, class: "btn btn-danger", data: { confirm: "Está a punto de cancelar la solicitud. Esta acción no se puede deshacer." } %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :support_coordinator_id, "Coordinador soporte" %>
+          <%= form.collection_select :support_coordinator_id, support_coordinators || [], :id, :label, { prompt: true }, { disabled: support_sale.support_coordinator.present? || !(view == "support_manager") } %>
+        </div>
+        <% if view == "support_manager" && !(support_sale.canceled?) %>
+          <div class="form-group col-sm-12 col-md-6">
+            <%= form.label :status, "¿Rechazar solicitud?" %>
+            <div>
+            <%= link_to "Rechazar", folder_support_sale_path(support_sale.folder, support_sale, support_sale: { status: "rejected" }), method: :patch, class: "btn btn-danger", data: { confirm: "Está a punto de rechazar la solicitud. Esta acción no se puede deshacer." } %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-12 col-md-6">
+          <%= form.label :supporter_id, "Asesor de soporte" %>
+          <%= form.collection_select :supporter_id, supporters || [], :id, :label_with_role, { prompt: true }, { disabled: support_sale.supporter.present? || !(view == "support_coordinator") } %>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="row">
+      <div class="actions py-3 col-md-12">
+        <%= link_to "Regresar", folder_path(support_sale.folder), class: "btn btn-secondary" %>
+        <%= form.submit("Actualizar", class: "btn btn-primary") unless support_sale.canceled? || view == "requester" %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

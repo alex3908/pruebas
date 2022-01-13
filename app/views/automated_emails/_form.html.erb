@@ -1,0 +1,34 @@
+
+<div class="d-flex flex-wrap justify-content-between pt-3">
+  <h3 class="text-left vertical-align m-0 py-3">Configuraciones de correo automatizado</h3>
+  <div class="clearfix py-2"></div>
+</div>
+
+<div class="row">
+
+  <div class="col-sm-12 pb-3">
+    <%= label_tag :automated_type, "Tipo de automatización" %>
+    <%= select_tag :automated_type, options_for_select(AutomatedEmail.types.keys.map { |key| [I18n.t("activerecord.attributes.automated_email.types.#{key}"), key] }, automated_email.automated_type),
+    {
+      include_blank: "Selecciona un tipo de automatización",
+      class: "form-control",
+      disabled: automated_email.persisted?,
+      data: {
+        remote: true,
+        url: show_inputs_email_template_automated_emails_path
+      }
+    } %>
+  </div>
+
+</div>
+
+<% if automated_email.persisted? %>
+  <% if automated_email.automated_type == AutomatedEmail.types[:folders] %>
+    <%= render 'automated_emails/inputs/folders' %>
+  <% elsif automated_email.automated_type == AutomatedEmail.types[:clients] %>
+    <%= render 'automated_emails/inputs/clients' %>
+  <% end %>
+<% else %>
+  <div id="inputs-section">
+  </div>
+<% end %>

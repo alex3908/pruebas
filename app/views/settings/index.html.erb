@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Configuraciones</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-secondary float-right mr-2" %>
+    </div>
+  </div>
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <%= render "settings/filters" %>
+</div>
+
+<div class="container">
+  <% if @settings.empty? %>
+    <p>No hay configuraciones.</p>
+  <% else %>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th width="30%"><%= sortable "label", "Etiqueta" %></th>
+        <th width="20%"><%= sortable "concept", "Concepto" %></th>
+        <th width="20%"><%= sortable "data_type", "Tipo de dato" %></th>
+        <th width="20%"><%= sortable "value", "Valor" %></th>
+        <th width="10%" colspan="4"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @settings.each do |setting| %>
+        <tr>
+          <td><%= setting.label %></td>
+          <td><%= setting.concept_label %></td>
+          <td><%= setting.data_type_label %></td>
+          <td>
+          <% if setting.data_type == "boolean" %>
+            <%= setting.convert ? "Activo" : "Inactivo" %>
+          <% elsif setting.data_type == "percentage" %>
+            <%= setting.parse %>%
+          <% elsif setting.data_type != "html" %>
+           <%= setting.convert %>
+          <% else %>
+            Ingresa para ver
+          <% end %>
+          </td>
+          <td class="text-right align-middle">
+            <% if can?(:update, setting) %>
+              <%= link_to "Editar", edit_setting_path(setting), class: "btn btn-outline-primary" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= will_paginate(@settings, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                 onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  <% end %>
+</div>

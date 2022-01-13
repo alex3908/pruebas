@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Clasificadores</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-secondary float-right mr-2" %>
+      <%= link_to "Nuevo Clasificador", new_classifier_path, class: "btn btn-primary float-right mr-2" if can?(:create, Classifier) %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @classifiers.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ningún clasificador.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @classifiers.each do |classifier| %>
+          <tr>
+            <td><%= classifier.name %></td>
+            <td class="float-right text-center">
+              <% if can?(:update, Classifier) %>
+                <%= link_to edit_classifier_path(classifier), class: "table-link" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:destroy, Classifier) && classifier.roles.empty? %>
+                <%= link_to classifier, class: "table-link", method: :delete, data: { confirm: "¿Estás seguro?" } do %>
+                  <i class="fa fa-trash-o"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+<%= will_paginate(@classifiers, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+<div class="text-center mt-3">
+  <div class="d-inline-block" style="max-width: 100px">
+    Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                             onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+  </div>
+</div>

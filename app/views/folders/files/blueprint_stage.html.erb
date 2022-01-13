@@ -1,0 +1,54 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     viewBox="<%= stage.blueprint.view_box %>" style="<%= stage.blueprint.style %>" xml:space="preserve">
+
+  <% if !stage.new_record? %>
+    <style>
+      <%= sanitize stage.blueprint.styles %>
+
+      .lot {
+        margin: auto;
+        max-width: 800px;
+      }
+
+      .no-outline {
+        outline: none !important;
+      }
+
+      .current_lot{
+        fill: #000;
+      }
+    </style>
+  <% end %>
+
+  <%= render "blueprints/extras", extras: select_type(@extra, "ground") %>
+  <%= render "blueprints/extras", extras: select_type(@extra, "fillings") %>
+  <%= render "blueprints/extras", extras: select_type(@extra, "flora") %>
+
+  <g>
+    <% stage.blueprint.blueprint_lots.each do |blueprint_lot| %>
+      <% if blueprint_lot.html_type == 'polygon' %>
+        <polygon class="no-outline <%= blueprint_lot.html_class %> <%= "current_lot" if blueprint_lot.lot == lot %>"
+                 points="<%= blueprint_lot.points %>" />
+      <% end %>
+      <% if blueprint_lot.html_type == 'path' %>
+        <path class="no-outline <%= blueprint_lot.html_class %> <%= "current_lot" if blueprint_lot.lot == lot %>"
+              d="<%= blueprint_lot.d %>" />
+      <% end %>
+      <% if blueprint_lot.html_type == 'rect' %>
+        <rect class="no-outline <%= blueprint_lot.html_class %> <%= "current_lot" if blueprint_lot.lot == lot %>"
+              x="<%= blueprint_lot.x %>"
+              y="<%= blueprint_lot.y %>"
+              transform="<%= blueprint_lot.transform %>"
+              width="<%= blueprint_lot.width %>"
+              height="<%= blueprint_lot.height %>" />
+      <% end %>
+      <% if blueprint_lot.html_type == 'polyline' %>
+        <polyline class="no-outline <%= blueprint_lot.html_class %> <%= "current_lot" if blueprint_lot.lot == lot %>"
+                  points="<%= blueprint_lot.points %>" />
+      <% end %>
+    <% end -%>
+  </g>
+
+  <%= render "blueprints/extras", extras: select_type(@extra, "texts") %>
+
+</svg>

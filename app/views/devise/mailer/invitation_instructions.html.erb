@@ -1,0 +1,28 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size: 25px;">Nueva Cuenta</span></h1>
+  &nbsp;
+  <p><%= t('.greeting', recipient: @resource.label) %></p>
+
+  <p>
+  <div style="text-align: justify;">
+    <span>
+      <% if @user.created_by.present? %>
+        <%= t("devise.mailer.invitation_instructions.user_invited_you", brand: Setting.find_by(key: "company-name")&.value || "Grupo Orve", name: User.find(@user.created_by).label) %>
+      <% else %>
+        <%= t("devise.mailer.invitation_instructions.someone_invited_you", brand: Setting.find_by(key: "company-name")&.value || "Grupo Orve") %>
+      <% end %>
+    </span>
+  </div>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <%= link_to t("devise.mailer.invitation_instructions.accept"), accept_invitation_url(@resource, invitation_token: @token), class: "mcnButton", style: "font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;background-color: #54d335;border-color: #54d335; padding-top: 10px; padding-bottom: 10px;", title: t("devise.mailer.invitation_instructions.accept") %>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <span>
+      <%= t("devise.mailer.invitation_instructions.ignore") %>
+    </span>
+  </p>
+<% end %>

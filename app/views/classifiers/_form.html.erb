@@ -1,0 +1,30 @@
+<%= form_with(model: classifier, local: true, url: [classifier]) do |form| %>
+  <% if classifier.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(classifier.errors.count, "error") %> no permitieron guardar este clasificador:</h2>
+
+      <ul>
+        <% classifier.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :name, "Name" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :role_ids, "Roles" %>
+      <%= form.select :role_ids, options_from_collection_for_select(Role.all, :id, :name, classifier.role_ids), {}, multiple: true %>
+
+    </div>
+  </div>
+
+  <div class="actions py-3">
+    <%= link_to "Cancelar", classifiers_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

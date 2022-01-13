@@ -1,0 +1,301 @@
+<% if stage.present? && project.present? %>
+  <% if stage.blueprint.present? %>
+
+    <% if phase.present? %>
+      <%= link_to("Regresar", {controller: 'availability', action: 'lots', slug_project: phase.project.slug, slug_phase: phase.slug, slug_stage: nil, vendedor: user.present? ? encode_base_64(user.id) : nil, iframe: params[:iframe].present? ? true : nil}, class: "btn btn-secondary quotation-button-size mb-3" ) %>
+    <% end %>
+
+    <div class="lot availability">
+      <%= render("blueprints/blueprint_for_stage.html",
+                 project: project,
+                 phase: phase,
+                 stage: stage,
+                 extras: extras,
+                 selected_lot: nil,
+                 sale_map: true,
+                 show_tooltip: true,
+                 assignable: false,
+                 link: false,
+                 texts: false,
+                 with_styles: false) %>
+    </div>
+
+    <hr class="divider">
+
+    <% unless params[:iframe].present? %>
+      <div>
+        <h4 class="text-center py-3">Información de contacto</h4>
+        <%= form_tag(contact_information_path, method: :post, data: { remote: true }) do %>
+          <%= hidden_field_tag :etapa, params[:etapa] %>
+          <%= hidden_field_tag :vendedor, params[:vendedor] %>
+
+          <div class="row">
+            <div class="form-group col-sm-12 col-md-6">
+              <%= label_tag :name, "Nombre" %>
+              <div class="vertical-align">
+                <%= text_field_tag :name, nil, class: "form-control" %>
+                <div class="invalid-feedback">
+                  Este campo es obligatorio
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-sm-12 col-md-6">
+              <%= label_tag :first_surname, "Primer Apellido" %>
+              <div class="vertical-align">
+                <%= text_field_tag :first_surname, nil, class: "form-control" %>
+                <div class="invalid-feedback">
+                  Este campo es obligatorio
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-sm-12 col-md-6">
+              <%= label_tag :second_surname, "Segundo Apellido" %>
+              <div class="vertical-align">
+                <%= text_field_tag :second_surname, nil, class: "form-control" %>
+                <div class="invalid-feedback">
+                  Este campo es obligatorio
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-sm-12 col-md-6">
+              <%= label_tag :email, "Correo" %>
+              <div class="vertical-align">
+                <%= email_field_tag :email, nil, class: "form-control" %>
+                <div class="invalid-feedback">
+                  Este campo es obligatorio
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-sm-12 col-md-6">
+              <%= label_tag :main_phone, "Teléfono Principal" %>
+              <div class="vertical-align">
+                <%= phone_field_tag :main_phone, nil, class: "form-control", title: "Debe contener solo números" %>
+                <div class="invalid-feedback">
+                  Los número telefónicos deben ser a 10 dígitos
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-12">
+              <%= label_tag :message, "Mensaje" %>
+              <div class="vertical-align">
+                <%= text_area_tag :message, nil, class: "form-control" %>
+                <div class="invalid-feedback">
+                  Este campo es obligatorio
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions text-center pt-3">
+            <%= button_tag "Enviar", type: :submit, class: "btn btn-primary quotation-button-size text-center" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!--Modals-->
+    <div class="modal fade" id="chepina-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" id="modal-size" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="lot-title"></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+
+              <div id="chepina-container" class="<%= @user.present? ? "col-md-6" : "col-md-12" %>">
+                <img id="chepina" src="" alt="" class="img-fluid">
+              </div>
+
+              <div id="form-container" class="col-lg-6 col-md-12 text-left">
+                <%= form_with(method: "GET", data: { remote: true }, id: "quotation-form", multipart: true) do |form| %>
+                  <%= hidden_field_tag :vendedor, params[:vendedor] %>
+                  <%= hidden_field_tag :client, @client.id if @client.present? %>
+                  <%= hidden_field_tag :folder, @folder.id if @folder.present? %>
+                  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+                  <%= hidden_field_tag :total_periods, @total_payments %>
+
+                  <div class="form-group">
+                    <%= label_tag :total_payments, "Plazo:", class: "mt-2" %>
+                    <div class="vertical-align">
+                      <div class="input-group">
+                        <%= number_field_tag :total_payments, @total_payments, min: 1, step: 1, maxlength: "3", class: "form-control text-right", onchange: "if(this.value) {$(this.form).submit();}" %>
+                        <div class="input-group-append">
+                          <div class="input-group-text input-text-right"> mes(es)</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <%= label_tag :payment_way, "Método de calculo de enganche", class: "mt-2" %>
+                    <div class="vertical-align">
+                      <%= select_tag :payment_way, options_for_select([["Monto", "amount"], ["Porcentaje", "percentage"]], @payment_way), onchange: "if(this.value) {$(this.form).submit();}", class: "form-control" %>
+                    </div>
+                  </div>
+
+                  <div id="down_payment_amount_container" class="form-group">
+                      <%= label_tag :down_payment_amount, "Cantidad de enganche", class: "mt-2" %>
+                      <div class="vertical-align">
+                      <div class="input-group">
+                        <%= number_field_tag :down_payment_amount,0, step: 0.5, class: "form-control text-right", disabled: !@stage.credit_scheme.down_payment_editable && !@custom_quote_permissions, onchange: "if(this.value) {$(this.form).submit();}" %>
+                        <div class="input-group-append" id="down_payment_percentage_sign">
+                          <div class="input-group-text input-text-right">$</div>
+                        </div>
+                        <div class="invalid-feedback">
+                          Puede ser del <i id="min_down_payment"></i>%
+                          hasta el <i id="max_down_payment"></i>% del
+                          precio del <%= @lot_singular %>.
+                        </div>
+                      </div>
+                      </div>
+                  </div>
+
+                  <div class="form-group wrapper-last-payment">
+                    <%= label_tag :min_last_payment_payment_way, "Método de calculo de Contra entrega", class: "mt-2" %>
+                    <div class="vertical-align">
+                      <%= select_tag :min_last_payment_payment_way, options_for_select([["Porcentaje", "percentage"], ["Monto", "amount"]], @min_last_payment_payment_way), onchange: "if(this.value) {$(this.form).submit();}", class: "form-control" %>
+                    </div>
+                  </div>
+
+                  <div id="last_payment_amount_container" class="form-group wrapper-last-payment">
+                      <%= label_tag :min_last_payment_amount, "Cantidad de Contra entrega", class: "mt-2" %>
+                      <div class="vertical-align">
+                      <div class="input-group">
+                        <%= number_field_tag :min_last_payment_amount,0, step: 0.5, class: "form-control text-right", onchange: "if(this.value) {$(this.form).submit();}" %>
+                        <div class="input-group-append" id="last_payment_percentage_sign">
+                          <div class="input-group-text input-text-right"><%= @min_last_payment_payment_way == "percentage" ? "%" : "$" %></div>
+                        </div>
+                        <div id="last_payment_error" class="invalid-feedback">
+                          Puede ser del <i id="min_last_payment"></i>%
+                          hasta el <i id="max_last_payment"></i>% del
+                          precio del <%= @lot_singular %>.
+                        </div>
+                      </div>
+                      </div>
+                  </div>
+
+                  <div class="form-group wrapper-last-payment">
+                    <%= label_tag :last_payment_amount, "Contra entrega" %>
+                    <b id="last_payment"></b>
+                  </div>
+
+                  <div class="form-group" id="wrapper-down-payment">
+                    <%= label_tag :down_payment_amount, "Enganche: " %>
+                    <b id="down_payment"></b>
+                  </div>
+
+                  <div class="form-group" id="wrapper-initial-payment">
+                    <label>Apartado:</label>
+                    <b id="initial_payment"></b>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Saldo de enganche:</label>
+                    <b id="down_payment_to_differ"></b>
+                  </div>
+
+                  <div class="form-group" id="wrapper-first-payment">
+                    <label>Fecha límite para el pago de apartado:</label>
+                    <b id="first_payment"></b>
+                  </div>
+
+                  <div class="form-group" id="wrapper-second-payment">
+                    <label>Fecha límite para el pago de enganche:</label>
+                    <b id="second_payment"></b>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Precio de lista:</label>
+                    <b id="price"></b>
+                  </div>
+
+                  <div class="form-group" id="wrapper-final-price">Precio final:</label>
+                    <b id="final-price"> $0.00</b>
+                  </div>
+
+                  <div class="d-flex flex-wrap justify-content-between">
+                    <p class="text-left vertical-align m-0 py-3 color-primary">Esquema de pagos</p>
+                  </div>
+
+                  <div id="updates-table">
+                    <%= render "availability/updates_table" if @quotation.present? %>
+                  </div>
+
+                  <hr class="divider">
+
+                  <section class="<%= "d-none" unless @user.present? %>">
+                    <h5 class="text-center">Datos de envío</h5>
+                    <p class="my-4 text-center">Al ingresar sus datos de contacto se le enviará a su correo la cotización generada
+                      con base al número de plazos ingresado.</p>
+                    <div class="row">
+                      <div class="form-group col-sm-12 col-md-6">
+                        <%= label_tag :name, "Nombre" %>
+                        <div class="vertical-align">
+                          <%= text_field_tag :name, nil, class: "form-control" %>
+                          <div class="invalid-feedback">
+                            Este campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group col-sm-12 col-md-6">
+                        <%= label_tag :first_surname, "Primer Apellido" %>
+                        <div class="vertical-align">
+                          <%= text_field_tag :first_surname, nil, class: "form-control" %>
+                          <div class="invalid-feedback">
+                            Este campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group col-sm-12 col-md-6">
+                        <%= label_tag :second_surname, "Segundo Apellido" %>
+                        <div class="vertical-align">
+                          <%= text_field_tag :second_surname, nil, class: "form-control" %>
+                          <div class="invalid-feedback">
+                            Este campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group col-sm-12 col-md-6">
+                        <%= label_tag :email, "Correo" %>
+                        <div class="vertical-align">
+                          <%= email_field_tag :email, nil, class: "form-control" %>
+                          <div class="invalid-feedback">
+                            Este campo es obligatorio
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group col-sm-12 col-md-6">
+                        <%= label_tag :main_phone, "Teléfono Principal" %>
+                        <div class="vertical-align">
+                          <%= phone_field_tag :main_phone, nil, class: "form-control", title: "Debe contener solo números" %>
+                          <div class="invalid-feedback">
+                            Los número telefónicos deben ser a 10 dígitos
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <div class="actions text-center pt-3 <%= "d-none" unless @user.present? %>">
+                    <%= button_tag "Enviar Cotización", type: :button, id: "send_quote", class: "btn btn-primary quotation-button-size text-center" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <% end %>
+<% end %>
+
+<style>
+  .availability [data-id] {
+    cursor: pointer;
+  }
+</style>

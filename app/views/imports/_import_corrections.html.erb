@@ -1,0 +1,47 @@
+<div class="modal" tabindex="-1" id="correctionsModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Correcciones</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(import_corrections_imports_path, method: :post, multipart: true, class: "", data: { "controller": "importfilters", "target": "importfilters.form", "importfilters-url": import_corrections_imports_path(format: :json) }) do %>
+          <%= select_tag "project",
+                          options_for_select(Project.order(:name).pluck(:name, :id)),
+                          include_blank: t('selecciona un proyecto'),
+                          data: {
+                            controller: "corrections",
+                            action: "change->corrections#phasesChange",
+                            targetbox: "phases"
+                          }, class: "form form-group form-control" %>
+
+          <%= select_tag "phases",
+                          options_for_select(Phase.order(:name).pluck(:name, :id)),
+                          include_black: t('Selecciona una fase'),
+                          data: {
+                          disabled: true,
+                            controller: "corrections",
+                            action: "change->corrections#stagesChange",
+                            targetbox: "stages"
+                          }, class: "form form-group form-control" %>
+
+          <%= select_tag "stages",
+                          options_for_select(Stage.order(:name).pluck(:name, :id)),
+                          include_black: t('Selecciona un estado'),
+                          disabled: true,
+                          data: {
+                            target: "importfilters.filter"
+                          }, class: "form form-group form-control" %>
+
+            <input type="file" class="d-none" accept=".xls, .xlsx" id="importCorrectionsFile" data-target="importfilters.input" data-action="importfilters#upload">
+            <label class="btn btn-outline-primary mr-1 ml-1 float-right" for="importCorrectionsFile">
+            Importar
+            </label>
+          <% end %>
+      </div>
+    </div>
+  </div>
+</div>

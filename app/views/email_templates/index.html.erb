@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Plantillas de correo</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+        <%= link_to "Regresar", catalogs_path, class: "btn btn-secondary float-right mr-2" %>
+        <%= link_to "Consultar etiquetas", liquid_tags_email_templates_path, class: "btn btn-info mr-2", target: :_blank %>
+        <%= link_to "Nueva plantilla", new_email_template_path, class: "btn btn-primary float-right mr-2" if can?(:create, EmailTemplate) %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @email_templates.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No hay plantillas configuradas.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th width="25%">Plantilla</th>
+          <th width="25%"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+      <% @email_templates.each do |email_template| %>
+        <tr>
+          <td class="align-middle"><%= email_template.title %></td>
+          <td class="text-right align-middle">
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Opciones
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <%= link_to "Correos Automatizados", email_template_automated_emails_path(email_template), class: "dropdown-item" %>
+                <%= link_to "Editar", edit_email_template_path(email_template), class: "dropdown-item" if can?(:update, EmailTemplate) %>
+                <%= link_to("Previsualización", see_preview_modal_email_template_path(email_template), class: "dropdown-item", data: { toggle: "modal", target: "#modal-window" }, remote: true)  if can?(:see_preview_modal, EmailTemplate) %>
+                <%= link_to "Eliminar", email_template_path(email_template), method: :delete, data: { confirm: "¿Estás seguro que deseas eliminar la plantilla?" }, class: "dropdown-item"  if can?(:destroy, EmailTemplate) %>
+              </div>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= will_paginate(@email_templates, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+  <div id="modal-window" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+<% end %>

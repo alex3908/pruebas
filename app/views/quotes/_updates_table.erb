@@ -1,0 +1,20 @@
+<table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack" >
+  <thead>
+    <tr>
+      <th scope="col">Actualización</th>
+      <th scope="col">Monto</th>
+      <th scope="col">Pagos</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% unless @quotation.nil? %>
+      <% @quotation.interest_payments.each do |payment| %>
+        <tr>
+          <td class="align-middle"><%= payment[:interest] %></td>
+          <td class="align-middle"><%= number_to_currency(payment[:amount]) %></td>
+          <td class="align-middle"><%= payment[:payments] %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,23 @@
+* {
+  box-sizing: border-box;
+}
+.label-container {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap;
+
+  .square-label {
+    -webkit-flex: 1 auto;
+    flex: 1 auto;
+    padding: 0.5rem;
+    text-align: center;
+    background-color: $secondary;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 3px;
+    color: white;
+    margin: 2px;
+    border-radius: 10px;
+  }
+}

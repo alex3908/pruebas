@@ -1,0 +1,41 @@
+const redirectBack = function() {
+    Turbolinks.visit("<%= new_subscription_path(@folder.id, token: params[:token]) %>");
+};
+<% if local_assigns[:error] == 'transaction_error' %>
+Swal.fire({
+    title: 'Error',
+    text: 'Hubo un problema al procesar el pago.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Espera un momento y vuelve a intentarlo. \n Si el problema persiste, por favor comunícate con atención al cliente.'
+}).then(redirectBack);
+<% elsif local_assigns[:error] == 'rejected' %>
+Swal.fire({
+    title: 'Error',
+    text: 'La tarjeta fue rechazada',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Revisa el estado de tu tarjeta para verificar su validez.'
+}).then(redirectBack);
+<% elsif local_assigns[:error] == 'not_found' %>
+Swal.fire({
+    title: 'Error',
+    text: 'La tarjeta no pudo ser validada',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Revisa que los datos sean correctos y vuelve a intentar.'
+}).then(redirectBack);
+<% else %>
+Swal.fire({
+    title: '¡Domiciliación creada exitosamente!',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+}).then( function() {
+    Turbolinks.visit("<%= subscription_success_path %>");
+});
+<% end %>

@@ -1,0 +1,27 @@
+<div class="row">
+    <div class="col-12">
+        <div class="accordion collapse-elements px-4 py-2" id="accordion-discounts">
+            <div class="d-flex flex-wrap justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-discounts" aria-expanded="true" aria-controls="collapse-discounts">
+                <p class="text-left vertical-align m-0 py-3 color-primary">Descuentos vigentes</p>
+            </div>
+            <div class="table-container collapse" id="collapse-discounts" data-parent="#accordion-discounts">
+                <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+                    <thead>
+                        <tr>
+                            <th>Total de Pagos</th>
+                            <th class="text-right">Descuento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @relative_plans.each do |plan| %>
+                            <tr>
+                                <td class="align-middle"><%= "#{plan[1].first.total_payments} - #{plan[1].last.total_payments}" %></td>
+                                <td class="text-right"><%= "%.2f" % plan.first.to_f %> %</td>
+                            </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

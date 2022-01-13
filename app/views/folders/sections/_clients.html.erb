@@ -1,0 +1,84 @@
+<div class="container">
+  <section class="client">
+    <div class="row">
+      <div class="col-md-1 text-center py-3">
+        <%= image_tag("icons/quotation-client.png", class: "img-fluid") %>
+      </div>
+      <div class="col-md-11">
+        <div class="d-flex justify-content-between py-2">
+          <h3 class="vertical-align m-0"><%= @folder.clients.size > 1 ? "Copropietario 1" : "Propietario" %></h3>
+          <section>
+            <% if @step_role&.can_reassign_client? %>
+              <%= link_to "Reasignar", "#reassignClientModal", 'data-toggle': "modal", class: "btn btn-info remove-client-btn" %>
+            <% end %>
+            <% if @folder.buyer == 'coowner' && (@folder.client_2_id.nil? || @folder.client_3_id.nil? || @folder.client_4_id.nil? || @folder.client_5_id.nil? || @folder.client_6_id.nil?) && can?(:change_buyer, Folder) || (!@folder.active? && @step_role&.update_coowners?) %>
+              <%= link_to "Agregar", "#coownerModal", 'data-toggle': "modal", 'data-folder_id': @folder.id, class: "btn btn-primary remove-client-btn" %>
+            <% end %>
+          </section>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-green">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-gray">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%= render partial: "clients/info", locals: { client: @folder.client, is_show_view: false } %>
+    <div class="row">
+      <div class="col-sm-12 text-center my-2">
+        <% if can? :update, @folder.client %>
+          <%= link_to "Editar Cliente", edit_client_path(@folder.client, folder: @folder.id), class: "btn btn-secondary" %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="container">
+  <%= render partial: "folders/sections/coowner_description", locals: {
+      folder: @folder,
+      client: @folder.client_2,
+      client_index: 2,
+      label: "Copropietario 2"
+    } %>
+</div>
+
+<div class="container">
+  <%= render partial: "folders/sections/coowner_description", locals: {
+      folder: @folder,
+      client: @folder.client_3,
+      client_index: 3,
+      label: "Copropietario 3"
+    } %>
+</div>
+
+<div class="container">
+  <%= render partial: "folders/sections/coowner_description", locals: {
+      folder: @folder,
+      client: @folder.client_4,
+      client_index: 4,
+      label: "Copropietario 4"
+    } %>
+</div>
+
+<div class="container">
+  <%= render partial: "folders/sections/coowner_description", locals: {
+      folder: @folder,
+      client: @folder.client_5,
+      client_index: 5,
+      label: "Copropietario 5"
+    } %>
+</div>
+
+<div class="container">
+  <%= render partial: "folders/sections/coowner_description", locals: {
+      folder: @folder,
+      client: @folder.client_6,
+      client_index: 6,
+      label: "Copropietario 6"
+    } %>
+</div>

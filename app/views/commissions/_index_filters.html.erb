@@ -1,0 +1,78 @@
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :role, "Buscar por rol:" %>
+  <select id="role" name="role" class="form-control">
+    <option value="">Todos</option>
+    <% if can?(:read, Role) %>
+      <optgroup label="CRM">
+        <% @roles.each do |role| %>
+          <% unless role.is_evo %>
+            <option <%= "selected" if params["role"].to_i == role.id %> value="<%= role.id %>"><%= role.name %> </option>
+          <% end %>
+        <% end %>
+      </optgroup>
+    <% end %>
+    <% if is_evo_active? %>
+      <optgroup label="<%= @evo_string %>">
+        <% @roles.each do |role| %>
+          <% if role.is_evo && can?(:"create_#{role.key}".to_sym, User) %>
+            <option data-type="evo" data-key="<%= role.key %>" <%= "selected" if params["role"].to_i == role.id %> value="<%= role.id %>"><%= role.name %></option>
+          <% end %>
+        <% end %>
+      </optgroup>
+    <% end %>
+  </select>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :folder, "Buscar por folio de expediente:" %>
+  <%= number_field_tag :folder, params[:folder], class: "form-control" %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :project do %> Buscar por <span class="text-lowercase"><%= @project_singular %>: </span>
+  <% end %>
+  <%= select_tag :project, options_for_select(@projects.all.map { |project| [project.name, { "data-phases" => project.phases.to_json(include: [:stages]) }, project.id] }, selected: params["project"].to_s), { class: "form-control", include_blank: ("Todos") } %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :phase do %> Buscar por <span class="text-lowercase"><%= @phase_singular %>: </span>
+  <% end %>
+  <%= select_tag :phase, options_for_select([["Todas", ""]]), class: "form-control input-white bg-input-disabled", disabled: true %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :stage do %> Buscar por <span class="text-lowercase"><%= @stage_singular %>: </span>
+  <% end %>
+  <%= select_tag :stage, options_for_select([["Todas", ""]]), class: "form-control input-white bg-input-disabled", disabled: true %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :lot_number, "Buscar por número de lote:" %>
+  <%= number_field_tag :lot_number, params[:lot_number], class: "form-control" %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :lot_label, "Buscar por clasificador de lote:" %>
+  <%= text_field_tag :lot_label, params[:lot_label], class: "form-control" %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :user_email, "Buscar por correo de usuario:" %>
+  <%= text_field_tag :user_email, params[:user_email], class: "form-control" %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :user_name, "Buscar por nombre de usuario:" %>
+  <%= text_field_tag :user_name, params[:user_name], class: "form-control" %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :status, "Buscar por estado:" %>
+  <%= select_tag :status, options_for_select([["Pagado", "paid"], ["Pendiente", "pending"], ["Cancelado", "canceled"]], params[:status]),
+    { include_blank: "Todos", class: "form-control" } %>
+</div>
+
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :concept, "Buscar por tipo:" %>
+  <%= select_tag :concept, options_for_select(@folder_user_concepts.collect { |s| [s.name, s.id] }, params[:concept]),
+    { include_blank: "Todos", class: "form-control" } %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :from_date, "Buscar desde la fecha:" %>
+  <%= text_field_tag :from_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker", value: params[:from_date], required: false, placeholder: "dd/mm/yyyy" } %>
+</div>
+<div class="col-md-6 col-lg-3 mb-3">
+  <%= label_tag :to_date, "Buscar hasta la fecha:" %>
+  <%= text_field_tag :to_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker disabled", value: params[:to_date], required: false, placeholder: "dd/mm/yyyy" } %>
+</div>

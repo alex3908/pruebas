@@ -1,0 +1,93 @@
+<div class="pdf-bg-image-all-pages">
+  <section class="payments-quotation px-5">
+    <% amr.each_with_index do |payments, index| %>
+      <% unless valid_for_folder %>
+        <div class="position-relative">
+          <div class="water-mark">
+            <h1>NO VÁLIDO PARA EXPEDIENTE.</h1>
+          </div>
+        </div>
+      <% end %>
+      <div class="table-content page-break-table">
+        <div class="inner-separator new_format">
+          <div class="inner-separator_content new_format">
+            <div>
+              <p><span class="text-uppercase">Pagos</span></p>
+            </div>
+          </div>
+        </div>
+        <hr class="outer-separator new_format mt-2 p-0">
+        <div class="payments-table">
+          <table class="table table-striped table-payments">
+            <tbody>
+            <tr>
+              <th class="normal-header">Número de pago</th>
+              <th class="normal-header">Fecha</th>
+              <th class="normal-header">Capital</th>
+              <% if show_interest %>
+                <th class="normal-header">Actualización</th>
+              <% end %>
+              <th scope="col">Enganche</th>
+              <th class="normal-header">Total a pagar</th>
+              <% if have_capital_payment %>
+                <th scope="col">Abono a capital</th>
+              <% end %>
+              <th class="normal-header">Saldo Capital</th>
+            </tr>
+            <% if index === 0 %>
+              <% down_payment_monthly_payments.each do |payment| %>
+                <tr class="no-border">
+                  <td class="new_format align-middle gray-row" width="10%"><%= payment[:number] %></td>
+                  <td class="new_format align-middle gray-row"><%= payment[:date].strftime("%d-%m-%Y") %></td>
+                  <td class="new_format align-middle gray-light-row"></td>
+                  <% if show_interest %>
+                    <td class="new_format align-middle gray-light-row"></td>
+                  <% end %>
+                  <td class="new_format align-middle primary-row new_format"><%= number_to_currency(payment[:payment]) %></td>
+                  <td class="new_format align-middle gray-light-row"><%= number_to_currency(payment[:payment]) %></td>
+                  <% if have_capital_payment %>
+                    <td class="new_format align-middle gray-light-row"></td>
+                  <% end %>
+                  <td class="new_format align-middle gray-light-row"></td>
+                </tr>
+              <% end %>
+            <% end %>
+            <% payments.each do |payment| %>
+              <tr class="no-border">
+                <td class="new_format align-middle gray-row"><%= payment[:number] %></td>
+                <td class="new_format align-middle gray-row"><%= payment[:date].strftime("%d-%m-%Y") %></td>
+                <td class="new_format align-middle gray-light-row"><%= number_to_currency(payment[:capital]) %></td>
+                <% if show_interest %>
+                  <td class="new_format align-middle gray-light-row"><%= number_to_currency(payment[:interest]) %></td>
+                <% end %>
+                <td class="new_format align-middle <%= payment[:down_payment].to_f > 0 ? "primary-row new_format" : "gray-light-row" %>"><%= number_to_currency(payment[:down_payment]) %></td>
+                <td class="new_format align-middle gray-light-row"><%= number_to_currency(payment[:payment]) %></td>
+                <% if have_capital_payment %>
+                  <td class="new_format align-middle gray-light-row"><%= number_to_currency(payment[:capital_payment]) %></td>
+                <% end %>
+                <td class="new_format align-middle gray-light-row"><%= number_to_currency(payment[:amount]) %></td>
+              </tr>
+            <% end %>
+            <% if index + 1 === @amr.length %>
+              <tr class="no-border">
+                <td class="new_format align-middle no-text gray-row"></td>
+                <td class="new_format align-middle no-text gray-row"></td>
+                <td class="new_format align-middle no-text gray-light-row" id="table-total-capital"><%= number_to_currency(capital_total) %></td>
+                <% if show_interest %>
+                  <td class="new_format align-middle no-text gray-light-row" id="table-total-interest"><%= number_to_currency(interest_total) %></td>
+                <% end %>
+                <td class="new_format align-middle"><%= number_to_currency(down_payment_total) %></td>
+                <td class="new_format align-middle no-text gray-light-row" id="table-total-payment"><%= number_to_currency(payment_total) %></td>
+                <% if have_capital_payment %>
+                  <td class="new_format align-middle no-text gray-light-row"><%= number_to_currency(capital_payments_total) %></td>
+                <% end %>
+                <td class="new_format align-middle no-text gray-light-row"></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  </section>
+</div>

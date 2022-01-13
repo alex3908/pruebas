@@ -1,0 +1,197 @@
+<div class="container">
+  <div class="row">
+
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Clientes</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <% if can?(:mass_reassign, Client) %>
+        <button type="button" class="mr-1 btn btn-warning" data-toggle="modal" data-target="#massReassignModal">
+          Reasignar Clientes
+        </button>
+      <% end %>
+      <%= link_to("Nuevo Cliente", new_client_path, class: "btn btn-primary") if can?(:create, Client) %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <div class="accordion collapse-elements px-4 mb-4" id="accordion-additional">
+    <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+      <p class="text-left vertical-align m-0 py-3 color-primary">Filtros</p>
+    </div>
+    <div class="collapse show" id="collapse-section" data-parent="#accordion-additional">
+      <%= form_tag(clients_path, method: :get) do %>
+        <%= hidden_field_tag :direction, params[:direction] %>
+        <%= hidden_field_tag :sort, params[:sort] %>
+        <div class="container py-3">
+          <div class="row">
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :email_seller, "Buscar por correo del asesor:" %>
+              <%= text_field_tag :email_seller, params[:email_seller], class: "form-control" %>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :name_seller, "Buscar por nombre del asesor:" %>
+              <%= text_field_tag :name_seller, params[:name_seller], class: "form-control" %>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :search_email, "Buscar por correo del cliente:" %>
+              <%= text_field_tag :search_email, params[:search_email], class: "form-control" %>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :search_name, "Buscar por nombre del cliente:" %>
+              <%= text_field_tag :search_name, params[:search_name], class: "form-control" %>
+            </div>
+            <div class="col-md-12 col-lg-12 text-right pt-3">
+              <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                <i class="fa fa-search" aria-hidden="true"></i> Buscar
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @clients.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ningún cliente.
+        <% if can?(:create, Client) %>
+          <br> Comienza registrando uno.
+        <% end %>
+      </p>
+      <% if can?(:create, Client) %>
+        <div class="text-center mt-3">
+          <%= link_to "Nuevo Cliente", new_client_path, class: "btn btn-primary jumping" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th width="16%"><%= sortable "name", "Nombre" %></th>
+            <th width="16%"><%= sortable "main_phone", "Teléfono" %></th>
+            <th width="16%"><%= sortable "email", "Email" %></th>
+            <th width="16%"><%= sortable "user_id", "Asesor" %></th>
+            <th width="16%"><%= sortable "client_user_created", "Fecha de asignación" %></th>
+            <th><%= sortable "current_sign_in_at", "Activo" %></th>
+            <th width="16%"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @clients.each do |client| %>
+            <tr>
+              <td><%= client.label %></td>
+              <td><%= client.formatted_main_phone %></td>
+              <td>
+                <%= client.email %>
+                <% if client.confirmed_email %>
+                  <i class="fa fa-check-circle-o text-info" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Correo electrónico verificado."></i>
+                <% end %>
+              </td>
+              <td><%= client&.sales_executive&.label %></td>
+              <td><%= client.assignation_date %></td>
+              <td><%= client.has_activity? ? "Activo" : "Inactivo" %></td>
+              <td class="text-right">
+                <% unless UserClient.where(client_id: client.id).present? %>
+                  <% if can?(:create, UserClient) && client.confirmed_email %>
+                    <%= link_to user_clients_path(client: client), class: "table-link", method: :post, title: "Crear usuario del app", rel: "tooltip" do %>
+                      <i class="fa fa-mobile" aria-hidden="true"></i>
+                    <% end %>
+                  <% end %>
+                <% end %>
+                <% if can?(:quote, :quote) %>
+                  <%= link_to projects_path(client: client), class: "table-link", title: "Cotizar", rel: "tooltip" do %>
+                    <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                  <% end %>
+                <% end %>
+                <% if can?(:read, Client) %>
+                  <%= link_to client, class: "table-link", title: "Ver", rel: "tooltip" do %>
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                  <% end %>
+                <% end %>
+                <% if can?(:update, Client) %>
+                  <%= link_to edit_client_path(client), class: "table-link", title: "Editar", rel: "tooltip" do %>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                  <% end %>
+                <% end %>
+
+                <% if !client.confirmed_email && can?(:read, Client) %>
+                    <%= link_to resend_email_confirmation_client_path(client), method: :patch, class: "table-link", data: { toggle: "tooltip" }, title: "Enviar correo de confirmación", remote: true do %>
+                      <i class="fa fa-envelope-o"></i>
+                    <% end %>
+                <% end %>
+
+                <% if client.user_client.present? && can?(:create, UserClient) %>
+                    <%= link_to recovery_password_user_client_path(client.user_client), method: :patch, class: "table-link", data: { toggle: "tooltip" }, title: "Enviar correo de recuperación de contraseña", remote: true do %>
+                      <i class="fa fa-envelope-o"></i>
+                    <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <%= will_paginate(@clients, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+  <div class="text-center mt-3">
+    <div class="w-25 d-inline-block">
+      Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page), onchange: "if(this.value){window.location='?per_page='+this.value;}" %>
+    por página
+    </div>
+  </div>
+<% end %>
+
+<div class="modal fade" id="massReassignModal" role="dialog" aria-hidden="true" data-backdrop="true">
+  <div class="modal-dialog modal-dialog-center" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Reasignar clientes</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <%= form_with(scope: :mass_reassign, method: "PUT", url: reassign_clients_path, local: true) do |form| %>
+        <div class="modal-body">
+          <p class="py-2">Esta acción transferirá <strong>todos</strong> los clientes del asesor origen al asesor destino. Esta acción no puede deshacerse.</p>
+
+          <div class="form-group">
+            <%= form.label :client_user_concept_id, "Concepto" %>
+            <%= form.select :client_user_concept_id, @client_user_concepts.collect { |s| [s.name, s.id] },{ include_blank: "Selecciona un concepto" }, class: "form-control" %>
+          </div>
+
+          <div id="source_autocomplete_id" class="form-group" data-controller="autocomplete" data-autocomplete-url="<%= autocomplete_users_path %>" data-autocomplete-dynamic-params="<%= {client_user_concept_id: nil}.to_json %>" data-autocomplete-search="user_search=">
+            <%= form.label :source_user, "Asesor origen" %>
+            <input class="autocomplete-input form-control" data-target="autocomplete.field" required>
+            <%= form.hidden_field :source_user, value: "", class: "autocomplete-hidden", "data-target" => "autocomplete.hidden" %>
+          </div>
+          <div class="form-group" data-controller="autocomplete" data-autocomplete-url="<%= autocomplete_users_path %>" data-autocomplete-search="user_search=">
+            <%= form.label :target_user, "Asesor destino" %>
+            <input class="autocomplete-input form-control" data-target="autocomplete.field" required>
+            <%= form.hidden_field :target_user, value: "", class: "autocomplete-hidden", "data-target" => "autocomplete.hidden" %>
+          </div>
+        </div>
+        <div class="modal-footer pt-2">
+          <div class="collapse form-loading text-center">
+            <i class="fa fa-circle-o-notch fa-spin fa-2x"></i>
+          </div>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <%= form.submit "Reasignar", class: "btn btn-warning", data: { toggle: "collapse", target: ".form-loading", confirm: "¿Estás seguro que deseas completar la reasignación?" } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

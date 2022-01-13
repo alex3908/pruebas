@@ -1,0 +1,174 @@
+<section class="down-payment">
+  <div class="row">
+    <div class="col-md-1 text-center py-3">
+      <%= image_tag("icons/customizable.svg", class: "img-fluid mh-50") %>
+    </div>
+    <div class="col-md-11">
+      <div class="d-flex flex-wrap justify-content-between">
+        <h3 class="text-left vertical-align m-0 py-3">Datos Personalizables</h3>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4 pr-0">
+          <hr class="marker-bar-green">
+        </div>
+        <div class="col-8 pl-0">
+          <hr class="marker-bar-gray">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <% if can?(:custom_discount, :quote) %>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :custom_discount, "Descuento (%)" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" data-html="true" title="<%= "El orden de aplicación de los descuentos es: <br> 1. Descuento por plazo <br> 2. Promoción <br> 3. Cupón de descuento <br> 4. Promoción exclusiva".html_safe %>"></i>
+        <div class="input-group mb-3">
+          <%= number_field_tag :custom_discount, @folder.payment_scheme.discount * 100, step: 0.01, min: 0, max: 100, class: "form-control text-right", onchange: "$(this.form).submit();" %>
+          <div class="input-group-append">
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if can?(:custom_buy_price, :quote) %>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :custom_buy_price do %> Precio por m<sup>2</sup> <% end %>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= number_field_tag :custom_buy_price, @folder.payment_scheme.buy_price.round(2), min: 0, step: 0.01, class: "form-control", onchange: "$(this.form).submit();", disabled: !@lot.fixed_price.blank? %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if can?(:custom_zero_rate, :quote) %>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :custom_zero_rate, "Meses sin intereses" %>
+        <div class="vertical-align">
+          <div class="input-group">
+            <%= number_field_tag :custom_zero_rate, @folder.payment_scheme.zero_rate, min: 0, step: 1, class: "form-control", onchange: "$(this.form).submit();" %>
+            <div class="input-group-append">
+              <div class="input-group-text input-text-right">mes(es)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if can?(:custom_start_installments, :quote) %>
+      <div class="form-group col-sm-12 col-md-4" id="start_installments_container">
+        <%= label_tag :custom_start_installments, "Meses de gracia para la mensualidad" %>
+        <div class="vertical-align">
+          <div class="input-group">
+            <%= number_field_tag :custom_start_installments, @folder.payment_scheme.start_installments, min: 1, class: "form-control", disabled: @folder.payment_scheme.start_installments.nil?, onchange: "$(this.form).submit();" %>
+            <div class="input-group-append">
+              <div class="input-group-text input-text-right">mes(es)</div>
+            </div>
+            <div class="invalid-feedback">
+              Debe asignarse al menos un mes de gracia
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4 vertical-align">
+        <%= label_tag :custom_down_payment_differ, "Enganche diferido" %>
+        <%= check_box_tag :custom_down_payment_differ, @folder.payment_scheme.start_installments, @folder.payment_scheme.start_installments,
+                          data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: "Si",
+                              off: "No",
+                              onchange: "$(this.form).submit();"
+                          } %>
+      </div>
+    <% end %>
+
+    <% if can?(:custom_start_date, :quote) %>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :custom_start_date, "Fecha de inicio" %>
+        <%= text_field_tag :custom_start_date, @folder.calc_date.strftime("%d/%m/%Y %H:%M"), id: "folder-start-date", class: "form-control", placeholder: "dd/mm/yyyy hh:mm", onchange: "$(this.form).submit();", readonly: true %>
+      </div>
+    <% end %>
+
+    <% if can?(:custom_promotion, :quote) %>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :custom_promotion_name, "Nombre de la promoción" %>
+        <%= text_field_tag :custom_promotion_name, @folder.payment_scheme.promotion_name, class: "form-control", onchange: "$(this.form).submit();" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :custom_promotion, "Porcentaje de promoción (%)" %>
+        <div class="input-group mb-3">
+          <%= number_field_tag :custom_promotion, @folder.payment_scheme.promotion_discount * 100, step: 0.01, min: 0, max: 100, class: "form-control text-right", onchange: "$(this.form).submit();" %>
+          <div class="input-group-append">
+            <span class="input-group-text">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :custom_promotion_operation, "Tipo de promoción" %>
+        <%= select_tag(:custom_promotion_operation, options_for_select([["Multiplicativo por plazo", "over"], ["Mayor", "higher"], ["Suma", "addition"] ], @folder.payment_scheme.promotion_operation), { include_blank: "Selecciona una opción", class: "form-control", onchange: "$(this.form).submit();"  }) %>
+      </div>
+    <% end %>
+
+    <% if can?(:custom_credit, :quote) %>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :custom_credit, "Esquema de Credito" %>
+        <%= select_tag(:custom_credit, options_for_select(CreditScheme.where(status: true).collect { |u| [u.name, u.id] }, @folder.payment_scheme.credit_scheme_id), class: "form-control", onchange: "$(this.form).submit();") %>
+      </div>
+    <% end %>
+
+    <% if can?(:custom_area, :quote) %>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :custom_area, "Área Personalizada" %>
+        <div class="input-group">
+          <%= number_field_tag :custom_area, @folder.payment_scheme.area, min: 0, step: 0.01, class: "form-control text-right", onchange: "$(this.form).submit();" %>
+          <div class="input-group-append">
+            <span class="input-group-text">m<sup>2</sup></span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if can?(:custom_commissionable, :quote) %>
+      <div class="form-group col-sm-12 col-md-4 vertical-align">
+        <%= label_tag :custom_commissionable, "Es comisionable" %>
+        <%= check_box_tag :custom_commissionable, @folder.payment_scheme.is_commissionable, @folder.payment_scheme.is_commissionable,
+                          data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: "Si",
+                              off: "No",
+                          } %>
+      </div>
+    <% end %>
+
+    <% if @promotions_including_expired.size > 0 && can?(:custom_promotion, :quote) %>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= label_tag :promotion, "Promoción:" %>
+        <div class="vertical-align">
+          <%= select_tag :promotion, options_for_select(@promotions_including_expired.map { |p| ["#{p.name} (#{'%.2f' % (p.amount * 100)}%)", p.id] }, @folder.payment_scheme.promotion&.id), prompt: "Sin promoción", class: "form-control", onchange: "$(this.form).submit();" %>
+        </div>
+        <small id="promotions-warning" class="text-center text-warning mt-3" style='display:none;'></small>
+      </div>
+
+      <% if @promotions_with_active_coupons.any? %>
+        <div class="form-group col-sm-12 col-md-4">
+            <%= label_tag :promotion_code, "Cupón de descuento:" %>
+            <div class="vertical-align">
+              <%= text_field_tag :promotion_code, @folder.payment_scheme.coupon&.promotion_code, class: "form-control", onblur: "$(this.form).submit();" %>
+            </div>
+            <small id="coupons-warning" class="text-center text-warning mt-3" style='display:none;'></small>
+        </div>
+      <% end %>
+    <% end %>
+
+  </div>
+</section>

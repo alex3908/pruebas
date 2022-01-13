@@ -1,0 +1,33 @@
+<%= form_with(model: client_user_concept, local: true) do |form| %>
+
+  <div class="d-flex flex-wrap justify-content-between pt-3">
+    <h3 class="text-left vertical-align m-0 py-3">Datos de concepto</h3>
+    <div class="clearfix py-2"></div>
+  </div>
+
+  <div class="row">
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :name, "Nombre del concepto" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :max_users, "Usuarios máximos con este concepto por cliente" %>
+      <%= form.number_field :max_users, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :name, "Selecciona rol" %>
+      <%= form.select :role_ids, @roles.collect { |s| [s.name, s.id] }, {}, multiple: true, required: true %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="actions py-3">
+      <%= link_to "Cancelar", client_user_concepts_path, class: "btn btn-secondary" %>
+      <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+  </div>
+
+<% end %>

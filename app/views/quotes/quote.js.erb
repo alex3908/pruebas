@@ -1,0 +1,204 @@
+$('#payment-table').empty();
+$('#updates-table').empty();
+
+$('#download_pdf').prop("disabled", true);
+$('#send_email').prop("disabled", true);
+
+var inject_text = function(id, text) { if($(id)) { $(id).text(text); } }
+var inject_html = function(id, html) { if($(id)) { $(id).html(html); } }
+
+<% if @quotation.present? %>
+<% if params[:email].present? %>
+$( "<%= escape_javascript render('components/notice', {type: 'success', message: 'Correo enviado con exito.'}) %>" ).insertBefore( "#quote" );
+<% end %>
+inject_text('#discount', "<%= '%.2f' % @quotation.discount %>%");
+inject_text('#price', "<%= escape_javascript number_to_currency(@quotation.price) %>");
+inject_text('#price_with_interest', "<%= escape_javascript number_to_currency(@quotation.price_with_interest) %>");
+inject_text('#saving', "<%= escape_javascript number_to_currency(@quotation.saving) %>");
+inject_text('#total_price', "<%= escape_javascript number_to_currency(@project.show_final_price ? @payment_total : @quotation.total_price) %>");
+
+inject_text('#first_period_months', "<%= escape_javascript @quotation.interest_free_period.to_s %>");
+
+<% if @payment_way == 'percentage' %>
+inject_text('#down_payment', "<%= escape_javascript number_to_currency(@quotation.down_payment) %>");
+<% else %>
+inject_text('#down_payment', "<%= escape_javascript @quotation.down_payment_percentage.to_s %> %");
+<% end %>
+
+<% if @min_last_payment_payment_way == 'percentage' %>
+inject_text('#last_payment', "<%= escape_javascript number_to_currency(@quotation.last_payment) %>");
+<% else %>
+inject_text('#last_payment', "<%= escape_javascript @quotation.last_payment_percentage.to_s %> %");
+<% end %>
+
+inject_text('#down_payment_finance', "<%= escape_javascript @actual_down_payment_finance.to_s %>");
+inject_text('#initial_payment_label', "<%= escape_javascript number_to_currency(@quotation.initial_payment) %>");
+inject_text('#initial_payment_aux', "<%= escape_javascript number_to_currency(@quotation.initial_payment) %>");
+inject_text('#down_payment_to_differ', "<%= escape_javascript number_to_currency(@quotation.down_payment_to_differ) %>");
+inject_text('#down_payment_first_pay_amount', "<%= escape_javascript number_to_currency(@quotation.down_payment_monthly_payment) %>");
+inject_text('#down_payment_first_pay_date', "<%= escape_javascript @quotation.down_payment_first_pay_date %>");
+inject_text('#min_initial_payment', "<%= escape_javascript "El mínimo de apartado son #{number_to_currency('%.2f' % @min_initialpayment_price)} pesos" %>");
+inject_text('#max_initial_payment', "<%= escape_javascript number_to_currency('%.2f' % @down_payment_amount) %>");
+inject_text('#min_down_payment', "<%= '%.2f' % (@min_downpayment_percentage * 100) %>");
+inject_text('#max_down_payment', "<%= '%.2f' % (@max_downpayment_percentage * 100) %>");
+inject_text('#max_days_for_first_payment', "<%= @max_days_for_first_payment %>");
+inject_text('#min_days_for_first_payment', "<%= @min_days_for_first_payment %>");
+inject_text('#max_days_for_second_payment', "<%= @max_days_for_second_payment %>");
+inject_text('#min_days_for_second_payment', "<%= @min_days_for_second_payment %>");
+inject_text('#min_months_for_deferred_down_payment', "<%= @min_months_for_deferred_down_payment %>");
+inject_text('#max_months_for_deferred_down_payment', "<%= @max_months_for_deferred_down_payment %>");
+inject_text('#min_last_payment', "<%= '%.2f' % (@min_last_payment_percentage * 100) %>");
+inject_text('#max_last_payment', "<%= '%.2f' % (@max_last_payment_percentage * 100) %>");
+
+inject_html("#updates-table", "<%= escape_javascript render('quotes/updates_table') %>");
+inject_html("#down-payments-table", "<%= escape_javascript render('quotes/down_payments_table') %>");
+inject_html("#payment-table", "<%= escape_javascript render('quotes/amortization_table') %>");
+inject_html("#simple-quotation-table", "<%= escape_javascript render('quotes/simple_quotation_table') %>");
+
+$("#total_periods").val(<%= @total_periods %>);
+
+<% if @folder.present? && (@promotion.present? && @coupon.present? && @promotion_valid && @promotion_coupon_valid || @promotion.present? && @promotion_valid && (params[:coupon].nil? || @coupon.nil?) || @coupon.present? && @promotion_coupon_valid && (params[:promotion].blank? || @promotion.nil?) || params[:promotion].blank? && params[:coupon].nil?) %>
+$('#save').prop("disabled", false);
+<% else %>
+$('#reserve').prop("disabled", false);
+<% end %>
+$('#download_pdf').prop("disabled", false);
+$('#send_email').prop("disabled", false);
+
+<% if @downpayment_price_error %>
+$("#down_payment_amount_container .input-group").addClass('is-invalid');
+disableReserve();
+<% else %>
+$("#down_payment_amount_container .input-group").removeClass('is-invalid');
+<% end %>
+
+<% if @last_payment_error %>
+$("#quote_min_last_payment_amount .input-group").addClass('is-invalid');
+disableReserve();
+<% else %>
+$("#quote_min_last_payment_amount .input-group").removeClass('is-invalid');
+<% end %>
+
+<% if @initial_payment_price_error %>
+$("#initial_payment_amount_container .input-group").addClass('is-invalid');
+disableReserve();
+<% elsif !@stage.credit_scheme.independent_initial_payment && @quotation.initial_payment >  @quotation.down_payment_monthly_payment %>
+disableReserve();
+inject_text('#min_initial_payment', "<%= escape_javascript "El monto máximo de apartado es #{number_to_currency('%.2f' % @quotation.down_payment_monthly_payment)} pesos" %>");
+$("#initial_payment_amount_container .input-group").addClass('is-invalid');
+<% else %>
+$("#initial_payment_amount_container .input-group").removeClass('is-invalid');
+<% end %>
+
+<% if @first_payment_error %>
+$("#first_payment_container .vertical-align").addClass('is-invalid');
+disableReserve();
+<% else %>
+$("#first_payment_container .vertical-align").removeClass('is-invalid');
+<% end %>
+
+<% if @second_payment_error %>
+$("#second_payment_container .vertical-align").addClass('is-invalid');
+disableReserve();
+<% else %>
+$("#second_payment_container .vertical-align").removeClass('is-invalid');
+<% end %>
+
+<% if @promotion_error.present? %>
+inject_text('#promotions-warning', "<%= escape_javascript @promotion_error %>");
+if($('#promotions-warning')) { 
+    $('#promotions-warning').show();
+    disableReserve(); 
+}
+<% else %>
+if($('#promotions-warning')) { $('#promotions-warning').hide() }
+<% end %>
+
+<% if @promotion_coupon_error.present? %>
+inject_text('#coupons-warning', "<%= escape_javascript  @promotion_coupon_error %>");
+if($('#coupons-warning')) { 
+    $('#coupons-warning').show();
+    disableReserve(); 
+}
+<% else %>
+if($('#coupons-warning')) { $('#coupons-warning').hide() }
+<% end %>
+
+if ( $('#quotation-after').first().is( ":hidden" ) ) {
+      $('#quotation-after').slideDown();
+}
+
+<% if @quotation.down_payment_finance == 1 %>
+$(".down_payment_extra").addClass('d-none');
+<% else %>
+$(".down_payment_extra").removeClass('d-none');
+<% end %>
+
+<% if @quotation.complement_payment > 0 %>
+inject_text('#complement_payment_amount', "<%= escape_javascript number_to_currency(@quotation.complement_payment) %>");
+$("#complement_payment_amount_container").removeClass('d-none');
+<% else %>
+$("#complement_payment_amount_container").addClass('d-none');
+inject_text('#complement_payment_amount', " ");
+<% end %>
+
+<% if @down_payment_deferred_months_error %>
+$("#down_payment_finance_container .vertical-align").addClass('is-invalid');
+disableReserve();
+<% else %>
+$("#down_payment_finance_container .vertical-align").removeClass('is-invalid');
+<% end %>
+
+<% if @quotation.down_payment_to_differ < 0 %>
+$("#down_payment_balance_container .vertical-align").addClass('is-invalid');
+disableReserve();
+<% else %>
+$("#down_payment_balance_container .vertical-align").removeClass('is-invalid');
+<% end %>
+
+<% if @payment_way == "percentage" %>
+$("#down_payment_percentage_sign .input-group-text").text("%");
+<% else  %>
+$("#down_payment_percentage_sign .input-group-text").text("$");
+<% end %>
+
+<% if @min_last_payment_payment_way == 'percentage' %>
+$("#last_payment_percentage_sign .input-group-text").text("%");
+<% else %>
+$("#last_payment_percentage_sign .input-group-text").text("$");
+<% end %>
+
+<% if @initial_payment_editable || @custom_quote_permissions %>
+$("#initial_payment").attr('disabled', false);
+<% else %>
+$('#initial_payment').val("<%= '%.2f' % @initial_payment %>");
+$("#initial_payment").prop("disabled", true);
+<% end %>
+
+<% if @down_payment_editable || @custom_quote_permissions %>
+$("#down_payment_amount").attr('disabled', false);
+$("#payment_way").prop("disabled", false);
+<% else %>
+$('#payment_way').val("<%= @payment_way %>").trigger('change');
+$('#down_payment_amount').val("<%= '%.2f' % @down_payment_amount %>");
+$("#down_payment_amount").prop("disabled", true);
+$("#payment_way").prop("disabled", true);
+<% end %>
+
+<% if @custom_down_payment_differ.present? && @custom_start_installments.present? && @custom_start_installments.to_i < 1 %>
+$("#start_installments_container .vertical-align").addClass('is-invalid');
+disableReserve();
+<% else %>
+$("#start_installments_container .vertical-align").removeClass('is-invalid');
+<% end %>
+
+<% else %>
+$('#quotation-after').slideUp();
+<% end %>
+
+function disableReserve() {
+    $('#save').prop("disabled", true);
+    $('#reserve').prop("disabled", true);
+    $('#download_pdf').prop("disabled", true);
+    $('#send_email').prop("disabled", true);
+}

@@ -1,0 +1,62 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Correos automatizados</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+        <%= link_to "Regresar", email_templates_path, class: "btn btn-secondary float-right mr-2" %>
+        <%= link_to "Nueva Automatización", new_email_template_automated_email_path(@email_template), class: "btn btn-primary float-right mr-2" if can?(:create, EmailTemplate) %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @automated_emails.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No hay correos automatizados.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th width="25%">Tipo</th>
+          <th width="25%">Destinatario</th>
+          <th width="25%">Paso</th>
+          <th width="25%">Tipo de ejecución</th>
+          <th width="25%"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+      <% @automated_emails.each do |automated_email| %>
+        <tr>
+          <td class="align-middle"><%= automated_email.type %></td>
+          <td class="align-middle"><%= automated_email.reciever %></td>
+          <td class="align-middle"><%= automated_email.step.present? ? automated_email.step.name : "Sin paso asignado" %></td>
+          <td class="align-middle"><%= automated_email.execution %></td>
+          <td class="text-right align-middle">
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Opciones
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <%= link_to "Editar", edit_email_template_automated_email_path(@email_template, automated_email), class: "dropdown-item" %>
+                <%= link_to "Eliminar", email_template_automated_email_path(@email_template, automated_email), method: :delete, data: { confirm: "¿Estás seguro que deseas eliminar el correo automatizado?" }, class: "dropdown-item" %>
+              </div>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+<% end %>

@@ -1,0 +1,144 @@
+<div class="container">
+  <%= render partial: "components/breadcrumb", locals: {
+      name: "Historial",
+      last: "Pagos",
+      links: [
+          { name: "Dashboard", path: root_path },
+          { name: "Expediente", path: folder_path(@folder) },
+          { name: "Cobros", path: folder_installments_path(@folder) },
+      ],
+  } %>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <div class="text-center">
+    <div class="btn-group">
+      <%= link_to "Regresar", payments_folder_installments_path(@folder), class: "btn btn-secondary" %>
+      <%= link_to "Exportar", folder_payments_path(@folder, :xlsx), class: "btn btn-dark" %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <section class="general-info">
+    <div class="d-flex flex-wrap justify-content-between">
+      <h3 class="text-left vertical-align m-0 py-3">Datos Generales</h3>
+    </div>
+    <div class="row mb-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-green">
+      </div>
+      <div class="col-8 pl-0">
+        <hr class="marker-bar-gray">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-4">
+        <p class="text-capitalize"><%= @project_singular %></p>
+        <div class="vertical-align">
+          <b><%= @folder.project.name %></b>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <p class="text-capitalize"><%= @phase_singular %></p>
+        <div class="vertical-align">
+          <b><%= @folder.phase.name %></b>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <p class="text-capitalize"><%= @stage_singular %></p>
+        <div class="vertical-align">
+          <b><%= @folder.stage.name %></b>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <p class="text-capitalize"><%= @lot_singular %></p>
+        <div class="vertical-align">
+          <b><%= @folder.lot.name %></b>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-4">
+        <p class="text-capitalize">Cliente</p>
+        <div class="vertical-align">
+          <b><%= @folder.client.label %></b>
+        </div>
+      </div>
+
+      <% if @folder.client_2.present? %>
+        <div class="form-group col-sm-12 col-md-4">
+          <p class="text-capitalize">Copropietario 1</p>
+          <div class="vertical-align">
+            <b><%= @folder.client_2.label %></b>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @folder.client_3.present? %>
+        <div class="form-group col-sm-12 col-md-4">
+          <p class="text-capitalize">Copropietario 2</p>
+          <div class="vertical-align">
+            <b><%= @folder.client_3.label %></b>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @folder.client_4.present? %>
+        <div class="form-group col-sm-12 col-md-4">
+          <p class="text-capitalize">Copropietario 3</p>
+          <div class="vertical-align">
+            <b><%= @folder.client_4.label %></b>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @folder.client_5.present? %>
+        <div class="form-group col-sm-12 col-md-4">
+          <p class="text-capitalize">Copropietario 4</p>
+          <div class="vertical-align">
+            <b><%= @folder.client_5.label %></b>
+          </div>
+        </div>
+      <% end %>
+
+      <% if @folder.client_6.present? %>
+        <div class="form-group col-sm-12 col-md-4">
+          <p class="text-capitalize">Copropietario 5</p>
+          <div class="vertical-align">
+            <b><%= @folder.client_6.label %></b>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>
+<div class="container-fluid">
+  <section class="cash-flows">
+    <div class="container">
+      <div class="d-flex flex-wrap justify-content-between pt-3">
+        <h4 class="text-left vertical-align m-0 py-3">Flujos de caja</h4>
+        <div class="clearfix py-2"></div>
+      </div>
+    </div>
+    <%= render "cash_flows" %>
+  </section>
+</div>
+<div class="container-fluid">
+  <section class="cash-flows">
+  <div class="container">
+      <div class="d-flex flex-wrap justify-content-between pt-3">
+        <h4 class="text-left vertical-align m-0 py-3">Restructuras sin flujo de caja</h4>
+        <div class="clearfix py-2"></div>
+      </div>
+    </div>
+    <%= render "restructures" %>
+  </section>
+</div>

@@ -1,0 +1,70 @@
+<% disabled ||= false %>
+<div class="container">
+  <section class="projects py-2">
+    <div class="row">
+      <div class="col-md-1 text-center py-3">
+        <%= image_tag("icons/quotation-info.png", class: "img-fluid") %>
+      </div>
+      <div class="col-md-11">
+        <div class="d-flex flex-wrap justify-content-between">
+          <h3 class="text-left vertical-align m-0 py-3 text-capitalize">Información general</h3>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-green">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-gray">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<%= form_for(setup_role(role), local: true, url: role) do |form| %>
+  <% if role.errors.any? %>
+    <div class="alert alert-warning" role="alert">
+      <h6 class="alert-heading">
+        No se pudo guardar por <%= pluralize_without_count(role.errors.count, "la siguiente razón", "las siguientes razones") %>:
+      </h6>
+      <ul class="mb-0">
+        <% role.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :name, "Nombre" %>
+      <%= form.text_field :name, class: "form-control", disabled: disabled %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :hidden, "Oculto" %>
+      <div>
+      <%= form.check_box :hidden,
+                          disabled: disabled,
+                          data: {
+
+                            activate: "toggle",
+                            onstyle: "success",
+                            offstyle: "secondary",
+                            on: fa_icon("eye-slash"),
+                            off: fa_icon("eye"),
+                          } %>
+      </div>
+    </div>
+
+    <%= render partial: "quotations", locals: { form: form, disabled: disabled, role: role } if can?(:custom_quote_permissions, Role) %>
+    <%= render partial: "permissions", locals: { form: form, disabled: disabled, permissions: @permissions } %>
+
+    <div class="actions py-3">
+      <%= link_to disabled ? "Regresar" : "Cancelar", roles_path, class: "btn btn-secondary" %>
+
+      <% unless disabled %>
+        <%= form.submit "Guardar", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

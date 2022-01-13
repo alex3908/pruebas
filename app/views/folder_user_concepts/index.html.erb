@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Conceptos de responsables</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+        <%= link_to "Regresar", catalogs_path, class: "btn btn-secondary float-right mr-2" %>
+        <%= link_to "Nuevo concepto", new_folder_user_concept_path, class: "btn btn-primary float-right mr-2" if can?(:create, FolderUserConcept) %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @folder_user_concepts.empty? %>
+  <div class="container">
+    <p>No hay conceptos.</p>
+  </div>
+<% else %>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th width="25%">Concepto</th>
+          <th width="25%"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+      <% @folder_user_concepts.each do |folder_user_concept| %>
+        <tr>
+          <td class="align-middle"><%= folder_user_concept.name %></td>
+          <td class="text-right align-middle">
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Opciones
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <%= link_to "Editar", edit_folder_user_concept_path(folder_user_concept), class: "dropdown-item" if can?(:update, FolderUserConcept) %>
+                <% if can?(:destroy, FolderUserConcept) %>
+                  <% if folder_user_concept.folder_users.empty? && folder_user_concept.steps.empty? %>
+                    <%= link_to "Eliminar", folder_user_concept_path(folder_user_concept), method: :delete, data: { confirm: "¿Estás seguro que deseas eliminar la plantilla?" }, class: "dropdown-item" %>
+                  <% else %>
+                    <%= tag.div("Eliminar", data: { toggle: "tooltip", placement: "top" }, title: "Esta en uso en otra sección", class: "dropdown-item bg-warning") %>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= will_paginate(@folder_user_concepts, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

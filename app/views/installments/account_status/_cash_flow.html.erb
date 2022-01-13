@@ -1,0 +1,46 @@
+<% @slice_cash_flows.each do |cash_flows| %>
+  <% total_payment = index = 0 %>
+  <div class="table-content page-break-table">
+    <hr class="accent-line">
+    <div class="primary-light-background">Flujo de Caja</div>
+    <hr class="accent-line">
+    <div class="payments-table pt-3">
+      <table class="table">
+        <tbody>
+        <tr>
+          <th class="normal-header">No.</th>
+          <th class="normal-header">Folio de Seguimiento</th>
+          <th class="normal-header">Fecha</th>
+          <th class="normal-header">Cantidad Pagada</th>
+          <th class="normal-header">Forma de Pago</th>
+          <th class="normal-header">Estatus</th>
+          <th class="normal-header">Tipo de Abono</th>
+        </tr>
+        <% cash_flows.each do |cash_flow| %>
+          <% total_payment += cash_flow.amount %>
+          <tr class="no-border">
+            <td class="gray-row"><%= index += 1 %></td>
+            <td class="gray-row"><%= cash_flow.folio %></td>
+            <td class="gray-row"><%= cash_flow.date.strftime("%Y-%m-%d") %></td>
+            <td class="gray-light-row"><%= number_to_currency(cash_flow.amount) %></td>
+            <td class="gray-light-row"><%= cash_flow.payment_method_label %></td>
+            <td class="gray-light-row"><%= cash_flow.status_label %></td>
+            <td class="gray-light-row"><%= concept_with_percentage(cash_flow, true) %></td>
+          </tr>
+        <% end %>
+        <tr class="no-border">
+          <td class="gray-row"></td>
+          <td class="gray-row"></td>
+          <td class="gray-row"></td>
+          <td class="gray-light-row">
+            <b>Total</b> <span class="primary-color"><%= number_to_currency(total_payment) %></span>
+          </td>
+          <td class="gray-light-row"></td>
+          <td class="gray-light-row"></td>
+          <td class="gray-light-row"></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

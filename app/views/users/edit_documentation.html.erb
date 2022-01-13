@@ -1,0 +1,194 @@
+<div class="container">
+  <%= form_with(model: current_user, local: true, url: submit_documentation_users_path) do |form| %>
+    <section class="files w-100">
+      <div class="d-flex justify-content-between">
+        <h3 class="text-left vertical-align m-0 py-3">Documentos Requeridos</h3>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4 pr-0">
+          <hr class="marker-bar-gray">
+        </div>
+        <div class="col-8 pl-0">
+          <hr class="marker-bar-green">
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack" id="user_profile">
+          <thead>
+          <tr>
+            <th width="70%"></th>
+            <th width="30%"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <%= render partial: "users/file_input", locals: {
+            form: form,
+            file: current_user.official_identification,
+            name: "IDENTIFICACIÓN OFICIAL",
+            key: :official_identification,
+          } %>
+          <%= render partial: "users/file_input", locals: {
+              form: form,
+              file: current_user.address_proof,
+              name: "COMPROBANTE DOMICILIARIO",
+              key: :address_proof,
+          } %>
+          <%= render partial: "users/file_input", locals: {
+              form: form,
+              file: current_user.birth_certificate,
+              name: "ACTA DE NACIMIENTO",
+              key: :birth_certificate,
+          } %>
+          <%= render partial: "users/file_input", locals: {
+            form: form,
+            file: current_user.curp,
+            name: "CURP",
+            key: :curp,
+          } %>
+          <%= render partial: "users/file_input", locals: {
+            form: form,
+            file: current_user.rfc,
+            name: "RFC",
+            key: :rfc,
+          } %>
+          <%= render partial: "users/file_input", locals: {
+            form: form,
+            file: current_user.non_criminal_record,
+            name: "ANTECEDENTES NO PENALES",
+            key: :non_criminal_record,
+          } %>
+          <%= render partial: "users/file_input", locals: {
+            form: form,
+            file: current_user.job_reference,
+            name: "RECOMENDACIONES LABORALES",
+            key: :job_reference,
+          } %>
+          <%= render partial: "users/file_input", locals: {
+            form: form,
+            file: current_user.recommendation_letter_1,
+            name: "CARTA DE RECOMENDACIÓN 1",
+            key: :recommendation_letter_1,
+          } %>
+          <%= render partial: "users/file_input", locals: {
+            form: form,
+            file: current_user.recommendation_letter_2,
+            name: "CARTA DE RECOMENDACIÓN 2",
+            key: :recommendation_letter_2,
+          } %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="row mt-3">
+      <div class="form-group col-sm-12 col-md-4">
+        <%= form.label :written_curp, "CURP" %>
+        <%= form.text_field :written_curp, class: "form-control input-white text-uppercase",
+                                        onkeyup: "upperCase(this);",
+                                        onblur: "ValidateCurp(this.value)",
+                                        required: true,
+                                        value: current_user.written_curp.present? ? current_user.written_curp : "" %>
+      </div>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= form.label :written_rfc, "RFC" %>
+        <%= form.text_field :written_rfc, class: "form-control input-white text-uppercase",
+                                        onkeyup: "upperCase(this);",
+                                        onblur: "ValidateRfc(this.value)",
+                                        required: true,
+                                        value: current_user.written_rfc.present? ? current_user.written_rfc : "" %>
+      </div>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= form.label :phone, "Teléfono" %>
+        <%= form.text_field :phone, class: "form-control", title: "Debe contener solo números" %>
+      </div>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= form.label :birthdate, "Fecha de nacimiento" %>
+        <%= form.date_field :birthdate, value: current_user.birthdate.present? ? current_user.birthdate : Time.zone.now.strftime("%Y/%m/%d"), class: "form-control input-white", required: true %>
+        <div class="invalid-feedback">
+          Debes seleccionar una fecha
+        </div>
+      </div>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= form.label :branch_id, "Sucursal:" %>
+        <%= form.select :branch_id, options_from_collection_for_select(branches || [], :id, :name, current_user.branch.present? ? current_user.branch.id : nil), {}, class: "form-control", include_blank: "Selecciona una sucursal", disabled: !can?(:change_branch, User) %>
+      </div>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= form.label :gender, "Género" %>
+        <%= form.select :gender, options_for_select(User::GENDER.map {|gender| [I18n.t("activerecord.attributes.user.gender.#{gender[1]}"), gender[0]]}, current_user.gender), prompt: "Selecciona un genero" %>
+      </div>
+    </div>
+
+    <div class="actions">
+      <%= form.submit "Actualizar", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+  <section class="mt-5">
+    <div class="d-flex justify-content-between">
+      <h3 class="text-left vertical-align m-0 py-3">Cuentas Bancarias</h3>
+      <%= link_to "Nueva cuenta bancaria", new_user_bank_account_path(current_user), class: "btn btn-primary my-3" if can?(:update, BankAccount) %>
+    </div>
+    <div class="row mb-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-gray">
+      </div>
+      <div class="row mb-3">
+        <div class="col-4 pr-0">
+          <hr class="marker-bar-gray">
+        </div>
+        <div class="col-8 pl-0">
+          <hr class="marker-bar-green">
+        </div>
+      </div>
+    </div>
+
+    <% if current_user.bank_accounts.count < 1 %>
+      <div class="py-5">
+        <p class="text-center h5 leyend mb-5">
+          Aún no tienes cuentas bancarias registradas.
+        </p>
+      </div>
+    <% else %>
+      <div class="table-container">
+        <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+          <thead>
+            <tr>
+              <th>Titular</th>
+              <th>Banco</th>
+              <th>Número de cuenta</th>
+              <th>Moneda</th>
+              <th>Clabe</th>
+              <th colspan="3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% current_user.bank_accounts.order(created_at: :asc).each do |bank_account| %>
+              <tr>
+                <td class="align-middle"><%= bank_account.holder %></td>
+                <td class="align-middle"><%= bank_account.bank %></td>
+                <td class="align-middle"><%= bank_account.account_number %></td>
+                <td class="align-middle"><%= bank_account.currency %></td>
+                <td class="align-middle">
+                <% if bank_account.principal? %>
+                  <span class="badge badge-light">Principal</span><br>
+                <% end %>
+                <%= bank_account.clabe %>
+                </td>
+                <td class="align-middle">
+                  <div class="btn-group" role="group">
+                    <%= link_to user_bank_account_path(current_user, bank_account), class: "btn", method: :delete, style: "text-decoration:none", data: { confirm: "¿Estás seguro de eliminar la cuenta?" } do %>
+                      <i class="fa fa-trash-o fa-folder-size icon-red" aria-hidden="true"></i>
+                    <% end %>
+                    <%= link_to edit_user_bank_account_path(current_user, bank_account), class: "btn" do %>
+                      <i class="fa fa-pencil-square-o"></i>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </section>
+</div>

@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Pipeline</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to "Regresar", folders_path, class: "btn btn-secondary float-right mr-2" %>
+    </div>
+  </div>
+  <hr class="divider">
+  <%= render "folders/filters" do %>
+    <% content_for(:additional_filters) do %>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :from_step_log_date, "Pipeline desde la fecha:" %>
+        <%= text_field_tag :from_step_log_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker", value: params[:from_step_log_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :to_step_log_date, "Pipeline hasta la fecha:" %>
+        <%= text_field_tag :to_step_log_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker disabled", value: params[:to_step_log_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+<% if @steps.empty? %>
+  <div class="py-5">
+    <p class="text-center h5 leyend mb-5">
+      No se ha encontrado ningún paso en el pipeline.
+      <% if can?(:create, :step) %>
+        <br> Comienza creando un paso
+      <% end %>
+    </p>
+    <% if can?(:create, :step) %>
+      <div class="text-center mt-3">
+      <%= link_to "Nuevo Paso", new_step_path, class: "btn btn-primary jumping" %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="container-fluid main-container">
+    <div class="pipeline-container">
+      <% @steps.each do |step| %>
+        <%= render partial: "pipeline-column", locals: { step: step } %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

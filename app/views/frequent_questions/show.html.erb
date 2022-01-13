@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Preguntas Frecuentes</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to "Preguntas Frecuentes", frequent_questions_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Ver pregunta</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <strong>Titulo: </strong> <%= @frequent_question.title %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <strong>URL: </strong> <a href="<%= "http://#{@frequent_question.link}" %>" target="_blank"><%= @frequent_question.link %></a>
+    </div>
+    <div class="form-group col-sm-12">
+      <strong>Contenido: </strong> <%= @frequent_question.content %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <strong>Creada por: </strong> <%= @frequent_question.user.label %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <strong>Status: </strong> <%= @frequent_question.status_label %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <strong>Creado el: </strong> <%= human_full(@frequent_question.created_at) %>
+    </div>
+    <% if @frequent_question.updated_at %>
+      <div class="form-group col-sm-12 col-md-6">
+        <strong>Editado el: </strong> <%= human_full(@frequent_question.updated_at) %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="container">
+  <div class="actions py-3">
+    <%= link_to "Regresar", frequent_questions_path, class: "btn btn-secondary" %>
+    <% if can?(:edit, FrequentQuestion) %>
+      <%= link_to "Editar", edit_frequent_question_path(@frequent_question), class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>

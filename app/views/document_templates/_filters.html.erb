@@ -1,0 +1,30 @@
+<div class="accordion collapse-elements px-4 mb-4" id="accordion-additional">
+  <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Filtros</p>
+  </div>
+  <div class="collapse show pb-2" id="collapse-section" data-parent="#accordion-additional">
+    <%= search_form_for @q do |f| %>
+      <div class="row form-group">
+
+        <div class="col-md-4 mb-3 ">
+          <%= f.label :name_cont, "Buscar por nombre:" %>
+          <%= f.search_field :name_cont, class: "form-control" %>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <%= f.label :doc_type_eq, "Buscar por tipo:" %>
+          <%= f.select :doc_type_eq, DocumentTemplate.doc_types.map{ |key, value| [I18n.t("activerecord.attributes.document_template.#{key}"), DocumentTemplate.doc_types.key(value)]}, {include_blank: "Todos"}, class: "form-control" %>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <%= f.label :document_section_id_eq, "Buscar por sección:" %>
+          <%= f.select :document_section_id_eq, @document_section.collect {|section| [section.name, section.id] }, {include_blank: "Todos"}, class: "form-control" %>
+        </div>
+
+        <div class="col-md-12 text-right">
+          <%= f.submit "Buscar", class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

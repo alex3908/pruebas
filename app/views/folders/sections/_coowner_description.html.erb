@@ -1,0 +1,33 @@
+<% if client.present? %>
+  <div class="container">
+    <section class="client">
+      <div class="row">
+        <div class="col-md-1 text-center py-3">
+          <%= image_tag("icons/quotation-client.png", class: "img-fluid") %>
+        </div>
+        <div class="col-md-11">
+          <div class="d-flex justify-content-between">
+            <h3 class="text-left vertical-align m-0 py-3"><%= label %></h3>
+            <%= link_to "Eliminar", "/folders/#{folder.id}/client/#{client_index}", method: :delete, data: { confirm: "¿Estás seguro de eliminar el copropietario?" }, class: "btn btn-danger remove-client-btn" %>
+          </div>
+          <div class="row mb-3">
+            <div class="col-4 pr-0">
+              <hr class="marker-bar-green">
+            </div>
+            <div class="col-8 pl-0">
+              <hr class="marker-bar-gray">
+            </div>
+          </div>
+        </div>
+      </div>
+      <%= render partial: "clients/info", locals: { client: client, is_show_view: false } %>
+      <div class="row">
+        <div class="col-sm-12 text-center my-2">
+          <% if can?(:update, client) %>
+            <%= link_to "Editar Cliente", edit_client_path(client, folder: folder.id), class: "btn btn-secondary" %>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  </div>
+<% end %>

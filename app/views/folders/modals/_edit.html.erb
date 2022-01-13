@@ -1,0 +1,37 @@
+<div class="modal fade" id="editFolderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Editar Expediente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= form_with(model: @folder, local: true) do |form| %>
+          <div class="row">
+            <% if folder_ready_for_date(@folder) %>
+              <div class="form-group col-sm-12">
+                <%= form.label :approved_date, "Fecha de aprobación" %>
+                  <%= form.text_field :approved_date, class: "form-control datepicker",
+                                          placeholder: "dd/mm/yyyy",
+                                          readonly: true,
+                                          autocomplete: "off",
+                                          value:  @folder.approved_date&.strftime("%d/%m/%Y") %>
+              </div>
+            <% else %>
+              <div class="form-group col-sm-12">
+                <%= form.label :approved_date, "Fecha de aprobación" %>
+                <p class="red-letters">El expediente aún no esta aprobado</p>
+              </div>
+            <% end %>
+          </div>
+          <div class="modal-footer pt-2">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <%= form.submit "Guardar", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

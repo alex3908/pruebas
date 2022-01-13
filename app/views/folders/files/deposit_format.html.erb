@@ -1,0 +1,82 @@
+<div class="pdf-bg  pt-5 mt-5">
+  <div class="title-container pt-5 mt-5">
+    <div class="square-point"></div>
+    <h1>FICHA DE DEPÓSITO</h1>
+    <div class="square-point"></div>
+  </div>
+
+  <hr class="division-bar">
+
+  <h2 class="subtitle">DATOS PARA DEPÓSITO</h2>
+  <div class="container mb-5 pb-5">
+    <div class="row">
+      <div class="col-xs-6 right_col">
+        <p>Referencia de pago: </p>
+      </div>
+      <div class="col-xs-6 left_col">
+        <p><%= @lot.reference %></p>
+      </div>
+      <div class="col-xs-6 right_col">
+        <p>Concepto: </p>
+      </div>
+      <div class="col-xs-6 left_col">
+        Apartado de la unidad <%= @lot.name %> de <%= @stage.name %> de <%= @phase.name %> del desarrollo <%= @project.name %>
+      </div>
+      <div class="col-xs-6 right_col">
+        <p>Importe: </p>
+      </div>
+      <div class="col-xs-6 left_col">
+        <p><%= number_to_currency(@folder.payment_scheme.initial_payment) %></p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="division-bar">
+  <% if @stage.enterprise.online_payment_services.stp.any? %>
+    <h2 class="subtitle">DATOS DE LA CUENTA</h2>
+    <div class="container">
+      <table class="text-center table-striped w-100">
+        <colgroup>
+          <col class="table-left-column">
+        </colgroup>
+        <thead>
+        <tr>
+          <th class="color-primary w-33">Banco</th>
+          <th class="color-primary w-33">Titular</th>
+          <th class="color-primary w-33">CLABE</th>
+        </tr>
+        </thead>
+        <tr>
+          <td class="w-33 text-dark text-bold">STP</td>
+          <td class="w-33 text-dark"><%= @stage.enterprise.business_name %></td>
+          <td class="w-33 text-dark"><%= @folder.stp_clabe %></td>
+        </tr>
+      </table>
+    </div>
+  <% elsif @stage.enterprise.bank_accounts.count > 0 %>
+    <h2 class="subtitle">DATOS DE LA CUENTA</h2>
+    <div class="container">
+      <table class="text-center table-striped w-100">
+        <colgroup>
+          <col class="table-left-column">
+        </colgroup>
+        <thead>
+        <tr>
+          <th class="color-primary w-25">Banco</th>
+          <th class="color-primary w-25">Titular</th>
+          <th class="color-primary w-25">Número de cuenta</th>
+          <th class="color-primary w-25">CLABE</th>
+        </tr>
+        </thead>
+        <% @stage.enterprise.bank_accounts.each do |bank_account| %>
+          <tr>
+            <td class="w-25 text-dark text-bold"><%= bank_account.bank %></td>
+            <td class="w-25 text-dark"><%= bank_account.holder %></td>
+            <td class="w-25 text-dark"><%= bank_account.account_number %></td>
+            <td class="w-25 text-dark"><%= bank_account.clabe %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  <% end %>
+</div>

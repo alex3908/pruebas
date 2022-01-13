@@ -1,0 +1,77 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Configuraciones</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to "Catálogo", catalogs_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Configuración</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<div class="container">
+
+  <%= form_for(Settings.new, url: app_settings_path) do |f| %>
+    <% if @errors&.any? %>
+      <div class="alert alert-block alert-danger">
+        <ul>
+          <% @errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group row">
+      <%= f.label :project_singular, I18n.t('settings.project_singular'), class: "col-sm-2 col-form-label align-middle" %>
+      <div class="col-sm-10">
+        <%= f.text_field :project_singular, value: Settings.project_singular, class: "form-control", required: true %>
+        <small class="form-text text-muted">NOMBRE DE LA ENTIDAD DEL PRIMER NIVEL</small>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <%= f.label :phase_singular, I18n.t('settings.phase_singular'), class: "col-sm-2 col-form-label align-middle" %>
+      <div class="col-sm-10">
+        <%= f.text_field :phase_singular, value: Settings.phase_singular, class: "form-control", required: true %>
+        <small class="form-text text-muted">NOMBRE DE LA ENTIDAD DEL SEGUNDO NIVEL</small>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <%= f.label :stage_singular, I18n.t('settings.stage_singular'), class: "col-sm-2 col-form-label align-middle" %>
+      <div class="col-sm-10">
+        <%= f.text_field :stage_singular, value: Settings.stage_singular, class: "form-control", required: true %>
+        <small class="form-text text-muted">NOMBRE DE LA ENTIDAD DEL TERCER NIVEL</small>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <%= f.label :lot_singular, I18n.t('settings.lot_singular'), class: "col-sm-2 col-form-label align-middle" %>
+      <div class="col-sm-10">
+        <%= f.text_field :lot_singular, value: Settings.lot_singular, class: "form-control", required: true %>
+        <small class="form-text text-muted">NOMBRE DE LA ENTIDAD DEL CUARTO NIVEL</small>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <%= f.label :slack_subscription_notifs_hook, I18n.t('settings.slack_subscription_notifs_hook'), class: "col-sm-2 col-form-label align-middle" %>
+      <div class="col-sm-10">
+        <%= f.text_field :slack_subscription_notifs_hook, value: Settings.slack_subscription_notifs_hook, class: "form-control" %>
+        <small class="form-text text-muted">Webhook de Slack para publicación de mensajes.</small>
+      </div>
+    </div>
+
+    <div class="actions py-3">
+      <%= link_to "Cancelar", app_settings_path, class: "btn btn-secondary" %>
+      <%= f.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+</div>

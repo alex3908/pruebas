@@ -1,0 +1,25 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Items") do |sheet|
+  # Create the header row
+  sheet.add_row ["Número", "#{@project_singular}", "#{@phase_singular}", "#{@stage_singular}", "#{@lot_singular}", "Estado", "Cliente", "Folio", "Fecha", "Monto", "Sucursal", "Método de pago", "Cuenta" ]
+  # Create entries for each item
+  @cash_flows.each_with_index do |cash_flow, index|
+
+    sheet.add_row [
+    index+1,
+    @folder.project.name,
+    @folder.phase.name,
+    @folder.stage.name,
+    @folder.lot.name,
+    cash_flow.status_label,
+    cash_flow.client.label,
+    cash_flow.folio,
+    cash_flow.date.strftime("%d/%m/%Y"),
+    cash_flow.amount,
+    cash_flow.branch.name,
+    cash_flow.payment_method_label,
+    cash_flow.bank_account_label,
+    ]
+  end
+end

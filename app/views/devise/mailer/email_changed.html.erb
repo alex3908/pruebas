@@ -1,0 +1,25 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Su email ha cambiado</span></h1>
+  &nbsp;
+  <p>
+    <span>Hola <%= @email %>
+      :</span></p>
+  <p>
+    <span>
+      <% if @resource.try(:unconfirmed_email?) %>
+      Nos comunicamos con usted para notificarle que su correo electrónico se está cambiando a <%= @resource.unconfirmed_email %>.
+      <% else %>
+      Nos estamos comunicando con usted para notificarle que su correo electrónico ha cambiado a <%= @resource.email %>.
+      <% end %>
+    </span>
+  </p>
+<% end %>
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <span>
+      Si tiene preguntas puede contactarnos al teléfono <span style="color: #5e5e5e; font-weight: 600;">(999) 944 2525</span>
+      <br>
+      <br> ¡Saludos!
+    </span>
+  </p>
+<% end %>

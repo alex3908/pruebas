@@ -1,0 +1,26 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Cotización</span></h1>
+  &nbsp;
+  <p>
+    <span>Estimado <%= @user.label %>, </span></p>
+  <p>
+    <span>
+      El cliente <b><%= @client.name %> <%= @client.first_surname %></b> ha mostrado interés en el proyecto <b><%= @project.name %> / <%= @lot.full_name %></b>.
+    </span>
+  </p>
+  <p>
+    <span>
+      Sus datos de contacto son:
+    </span>
+    <ul>
+      <li>Teléfono: <b><%= @client.main_phone %></b></li>
+      <li>Correo electrónico: <b><%= @client.email %></b></li>
+    </ul>
+  </p>
+  <p>
+    <span>
+      Te recomendamos contactarlo lo antes posible. <br>
+      ¡Mucho éxito!
+    </span>
+  </p>
+<% end %>

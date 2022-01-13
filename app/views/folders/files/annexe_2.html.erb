@@ -1,0 +1,31 @@
+<style>
+  .stage-blueprint {
+    position: relative;
+    margin-top: 100px;
+    width: auto;
+  }
+
+  .stage-title {
+    padding-top: 200px;
+  }
+
+  p {
+    font-size: 18px;
+    text-align: justify;
+  }
+</style>
+<div class="padding-top-50" style="page-break-after: always">
+  <div class="container p-5 text-center">
+    <h1><%= stage.stage_description_title.presence || "Anexo" %></h1>
+    <div class="w-100 stage-blueprint">'
+      <% if blueprint_stage.present? %>
+        <%= image_tag "data:image/png;base64,#{Base64.encode64(PdfService.instance.svg_to_png(blueprint_stage))}", class: "img-fluid", style: "max-height: 700px" %></div>
+      <% end %>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <h1 class="stage-title text-center"><%= stage.name %>: <%= stage.phase.project.lot_entity_name %> <%= lot.name %></h1>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,5 @@
+<div class="message">
+  <%= image_tag("brands/orve-logo-white-green.png", style: "width: auto; height: 50px") %>
+  <div class="message__title">Su cuenta aún no se encuentra aprobada</div>
+  <%= link_to("Cerrar sesión", destroy_user_session_path, class: "btn", method: :delete) %>
+</div>

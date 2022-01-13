@@ -1,0 +1,245 @@
+<%= form_with(model: step, local: true) do |form| %>
+  <div class="container">
+
+    <% if step.errors.any? %>
+      <div class="alert alert-warning" role="alert">
+        <h6 class="alert-heading">No se pudo guardar
+          por <%= pluralize_without_count(step.errors.count, "la siguiente razón", "las siguientes razones") %>:</h6>
+        <ul class="mb-0">
+          <% step.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :name, "Nombre" %>
+        <%= form.text_field :name, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :reject_step_id, "Paso al que rechaza" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Para rechazar a activo, remueve la selección"></i>
+        <%= form.select :reject_step_id, options_for_select(other_steps.map { |step| ["##{step.order + 1} - #{step.name}", step.id] }, selected: step.reject_step_id), { class: "form-control", include_blank: ("Todos") } %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :hubspot_id, "Hubspot id" %>
+        <%= form.text_field :hubspot_id, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 d-flex flex-column">
+        <%= form.label :installments_step, "¿Se tiene acceso a cobranza?" %>
+        <%= checkbox(form, "", :installments_step) %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :lot_status, "Comportamiento de unidades" %>
+        <%= form.select :lot_status, options_for_select([["Reservado", Lot::STATUS[:RESERVED]],
+                                                         ["Vendido", Lot::STATUS[:SOLD]]], selected: step.lot_status), { class: "form-control" } %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 d-flex flex-column">
+        <%= form.label :folders_expires, "¿Se expira en este paso?" %>
+        <%= checkbox(form, "", :folders_expires) %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :folder_user_concept_id, "Responsable requerido" %>
+        <%= form.select(:folder_user_concept_id, options_for_select(folder_user_concepts.collect { |fuc| [fuc.name, fuc.id] }, step.folder_user_concept_id), { include_blank: "Selecciona un tipo de responsable" }, class: "form-control", required: false) %>
+      </div>
+
+       <div class="form-group col-sm-12 col-md-6 d-flex flex-column">
+        <%= form.label :send_payment_reminder, "¿Se envían notificaciones de pago?" %>
+        <%= checkbox(form, "", :send_payment_reminder) %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :client_user_concept_id, "Responsable de cliente" %>
+        <%= form.select(:client_user_concept_id, options_for_select(client_user_concepts.collect { |fuc| [fuc.name, fuc.id] }, step.client_user_concept_id), { include_blank: "Selecciona un tipo de responsable" }, class: "form-control", required: false) %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :document_template_ids, "Documentos requeridos para movimiento automatizado" %>
+        <%= form.select :document_template_ids,  @folders_documents.collect { |s| [s.name, s.id] }, {}, multiple: true %>
+      </div>
+
+    </div>
+
+  </div>
+  <% if step.persisted? %>
+    <div class="steps-form-container">
+      <table class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr>
+          <th class="text-center align-middle"><small>Rol</small></th>
+          <th class="text-center align-middle"><small>Visible</small></th>
+          <th class="text-center align-middle"><small>Actualizar financiamiento</small></th>
+          <th class="text-center align-middle"><small>Actualizar copropietarios</small></th>
+          <th class="text-center align-middle"><small>Cancelar</small></th>
+          <th class="text-center align-middle"><small>Enviar a paso siguiente</small></th>
+          <th class="text-center align-middle"><small>Enviar a paso anterior</small></th>
+          <th class="text-center align-middle"><small>Rechazar</small></th>
+          <th class="text-center align-middle"><small>Agregar comentarios</small></th>
+          <% if step.installments_step? %>
+            <th class="text-center align-middle"><small>Cobranza</small></th>
+          <% end %>
+          <th class="text-center align-middle"><small>Gestionar recordatorios</small></th>
+          <th class="text-center align-middle"><small>Crear responsables</small></th>
+          <th class="text-center align-middle"><small>Editar responsables</small></th>
+          <th class="text-center align-middle"><small>Eliminar responsables</small></th>
+          <th class="text-center align-middle"><small>Firmar Promesa de compraventa</small></th>
+          <th class="text-center align-middle"><small>Cancelar firma de Promesa de compraventa </small></th>
+          <th class="text-center align-middle"><small>Reiniciar firma</small></th>
+          <th class="text-center align-middle"><small>Reasignar cliente</small></th>
+          <th class="text-center align-middle"><small>Reasignar propietario</small></th>
+          <th class="text-center align-middle"><small>Enviar link de pago por whatsapp</small></th>
+          <th class="text-center align-middle"><small>Enviar link de pago por email</small></th>
+          <th class="text-center align-middle"><small>Copiar link de pago al portapapeles</small></th>
+          <th class="text-center align-middle"><small>Gestionar cuotas personalizadas</small></th>
+          <th class="text-center align-middle"><small>Mostrar enlace de firma para clientes</small></th>
+          <th class="text-center align-middle"><small>Mostrar enlace de firma para firmantes</small></th>
+          <th class="text-center align-middle"><small>Enviar enlace de firma por Whatsapp</small></th>
+          <th class="text-center align-middle"><small>Enviar enlace de firma por correo</small></th>
+          <th class="text-center align-middle"><small>Copiar enlace de firma al portapapeles</small></th>
+          <th class="text-center align-middle"><small>¿Eliminar?</small></th>
+          <th class="text-center align-middle"></th>
+          <th class="text-center align-middle"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% step_roles.each do |step_role| %>
+          <%= form.fields_for :step_roles, step_role do |step_role_form| %>
+            <tr class="table-row">
+              <%= step_role_form.hidden_field :id %>
+              <th class="text-center align-middle">
+                <% if step_role.persisted? %>
+                  <%= step_role.role.name %>
+                <% else %>
+                  <%= step_role_form.collection_select :role_id, unassigned_roles, :id, :name, { prompt: true }, { class: "form-control not-select2", style: "width: 250px" } %>
+                <% end %>
+              </th>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :visible) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :update_financial) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :update_coowners) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_cancel) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_approve) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_soft_reject) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_reject) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_comment) %>
+              </td>
+              <% if step.installments_step? %>
+                <td class="text-center align-middle">
+                  <%= checkbox(step_role_form, "", :can_make_installments) %>
+                </td>
+              <% end %>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_manage_reminders) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_add_folder_user) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_edit_folder_user) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_remove_folder_user) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_send_to_sign_purchase_promise) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_send_to_cancel_sign_purchase_promise) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_resend_sign_files) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_reassign_client) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_reassign_seller) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :send_by_whatsapp) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :send_by_email) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :copy_to_clipboard) %>
+              </td>
+               <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_manage_custom_installments) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :show_clients_signature_links) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :show_signers_signature_links) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_send_signature_link_by_whatsapp) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_send_signature_link_by_email) %>
+              </td>
+              <td class="text-center align-middle">
+                <%= checkbox(step_role_form, "", :can_send_signature_link_by_clipboard) %>
+              </td>
+
+              <% if step_role.persisted? %>
+                <td class="text-center align-middle">
+                  <%= checkbox(step_role_form, "", :_destroy) %>
+                </td>
+                <td class="text-center align-middle">
+                  <%= link_to("Gestionar descargables", "#manageDownloadable#{step_role.id}", 'data-toggle': "modal", class: "btn btn-outline-primary") %>
+                  <%= render partial: "steps/manage_downloadable", locals: {
+                      step_role_form: step_role_form,
+                      step_role: step_role
+                  } %>
+                </td>
+                <td class="text-center align-middle">
+                  <%= link_to("Gestionar archivos", "#manageFiles#{step_role.id}", 'data-toggle': "modal", class: "btn btn-outline-primary") %>
+                  <%= render partial: "steps/manage_files", locals: {
+                      step_role_form: step_role_form,
+                      step_role: step_role
+                  } %>
+                </td>
+              <% else %>
+                <td class="text-center align-middle"></td>
+                <td class="text-center align-middle"></td>
+                <td class="text-center align-middle"></td>
+              <% end %>
+            </tr>
+          <% end %>
+        <% end %>
+        <tbody>
+        </table>
+    </div>
+  <% end %>
+
+  <div class="container">
+    <div class="actions py-3">
+      <%= link_to "Cancelar", steps_path, class: "btn btn-secondary" %>
+      <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>

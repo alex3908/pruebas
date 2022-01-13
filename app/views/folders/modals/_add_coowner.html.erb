@@ -1,0 +1,25 @@
+<div class="modal fade" id="coownerModal" role="dialog" aria-labelledby="saleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="saleModalLabel">Agregar Copropietario</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div data-controller="autocomplete" data-autocomplete-url="<%= autocomplete_clients_path %>" data-autocomplete-search="search=">
+        <div class="modal-body">
+          <div class="form-group col-sm-12 col-md-12">
+            <label>Cliente</label>
+                  <input class="autocomplete-input form-control" data-target="autocomplete.field">
+                  <input type="hidden" name="client" value="" class="autocomplete-hidden" data-target="autocomplete.hidden">
+          </div>
+        </div>
+        <div class="modal-footer pt-2">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">CERRAR</button>
+          <button type="button" class="btn btn-primary" data-action="autocomplete#validateAutocomplete" id="saveCoowner">GUARDAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

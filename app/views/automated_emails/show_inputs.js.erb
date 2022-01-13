@@ -1,0 +1,5 @@
+<% if params[:automated_type] == AutomatedEmail.types[:folders] %>
+$("#inputs-section").html("<%= j (render 'automated_emails/inputs/folders') %>");
+<% elsif params[:automated_type] == AutomatedEmail.types[:clients] %>
+$("#inputs-section").html("<%= j (render 'automated_emails/inputs/clients') %>");
+<% end %>

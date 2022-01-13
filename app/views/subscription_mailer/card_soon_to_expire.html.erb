@@ -1,0 +1,15 @@
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <span>
+      Tu tarjeta terminación <%= @subscription.last_four_digits %> esta pronto a expirar, debes actualizar tus datos bancarios desde la siguiente
+      liga si deseas seguir con la domiciliación de <b><%= @stage.name %> <%= @stage.phase.project.lot_entity_name %> <%= @lot.name %></b> con referencia
+      <b><%= @lot.reference %></b>.
+    </span>
+  </p>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <%= link_to new_subscription_url(folder_id: @folder.id) do %>
+    <%= image_tag("domicilie-aqui.jpg", style: "width: 100%") %>
+  <% end %>
+<% end %>

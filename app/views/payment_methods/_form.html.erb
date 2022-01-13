@@ -1,0 +1,172 @@
+<%= form_with(model: payment_method, local: true, url: [payment_method]) do |form| %>
+  <% if payment_method.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(payment_method.errors.count, "error") %> no permitieron guardar esta método de pago:</h2>
+
+      <ul>
+        <% payment_method.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= tag.h5("No se pueden relizar cambios porque este método está relacionado a alguna bonificacion existente.", class: "text-warning") if payment_method.cash_backs.any? %>
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-8">
+      <%= form.label :name, "Nombre" %>
+      <%= form.text_field :name, class: "form-control", disabled: payment_method.cash_backs.any? %>
+    </div>
+    <div class="form-group col-sm-12 col-md-2">
+      <%= form.label :active, "Activo" %>
+      <div>
+        <%= form.check_box :active,
+                          data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: "Si",
+                              off: "No",
+                          } %>
+      </div>
+    </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= label_tag :payment_is_income, "El método de pago representa un ingreso" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Se usa para indicar si el método de pago representa un ingreso o no."></i>
+        <div class="row">
+          <div class="col-sm-12 col-md-4">
+                    <%= form.check_box :payment_is_income,
+                              data: {
+                                  activate: "toggle",
+                                  onstyle: "success",
+                                  offstyle: "secondary",
+                                  on: "Si",
+                                  off: "No",
+                              } %>
+          </div>
+        </div>
+      </div>
+
+    <div class="form-group col-sm-12 col-md-2 text-center">
+      <%= form.label :cash_back, "Bonificación" %>
+      <div>
+        <%= form.check_box :cash_back, disabled: payment_method.cash_backs.any?,
+                           data: {
+                               activate: "toggle",
+                               onstyle: "success",
+                               offstyle: "secondary",
+                               on: "Si",
+                               off: "No",
+                           } %>
+      </div>
+    </div>
+  </div>
+  <fieldset id="concepts" style="<%= "display: none;" unless payment_method.cash_back %>">
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :cash_back, "Restringir bonificaciones por expediente" %>
+        <div>
+        <%= form.check_box :cash_back_folder_exclusivity, disabled: payment_method.cash_backs.any?,
+                           data: {
+                               activate: "toggle",
+                               onstyle: "success",
+                               offstyle: "secondary",
+                               on: "Si",
+                               off: "No",
+                           } %>
+        </div>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :add_balance, "Agregar saldo" %>
+        <div>
+        <%= form.check_box :add_balance,
+                           data: {
+                               activate: "toggle",
+                               onstyle: "success",
+                               offstyle: "secondary",
+                               on: "Si",
+                               off: "No",
+                           } %>
+        </div>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :reffered_client_cash_back, "Bonificación para cliente referido" %>
+        <div>
+        <%= form.check_box :reffered_client_cash_back,
+                           data: {
+                               activate: "toggle",
+                               onstyle: "success",
+                               offstyle: "secondary",
+                               on: "Si",
+                               off: "No",
+                           } %>
+        </div>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :reffered_client_cash_back_multiple, "Bonificación para cliente referido en multiples compras" %>
+        <div>
+        <%= form.check_box :reffered_client_cash_back_multiple,
+                           data: {
+                               activate: "toggle",
+                               onstyle: "success",
+                               offstyle: "secondary",
+                               on: "Si",
+                               off: "No",
+                           } %>
+        </div>
+      </div>
+
+    </div>
+    <div class="row">
+      <legend>Uso permitido</legend>
+      <div class="form-group col-sm-12 col-md-2 text-center">
+        <%= form.label :initial_payment, "Capital" %>
+        <div>
+          <%= form.check_box :capital, disabled: payment_method.cash_backs.any?,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-2 text-center">
+        <%= form.label :down_payment, "Enganche" %>
+        <div>
+          <%= form.check_box :down_payment, disabled: payment_method.cash_backs.any?,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-2 text-center">
+        <%= form.label :interest, "Interés" %>
+        <div>
+          <%= form.check_box :interest, disabled: payment_method.cash_backs.any?,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+    </div>
+    <hr>
+  </fieldset>
+
+  <div class="actions py-3">
+    <%= link_to "Cancelar", payment_methods_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

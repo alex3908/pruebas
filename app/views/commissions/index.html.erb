@@ -1,0 +1,127 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Comisiones</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 text-right">
+      <% if can?(:import, Commission) %>
+        <div class="m-1" data-controller="import" data-import-url="<%= import_commissions_url(format: :json) %>">
+          <input type="file" class="d-none" id="importCommissionFile" data-target="import.input" data-action="import#upload">
+          <label class="btn btn-secondary mb-0" for="importCommissionFile">
+            <i class="fa fa-upload" aria-hidden="true"></i> Cargar CSV
+          </label>
+        </div>
+      <% end %>
+      <%= link_to "Descargar mis comisiones", download_commissions_url(project: params[:project], phases: params[:phases], stages: params[:stages], lot: params[:lot], status: params[:status], concept: params[:concept], from_date: params[:from_date], to_date: params[:to_date], format: :pdf), class: "btn btn-info m-1", target: "_blank" %>
+      <%= link_to "Regresar", sales_path, class: "btn btn-outline-secondary" %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <div class="accordion collapse-elements px-4 mb-4" id="accordion-additional">
+    <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+      <p class="text-left vertical-align m-0 py-3 color-primary">Filtros</p>
+    </div>
+    <div class="row collapse show" id="collapse-section" data-parent="#accordion-additional">
+      <%= form_tag(commissions_path, method: :get, data: { controller: "export", 'target': "export.form", 'export-url': export_commissions_url(format: :json) }) do %>
+        <%= hidden_field_tag :direction, params[:direction] %>
+        <%= hidden_field_tag :sort, params[:sort] %>
+        <div class="container py-3">
+          <div class="row">
+            <%= render partial: "index_filters" %>
+            <div class="col-md-12 col-lg-12 text-right">
+              <% if can?(:update, Commission) %>
+                <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+                  <i class="fa fa-download" aria-hidden="true"></i> Descargar CSV
+                <% end %>
+              <% end %>
+              <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                <i class="fa fa-search" aria-hidden="true"></i> Buscar
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <% if can?(:update, Commission) %>
+        <div style="display: none;">
+          <%= form_with(url: import_commissions_path) do |f| %>
+            <%= f.file_field(:file, onchange: "this.form.submit();") %>
+            <%= f.submit %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @commissions.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado comisiones en tu busqueda.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th><%= sortable "commission_created", "Fecha" %></th>
+            <% unless can? :reserve, :quote %>
+              <th>Usuario</th>
+            <% end %>
+            <th class="text-capitalize"><%= sortable "project_id", @project_singular %></th>
+            <th><%= sortable "phase_id", @phase_singular %></th>
+            <th class="text-capitalize"><%= sortable "stage_id", @stage_singular %></th>
+            <th><%= sortable "lot_id", "Unidad" %></th>
+            <th><%= sortable "payment_id", "Pago" %></th>
+            <th><%= sortable "amount", "Cantidad" %></th>
+            <th><%= sortable "status", "Estado" %></th>
+            <th></th>
+            <th colspan="3"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @commissions.each do |commission| %>
+            <tr>
+              <td><%= commission.date.strftime("%d-%m-%Y") %></td>
+              <% unless can? :reserve, :quote %>
+                <td><%= commission.folder_user.user.label %>
+                <br><span class="badge badge-pill badge-info"><%= commission.folder_user.user.role.name %></span>
+                </td>
+              <% end %>
+              <td><%= commission.installment.folder.project.name %></td>
+              <td><%= commission.installment.folder.phase.name %></td>
+              <td><%= commission.installment.folder.stage.name %></td>
+              <td><%= commission.installment.folder.lot.name %></td>
+              <td class="text-capitalize"><%= "#{commission.installment.concept_label} #{commission.installment.number}" %></td>
+              <td><%= number_to_currency(commission.amount) %></td>
+              <td>
+                <%= commission.status_label %>
+              </td>
+              <td class="text-right align-middle">
+                <% if can?(:read, commission) %>
+                  <%= link_to "Ver", commission_path(commission), class: "btn btn-secondary" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@commissions, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+          onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

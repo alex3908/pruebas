@@ -1,0 +1,65 @@
+<style>
+  tbody:not(.account-status-table) > tr > :nth-child(2) {
+    color: #212529;
+  }
+</style>
+
+<section class="parent blank-space-with-lines">
+  <div class="column">
+    <div class="content <%= 'twocol' if two_columns %>">
+      <%= code_block.html_safe %>
+    </div>
+  </div>
+</section>
+<div class="text-justify">
+  <div class="confirm_sign mt-1">
+    <table style="width:100%;">
+      <% @signers.each_with_index do |signer, index| %>
+        <% if index.even? %>
+          <tr>
+        <% end %>
+        <td class="py-4" style="width:50%;">
+          <table style="width:100%;">
+            <tr>
+              <td class="text-center py-2 signers-height">
+                <%= signer[:definition] %>
+                <br>
+                <%= signer[:company] %>
+              </td>
+            </tr>
+            <tr>
+              <td class="text-center sign-tag-color sign-space">
+                <%= signer[:sign_tag] %>
+              </td>
+            </tr>
+            <tr>
+              <td class="bar-sign text-bold text-capitalize text-center">
+              <%= signer[:name] %>
+              <br>
+              <%= signer[:role] %>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <% if index.odd? %>
+          </tr>
+        <% end %>
+      <% end %>
+
+      <% if @signers.length.even? %>
+        <td class="py-4" style="width:50%;">
+        </td>
+        </tr>
+      <% end %>
+
+    </table>
+
+  </div>
+</div>
+<section class="parent">
+  <div class="column">
+    <div class="content fourcol">
+      <%= footer.html_safe %>
+    </div>
+  </div>
+</section>

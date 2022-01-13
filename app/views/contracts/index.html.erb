@@ -1,0 +1,79 @@
+<div class="container">
+  <div class="row d-flex">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Contratos</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 float-right">
+      <div class="d-flex justify-content-end">
+        <%= link_to "Regresar", catalogs_path, class: "btn btn-secondary mr-2" %>
+        <%= link_to "Consultar etiquetas", liquid_tags_contracts_path, class: "btn btn-info mr-2", target: :_blank %>
+        <%= link_to "Nuevo contrato", new_contract_path, class: "btn btn-primary" if can?(:create, Contract) %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if can?(:custom_index, Contract) %>
+  <div class="container">
+    <%= render "contracts/filters" %>
+  </div>
+<% end %>
+
+<% if @contracts.empty? %>
+  <div class="container">
+    <p>No hay contratos.</p>
+  </div>
+<% else %>
+  <div class="container">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th width="50%"><%= sortable "label", "Etiqueta" %></th>
+          <th width="25%">Contrato</th>
+          <th width="25%"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @contracts.each do |contract| %>
+          <tr>
+            <td class="align-middle"><%= contract.label %></td>
+            <td class="align-middle">
+              <% if contract.folder.present? %>
+                Folio del expediente: <%= contract.folder.id %> <br>
+                <span class="badge badge-info">Personalizado</span>
+              <% else %>
+                <span class="badge badge-secondary">Plantilla</span>
+              <% end %>
+            </td>
+            <td class="text-right align-middle">
+              <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Opciones
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <%= link_to "Ver", contract_path(contract), class: "dropdown-item" if can?(:see_binnacle, Contract) %>
+                  <%= link_to "Previsualización", preview_contract_path(contract, format: :pdf), class: "dropdown-item", target: "_blank" if can?(:update, Contract) || can?(:custom_update, Contract) %>
+                  <%= link_to "Editar", edit_contract_path(contract), class: "dropdown-item" if can?(:update, Contract) || can?(:custom_update, Contract) %>
+                  <%= link_to "Eliminar", contract_path(contract), method: :delete, data: { confirm: "¿Estás seguro que deseas eliminar el contrato?" }, class: "dropdown-item" if (!contract.folder.present? && can?(:destroy, Contract)) || (contract.folder.present? && can?(:custom_destroy, Contract)) %>
+                  <%= link_to "Ir al expediente", folder_path(contract.folder), class: "dropdown-item" if contract.folder.present? && can?(:read, Folder) %>
+                </div>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= will_paginate(@contracts, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+          onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,88 @@
+# Additional translations at http://github.com/plataformatec/devise/wiki/I18n
+
+es:
+  errors:
+    messages:
+      expired: "ha expirado, por favor pida uno nuevo"
+      not_found: "no encontrado"
+      already_confirmed: "ya está confirmada, por favor intente ingresar"
+      not_locked: "no está bloqueada"
+      not_saved:
+        one: "1 error evitó que este %{resource} fuera guardado:"
+        other: "%{count} errores evitaron que este %{resource} fuera guardado:"
+
+  devise:
+    invitations:
+      send_instructions: "Se ha enviado un correo electrónico de invitación a %{email}."
+      invitation_token_invalid: "¡El token de invitación proporcionado no es válido.!"
+      updated: "Su contraseña fue establecida exitosamente. Ahora has iniciado sesión."
+      updated_not_active: "Su contraseña fue establecida exitosamente."
+      no_invitations_remaining: "No quedan invitaciones."
+      invitation_removed: "Tu invitación fue eliminada."
+      new:
+        header: "Enviar invitacion"
+        submit_button: "Envia una invitacion"
+      edit:
+        header: "Establece tu contraseña"
+        submit_button: "Establecer mi contraseña"
+    failure:
+      already_authenticated: 'Has iniciado sesión correctamente.'
+      unauthenticated: 'Necesitas ingresar o registrarte para continuar.'
+      unconfirmed: 'Debes confirmar tu cuenta para continuar.'
+      locked: 'Tu cuenta está bloqueada.'
+      invalid: 'Correo o contraseña inválidos.'
+      invalid_token: 'Ficha de autenticación invalida.'
+      timeout: 'Tu sesión ha expirado, por favor ingresa nuevamente para continuar.'
+      inactive: 'Tu cuenta aún no ha sido activada.'
+      user:
+        invited: 'Requiere aceptar su invitación para iniciar sesión.'
+        not_found_in_database: 'Verifique sus credenciales.'
+    sessions:
+      signed_in: 'Has iniciado sesión correctamente.'
+      signed_out: 'Tu sesión fue cerrada exitosamente.'
+    passwords:
+      send_instructions: 'Recibirás un correo electrónico con instrucciones sobre cómo reiniciar tu contraseña en unos minutos.'
+      updated: 'Tu contraseña fue cambiada exitosamente y has sido ingresado al sistema.'
+      updated_not_active: 'Tu contraseña se cambió exitosamente.'
+      send_paranoid_instructions: "Si tu correo electrónico existe en nuestra base de datos, recibirás un enlace para reiniciar tu contraseña en unos minutos."
+    confirmations:
+      send_instructions: 'Recibirás un correo electrónico con instrucciones sobre cómo confirmar tu cuenta en unos minutos.'
+      send_paranoid_instructions: 'Si tu correo electrónico existe en nuestra base de datos, recibirás un correo con instrucciones sobre cómo confirmar tu cuenta en unos minutos.'
+      confirmed: 'Tu cuenta fue confirmada exitosamente, has sido ingresado al sistema.'
+    registrations:
+      signed_up: '¡Bienvenido! Has ingresado al sistema exitosamente.'
+      inactive_signed_up: 'Te has registrado exitosamente; sin embargo, no te hemos podido ingresar debido a que tu cuenta está %{reason}.'
+      updated: 'Actualizaste tu cuenta exitosamente.'
+      destroyed: '¡Hasta luego! Tu cuenta fue cancelada con éxito, esperamos verte de nuevo pronto. Gracias.'
+      reasons:
+        inactive: 'inactiva'
+        unconfirmed: 'sin confirmar'
+        locked: 'bloqueada'
+    unlocks:
+      send_instructions: 'Recibirás un correo electrónico con instrucciones sobre cómo desbloquear tu cuenta en unos minutos.'
+      unlocked: 'Tu cuenta fue desbloqueada con éxito, has sido ingresado al sistema.'
+      send_paranoid_instructions: 'Si tu cuenta existe, recibirás un correo electrónico con instrucciones sobre cómo desbloquear tu cuenta en unos minutos.'
+    omniauth_callbacks:
+      success: 'Exitosamente autorizado desde la cuenta %{kind}.'
+      failure: 'No te pudimos autorizar en %{kind} debido a "%{reason}".'
+    mailer:
+      confirmation_instructions:
+        subject: 'Instrucciones de Confirmación'
+      reset_password_instructions:
+        subject: 'Instrucciones de reinicio de contraseña'
+      unlock_instructions:
+        subject: 'Instrucciones de desbloqueo'
+      invitation_instructions:
+        subject: "Invitación para unirte al CRM Inmobiliario de %{brand}"
+        hello: "Hola %{name}"
+        someone_invited_you: "Te han invitado a utilizar el CRM Inmobiliario de %{brand}, puedes aceptarlo a través del siguiente enlace:"
+        user_invited_you: "%{name} te invitó a utilizar el CRM Inmobiliario de %{brand}, puedes aceptarlo a través del siguiente enlace:"
+        accept: "Aceptar la invitacion"
+        accept_until: "Esta invitación será válida hasta %{due_date}."
+        ignore: "Si no desea aceptar la invitación, por favor ignore este correo electrónico."
+  time:
+    formats:
+      devise:
+        mailer:
+          invitation_instructions:
+            accept_until_format: "%B %d, %Y %I:%M %p"

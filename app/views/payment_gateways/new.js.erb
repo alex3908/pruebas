@@ -1,0 +1,63 @@
+const redirectBack = function () {
+  Turbolinks.visit("<%= new_online_payment_path(@folder.id) %>");
+};
+
+const successPayment = function () {
+  Turbolinks.visit("<%= payment_success_path %>"); 
+}; 
+
+<% if local_assigns[:return_url] %>
+  const redirectToNetpay = function() {
+   Turbolinks.visit("<%= local_assigns[:return_url] %>");
+  };
+
+  Swal.fire({
+      title: 'Pago en revisión',
+      text: 'Serás redirigido al sitio de NetPay para confirmar tu pago',
+      type: 'warning',
+      confirmButtonText: 'Continuar',
+  }).then(redirectToNetpay);
+<% elsif local_assigns[:error] == 'decision_manager' %>
+  Swal.fire({
+    title: 'Error',
+    text: 'Hubo un problema al procesar el pago.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'La transacción fue rechazada por el banco emisor. Por favor comunícate con tu ejecutivo o con tu banco.'
+  }).then(redirectBack);
+<% elsif local_assigns[:error] == 'payment_error' %>
+  Swal.fire({
+    title: 'Error',
+    text: 'Hubo un problema al procesar el pago.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Espera un momento y vuelve a intentarlo. \n Si el problema persiste, por favor comunícate con servicio al cliente.'
+  }).then(redirectBack);
+<% elsif local_assigns[:error] == 'rejected' %>
+  Swal.fire({
+    title: 'Error',
+    text: 'La tarjeta fue rechazada',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Revisa el estado de tu tarjeta para verificar su validez.'
+  }).then(redirectBack);
+<% elsif local_assigns[:error] == 'not_found' %>
+  Swal.fire({
+    title: 'Error',
+    text: 'La tarjeta no pudo ser validada',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Revisa que los datos sean correctos y vuelve a intentar.'
+  }).then(redirectBack);
+<% else %>
+  Swal.fire({
+    title: '¡Pago realizado correctamente!',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  }).then(successPayment);
+<% end %>

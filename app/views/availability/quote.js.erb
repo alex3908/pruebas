@@ -1,0 +1,83 @@
+$('body').addClass('ignore-modal-close');
+
+$('#payment-table').empty();
+$('#updates-table').empty();
+
+
+var inject_text = function (id, text) {
+    if ($(id)) {
+        $(id).text(text);
+    }
+}
+var inject_html = function (id, html) {
+    if ($(id)) {
+        $(id).html(html);
+    }
+}
+
+const wrapper_down_payment = $('#wrapper-down-payment');
+const wrapper_last_payment = $('.wrapper-last-payment')
+
+wrapper_down_payment.hide();
+wrapper_last_payment.hide();
+
+<% if @quotation.present? %>
+<% if params[:email].present? %>
+$("<%= escape_javascript render('components/notice', {type: 'success', message: 'Correo enviado con exito.'}) %>").insertBefore("#quote");
+<% end %>
+
+<% if @payment_way == 'percentage' %>
+inject_text('#down_payment', "<%= escape_javascript number_to_currency(@quotation.down_payment) %>");
+<% else %>
+inject_text('#down_payment', "<%= escape_javascript @quotation.down_payment_percentage.to_s %> %");
+<% end %>
+
+<% if @min_last_payment_payment_way == 'percentage' %>
+inject_text('#last_payment', "<%= escape_javascript number_to_currency(@quotation.last_payment) %>");
+<% else %>
+inject_text('#last_payment', "<%= escape_javascript @quotation.last_payment_percentage.to_s %> %");
+<% end %>
+
+<% if @min_downpayment_price.to_f != @down_payment_amount.to_f %>
+wrapper_down_payment.show();
+<% end %>
+
+<% if @has_min_last_payment %>
+wrapper_last_payment.show();
+<% end%>
+
+inject_text('#min_last_payment', '<%= '%.2f' % (@min_last_payment_percentage * 100) %>');
+inject_text('#max_last_payment', '<%= '%.2f' % (@max_last_payment_percentage * 100) %>');
+inject_text("#down_payment_to_differ", "<%= escape_javascript number_to_currency(@quotation.down_payment_to_differ) %>");
+inject_text("#initial_payment", "<%= escape_javascript number_to_currency(@quotation.initial_payment) %>");
+inject_text("#first_payment", "<%= @max_days_for_first_payment %>" + " días");
+inject_text("#second_payment", "<%= @max_days_for_second_payment %>" + " días");
+inject_text("#final-price", "<%= escape_javascript number_to_currency(@payment_total) %>");
+inject_html("#updates-table", "<%= escape_javascript render('availability/updates_table') %>");
+inject_html("#down-payments-table", "<%= escape_javascript render('quotes/down_payments_table') %>");
+
+<% if @downpayment_price_error %>
+$("#down_payment_amount_container .input-group").addClass('is-invalid');
+disableReserve();
+<% else %>
+$("#down_payment_amount_container .input-group").removeClass('is-invalid');
+<% end %>
+
+<% if @last_payment_error %>
+$("#last_payment_amount_container .input-group").addClass('is-invalid');
+disableReserve();
+<% else %>
+$("#last_payment_amount_container .input-group").removeClass('is-invalid');
+<% end %>
+
+<% if @quotation.initial_payment > 0 %>
+$("#initial_payment").parent().removeClass("d-none");
+$("#first_payment").parent().removeClass("d-none");
+<% else %>
+$("#initial_payment").parent().addClass("d-none");
+$("#first_payment").parent().addClass("d-none");
+<% end %>
+
+<% else %>
+$('#quotation-after').slideUp();
+<% end %>

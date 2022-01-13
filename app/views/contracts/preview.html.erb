@@ -1,0 +1,33 @@
+<div class="text-justify blank-space-with-lines">
+  <%= @html_code_block.html_safe %>
+  <div class="confirm_sign mt-1">
+    <table style="width:100%;">
+      <% @signers.each_with_index do |signer, index| %>
+        <% if index.even? %>
+          <tr>
+        <% end %>
+        <td class="py-4" style="width:50%;">
+          <div class="text-center py-2 signers-height">
+            <%= signer[:definition] %>
+            <br>
+            <%= signer[:company] %>
+          </div>
+          <div class="bar-sign text-bold text-capitalize text-center">
+            <%= signer[:name] %>
+            <br>
+            <%= signer[:role] %>
+          </div>
+        </td>
+        <% if index.odd? %>
+          </tr>
+        <% end %>
+      <% end %>
+
+      <% if @signers.length.even? %>
+        </tr>
+      <% end %>
+
+    </table>
+
+  </div>
+</div>

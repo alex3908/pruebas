@@ -1,0 +1,49 @@
+<%= render partial: "components/bar" %>
+
+<div class="text-center devise-container">
+  <div class="form-container">
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+      <%= link_to image_tag("brands/orve-isotype-green.png", class: "img-fluid", style: "max-width: 160px"), root_path %>
+      <h2 class="h4 my-3 font-weight-normal">Cambia tu contraseña</h2>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
+
+      <% if alert %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= alert %>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <% end %>
+
+      <% if notice %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <%= notice %>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :password, "Nueva contraseña", class: "sr-only" %><br>
+        <%= f.password_field :password, autofocus: true, autocomplete: "new-password", placeholder: "Nueva contraseña (#{@minimum_password_length} caracteres mínimos)", class: "from-control" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password_confirmation, "Confirma tu contraseña", class: "sr-only" %><br>
+        <%= f.password_field :password_confirmation, autocomplete: "off", placeholder: "Confirma tu contraseña", class: "from-control" %>
+      </div>
+
+      <div class="actions">
+        <%= f.submit "Cambiar mi contraseña", class: "btn btn-outline-primary" %>
+      </div>
+      <p class="mt-5 mb-3 privacy-policy">
+        <%= t("app.auth.copy", brand: @full_company_name) %> | <a href=<%= @privacy_policy %>><%= t("app.auth.privacy_policy") %></a>
+      </p>
+    <% end %>
+
+  </div>
+
+</div>

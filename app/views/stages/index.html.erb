@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align text-capitalize p-0 m-0"><%= @stage_plural %> de <%= @phase.name %></h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", project_path(@project), class: "btn btn-secondary float-right mr-2" %>
+      <%= link_to "Nueva #{@stage_singular}", new_project_phase_stage_path(@project, @phase), class: "btn btn-outline-primary float-right text-capitalize mr-2" if can?(:create, Stage) %>
+      <span>
+        <%= link_to_if(enable_phase_button_availibility?(@phase), "Disponibilidad", {controller: 'availability', action: 'lots', slug_project: @phase.project.slug, slug_phase: @phase.slug, vendedor: encode_base_64(current_user.id)}, class: "btn btn-outline-secondary float-right text-capitalize ", target: "_blank" ) %>
+        <% if !enable_phase_button_availibility?(@phase) %> <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="<%= message_miss_phase_slug_for_url(@phase) %>"></i><% end %>
+      </span>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if can?(:reserve, :quote) && @phase.blueprint.present? %>
+  <div class="container">
+    <div class="stage">
+      <%= render("blueprints/blueprint_for_phase",
+        project: @project,
+        phase: @phase,
+        stages: @stages,
+        extras: @extras,
+        selected_stage: nil,
+        texts: false,
+        assignable: false,
+        availability: false,
+        with_styles: false) %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <% if (@stages_residential.size + @stages_commercial.size) < 1 %>
+      <div class="py-5">
+        <p class="text-center h5 leyend mb-5">
+          No se ha encontrado <span class="text-lowercase"><%= @stage_plural %></span>.
+        </p>
+      </div>
+    <% else %>
+      <% if @stages_residential.size > 0 %>
+        <div class="d-flex flex-wrap justify-content-between pt-3">
+          <h3 class="text-left vertical-align m-0 py-3">Residenciales</h3>
+          <div class="clearfix py-2"></div>
+        </div>
+
+        <%= render partial: "table", locals: { stages: @stages_residential } %>
+      <% end %>
+
+      <% if @stages_commercial.size > 0 %>
+        <div class="d-flex flex-wrap justify-content-between pt-3">
+          <h3 class="text-left vertical-align m-0 py-3">Comerciales</h3>
+          <div class="clearfix py-2"></div>
+        </div>
+
+        <%= render partial: "table", locals: { stages: @stages_commercial } %>
+      <% end %>
+      <%= render "blueprint_assignment" if @phase.blueprint.present? %>
+    <% end %>
+  </div>
+<% end %>

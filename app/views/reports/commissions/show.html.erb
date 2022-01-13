@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Reporte de comisiones</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Reportes", reports_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Comisiones</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<%= form_tag(commissions_reports_path, method: :post, data: { controller: "export", 'target': "export.form", 'export-url': export_xlsx_commissions_url(format: :json) }) do %>
+  <%= hidden_field_tag :direction, params[:direction] %>
+  <%= hidden_field_tag :sort, params[:sort] %>
+  <div class="container py-3">
+    <div class="row">
+      <%= render partial: "commissions/index_filters" %>
+      <div class="col-md-12 col-lg-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

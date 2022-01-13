@@ -1,0 +1,10 @@
+<%= form.fields_for property_name, OpenStruct.new(properties) do |p| %>
+  <div class="row">
+    <% online_payment_service.creator.get_fields.each do |field_name| %>
+      <div class="form-group col-md-6">
+        <%= p.label field_name, I18n.t("payment_services.#{online_payment_service.provider}.#{property_name}.#{field_name}") %>
+        <%= p.text_field field_name, class: "form-control" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

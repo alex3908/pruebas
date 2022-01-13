@@ -1,0 +1,15 @@
+   <div class="lot availability">
+      <%= render("blueprints/blueprint_for_phase.html",
+        project: project,
+        phase: phase,
+        stages: stages,
+        extras: extras,
+        selected_stage: nil,
+        show_tooltip: true,
+        assignable: false,
+        link: false,
+        texts: false,
+        availability: true,
+        current_user: user,
+        with_styles: false) %>
+    </div>

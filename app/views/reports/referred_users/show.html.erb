@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Reporte de usuarios referidos</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Reportes", reports_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Usuarios referidos</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<%= form_tag(referred_users_reports_path, method: :post, data: { controller: "export", 'target': "export.form", 'export-url': referred_users_reports_path(format: :json) }) do %>
+  <%= hidden_field_tag :direction, params[:direction] %>
+  <%= hidden_field_tag :sort, params[:sort] %>
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :from_date, "Buscar desde la fecha:" %>
+        <%= text_field_tag :from_date, only_date(Time.zone.now), { class: "form-control datepicker", value: params[:from_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :to_date, "Buscar hasta la fecha:" %>
+        <%= text_field_tag :to_date, only_date(Time.zone.now), { class: "form-control datepicker disabled", value: params[:to_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+      <div class="col-md-12 col-lg-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Reporte de Clientes</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Reportes", reports_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Clientes</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<%= form_tag(clients_reports_path, method: :post, data: { controller: "export", 'target': "export.form", 'export-url': clients_reports_path(format: :json) }) do %>
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-md-6 col-lg-4 mb-3">
+        <%= label_tag :from_date, "Buscar desde la fecha:" %>
+        <%= text_field_tag :from_date, only_date(Time.zone.now), { class: "form-control datepicker", required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+      <div class="col-md-6 col-lg-4 mb-3">
+        <%= label_tag :to_date, "Buscar hasta la fecha:" %>
+        <%= text_field_tag :to_date, only_date(Time.zone.now), { class: "form-control datepicker disabled", required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+      <% if !@lead_sources.blank? %>
+        <div class="col-md-6 col-lg-4 mb-3">
+          <%= label_tag :lead_source, "Origen del cliente:" %>
+          <%= select_tag :lead_source, options_for_select(@lead_sources.map { |source| [source.name, source.id] }), { class: "form-control", include_blank: "Todos" } %>
+        </div>
+      <% end %>
+
+      <div class="col-md-6 col-lg-4 mb-3" data-controller="autocomplete" data-autocomplete-url="<%= autocomplete_users_path %>" data-autocomplete-search="user_search=">
+        <%= label_tag "concept[#{@sales_executive.id}]", "Buscar por #{@sales_executive.name.titlecase}:" %>
+        <input class="autocomplete-input form-control" data-target="autocomplete.field" required>
+        <%= hidden_field_tag "concept[#{@sales_executive.id}]", "", class: "autocomplete-hidden", "data-target" => "autocomplete.hidden" %>
+      </div>
+
+      <% @concepts.each do |concept| %>
+        <div class="col-md-6 col-lg-4 mb-3" data-controller="autocomplete" data-autocomplete-url="<%= autocomplete_users_path %>" data-autocomplete-search="user_search=">
+          <%= label_tag "concept[#{concept.id}]", "Buscar por #{concept.name.titlecase}:" %>
+          <input class="autocomplete-input form-control" data-target="autocomplete.field" required>
+          <%= hidden_field_tag "concept[#{concept.id}]", "", class: "autocomplete-hidden", "data-target" => "autocomplete.hidden" %>
+        </div>
+      <% end %>
+
+      <div class="col-md-6 col-lg-4 mb-3 <%= "d-none" if @first_evo_searcher.nil? %>">
+        <%= label_tag "#{@subordinate&.key}_node", "Buscar por #{@subordinate&.name&.titlecase}:" %>
+        <%= select_tag "#{@subordinate&.key}_node", options_for_select(@first_evo_searcher.map { |first| [first.user.label, first.user.id] }, selected: params["#{@subordinate&.key}_node"].to_s), { class: "form-control search-subordinates", include_blank: ("Todos"), data: { child: @subordinate&.next&.key, key: @subordinate&.key } } %>
+      </div>
+
+      <%= subordinate_tag @subordinate, params, "col-md-6 col-lg-4 mb-3" %>
+
+      <div class="col-md-12 col-lg-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

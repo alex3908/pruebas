@@ -1,0 +1,83 @@
+<%= form_with(model: @signer, local: true) do |form| %>
+
+  <% if @signer.errors.any? %>
+    <div class="alert alert-warning" role="alert">
+      <h6 class="alert-heading">No se pudo guardar
+        por <%= pluralize_without_count(@signer.errors.count, "la siguiente razón", "las siguientes razones") %>:</h6>
+      <ul class="mb-0">
+        <% @signer.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :name, "Nombre(s)" %>
+      <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :first_surname, "Apellido Paterno" %>
+      <%= form.text_field :first_surname, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :second_surname, "Apellido Materno" %>
+      <%= form.text_field :second_surname, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :definition, "Definición" %>
+      <%= form.text_field :definition, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :role, "Rol en empresa" %>
+      <%= form.text_field :role, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :company, "Empresa" %>
+      <%= form.text_field :company, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :email, "Correo" %>
+      <%= form.email_field :email, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 d-flex flex-column">
+      <%= form.label :phone, "Teléfono" %>
+      <%= form.phone_field :phone, class: "form-control", required: true, minlength: "10", title: "Debe contener solo números" %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :is_an_observer, "¿Es Observador?" %>
+      <div>
+      <%= form.check_box :is_an_observer,
+                          data: {
+                            activate: "toggle",
+                            onstyle: "success",
+                            offstyle: "secondary",
+                            on: "SI",
+                            off: "NO",
+                          } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions py-3">
+    <%= link_to "Cancelar", signers_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>
+<% content_for :scripts do %>
+    <script>
+      document.addEventListener('vue:mounted', () => {
+          let phone_field = document.querySelector("#signer_phone");
+          if (phone_field) {
+            window.intlTelInput(phone_field, {
+              separateDialCode: true,
+              hiddenInput: phone_field.id,
+              initialCountry: 'MX',
+              utilsScript:
+                'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/utils.js',
+            });
+          }
+      });
+  </script>
+<% end %>

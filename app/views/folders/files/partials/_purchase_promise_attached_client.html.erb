@@ -1,0 +1,5 @@
+<% if client.present? && client.person == Client::MORAL %>
+  <%= render partial: "folders/files/partials/moral_client", locals: { client: client, project: project } %>
+<% elsif client.present? && client.person == Client::PHYSICAL %>
+  <%= render partial: "folders/files/partials/physical_client", locals: { client: client, project: project } %>
+<% end %>

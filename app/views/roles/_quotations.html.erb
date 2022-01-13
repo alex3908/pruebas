@@ -1,0 +1,119 @@
+<div class="card bg-light mb-3 card-users w-100 mx-3">
+  <div class="card-header text-center">
+    <h6 class="text-center m-0 text-uppercase">Reglas de cotizador</h6>
+    <div class="col-md-12 pt-2 pb-3">
+      <hr class="marker-bar-gray">
+    </div>
+    <%= form.fields_for :quote_role do |f| %>
+      <div class="row mt-5 justify-content-center">
+
+        <div class="col-5">
+          <p>Plazo mínimo del enganche</p>
+          <div class="vertical-align">
+            <div class="input-group">
+              <%= f.number_field :min_months_deferred_down_payment,
+              min: 1,
+              disabled: disabled,
+              class: "form-control text-right" %>
+              <div class="input-group-append">
+                <div class="input-group-text input-text-right">meses</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-5">
+          <p>Plazo máximo del enganche</p>
+          <div class="vertical-align">
+            <div class="input-group">
+              <%= f.number_field :max_months_deferred_down_payment,
+              min: 1,
+              disabled: disabled,
+              class: "form-control text-right" %>
+              <div class="input-group-append">
+                <div class="input-group-text input-text-right">meses</div>
+              </div>
+            </div>
+            <small>Si eliges un mínimo, pero no un máximo, éste será infinito.</small>
+            <small>Si todo queda vacío, se tomarán las reglas del cotizador por defecto.</small>
+          </div>
+        </div>
+
+      </div>
+      <div class="row mt-5 justify-content-center">
+
+        <div class="col-5">
+          <p>Días mínimos para el pago del apartado</p>
+          <div class="vertical-align">
+            <div class="input-group">
+              <%= f.number_field :min_days_first_monthly_payment,
+              min: 1,
+              disabled: disabled,
+              class: "form-control text-right" %>
+              <div class="input-group-append">
+                <div class="input-group-text input-text-right">días</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-5">
+          <p>Días máximos para el pago del apartado</p>
+          <div class="vertical-align">
+            <div class="input-group">
+              <%= f.number_field :max_days_first_monthly_payment,
+              min: 1,
+              disabled: disabled,
+              class: "form-control text-right" %>
+              <div class="input-group-append">
+                <div class="input-group-text input-text-right">días</div>
+              </div>
+            </div>
+            <small>Si eliges un mínimo, pero no un máximo, éste será infinito.</small>
+            <small>Si todo queda vacío, se tomarán las reglas del cotizador por defecto.</small>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row mt-5 justify-content-center">
+
+        <div class="col-5">
+          <p>Días mínimos para el pago del enganche</p>
+          <div class="vertical-align">
+            <div class="input-group">
+              <%= f.number_field :min_days_second_monthly_payment,
+                                 min: 1,
+                                 disabled: disabled,
+                                 class: "form-control text-right" %>
+              <div class="input-group-append">
+                <div class="input-group-text input-text-right">días</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-5">
+          <p>Días máximos para el pago del enganche</p>
+          <div class="vertical-align">
+            <div class="input-group">
+              <%= f.number_field :max_days_second_monthly_payment,
+                                 min: 1,
+                                 disabled: disabled,
+                                 class: "form-control text-right" %>
+              <div class="input-group-append">
+                <div class="input-group-text input-text-right">días</div>
+              </div>
+            </div>
+            <small>Si eliges un mínimo, pero no un máximo, éste será infinito.</small>
+            <small>Si todo queda vacío, se tomarán las reglas del cotizador por defecto.</small>
+          </div>
+        </div>
+
+      </div>
+      <div class="actions mt-4 py-3 text-left">
+        <%= form.submit "Guardar", class: "btn btn-primary" unless disabled %>
+      </div>
+    <% end %>
+  </div>
+</div>

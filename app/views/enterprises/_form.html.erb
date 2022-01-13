@@ -1,0 +1,204 @@
+<%= form_with(model: enterprise, local: true, class: "needs-validation") do |form| %>
+  <% if enterprise.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(enterprise.errors.count, "error") %> prohibited this enterprise from being saved:</h2>
+
+      <ul>
+        <% enterprise.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <fieldset>
+    <legend>Información general</legend>
+    <div class="row">
+      <div class="form-group col-sm-12">
+        <%= form.label :business_name, "Razón Social" %>
+        <%= form.text_field :business_name, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :short_business_name, "Nombre Comercial" %>
+        <%= form.text_field :short_business_name, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :rfc, "RFC" %>
+        <%= form.text_field :rfc, class: "form-control text-uppercase",
+                            onkeyup: "upperCase(this);",
+                            value: @enterprise.rfc.present? ? @enterprise.rfc : "",
+                            required: true %>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>Ubicación</legend>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :street, "Calle" %>
+        <%= form.text_field :street, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :outdoor_number, "Número Exterior" %>
+        <%= form.text_field :outdoor_number, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :indoor_number, "Número Interior" %>
+        <%= form.text_field :indoor_number, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :colony, "Colonia" %>
+        <%= form.text_field :colony, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :location, "Localidad" %>
+        <%= form.text_field :location, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :state, "Estado" %>
+        <%= form.text_field :state, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :country, "País" %>
+        <%= form.text_field :country, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :postal_code, "Código Postal" %>
+        <%= form.text_field :postal_code, class: "form-control" %>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="row">
+    <div class="actions py-3 col-md-12">
+      <%= link_to "Cancelar", enterprises_path, class: "btn btn-secondary" %>
+      <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>
+
+<% if enterprise.persisted? && (@enterprise.online_payment_services.any? || can?(:create, OnlinePaymentService)) %>
+  <hr>
+  <legend>Servicios de Cobranza</legend>
+  <div class="container my-3">
+    <% if @enterprise.online_payment_services.any? %>
+      <div class="row">
+        <div class="col-md-8">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th width="70%">Proveedor</th>
+                <th width="30%"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @enterprise.online_payment_services.each do |service| %>
+                <tr>
+                  <td class="align-middle">
+                    <%= image_tag service.image, class: 'img-responsive provider-logo' %>
+                  </td>
+                  <td class="align-middle text-center">
+                    <% if can?(:update, OnlinePaymentService) %>
+                    <div class="custom-file d-flex justify-content-center align-items-center">
+                      <%= link_to edit_enterprise_online_payment_service_path(@enterprise, service) do %>
+                        <i class="fa fa-pencil icon-click fa-folder-size mx-1" aria-hidden="true"></i>
+                      <% end %>
+                    </div>
+                      <% end %>
+                    <% if can?(:destroy, OnlinePaymentService) %>
+                      <div class="custom-file d-flex justify-content-center align-items-center">
+                        <%= link_to enterprise_online_payment_service_path(@enterprise, service), method: :delete, data: { confirm: "¿Estás seguro que deseas eliminar el servicio?" } do %>
+                          <i class="fa fa-trash icon-click icon-red fa-folder-size mx-1" aria-hidden="true"></i>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+    <% if can?(:create, OnlinePaymentService) %>
+    <fieldset>
+      <%= form_with(model: [enterprise, enterprise.online_payment_services.build]) do |f| %>
+        <legend class="h5">Nuevo servicio</legend>
+        <div class="row">
+          <div class="form-group col-sm-12 col-md-4">
+            <%= f.select :provider, options_for_select(@providers || []), { include_blank: true }, required: true %>
+          </div>
+          <div class="form-group col-sm-12 col-md-4">
+            <%= f.submit "Crear de pago online", class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </fieldset>
+      <% end %>
+  </div>
+<% end %>
+
+<% if enterprise.persisted? %>
+  <hr>
+  <legend>Servicios de firmas digitales</legend>
+  <div class="container my-3">
+    <% if @enterprise.digital_signature_services.any? %>
+      <div class="row">
+        <div class="col-md-8">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th width="70%">Nombre</th>
+                <th width="30%"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @enterprise.digital_signature_services.each do |digital_signature| %>
+                <tr>
+                  <td class="align-middle">
+                    <%= image_tag digital_signature.image, class: 'img-responsive provider-logo' %>
+                  </td>
+                  <td class="align-middle text-center">
+                    <div class="custom-file d-flex justify-content-center align-items-center">
+                      <%= link_to edit_enterprise_digital_signature_service_path(@enterprise, digital_signature) do %>
+                        <i class="fa fa-pencil icon-click fa-folder-size mx-1" aria-hidden="true"></i>
+                      <% end %>
+                      <% if can?(:destroy, DigitalSignatureService) %>
+                        <%= link_to enterprise_digital_signature_service_path(@enterprise, digital_signature), method: :delete  do %>
+                          <i class="fa fa-trash icon-click fa-folder-size mx-1" aria-hidden="true"></i>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+    <fieldset>
+      <%= form_with(model: [enterprise, enterprise.digital_signature_services.build]) do |f| %>
+        <legend class="h5">Nuevo servicio</legend>
+        <div class="row">
+          <div class="form-group col-sm-12 col-md-4">
+            <%= f.select :name, options_for_select(@providers_digital_signatures || []), { include_blank: true }, required: true %>
+          </div>
+          <div class="form-group col-sm-12 col-md-4">
+            <%= f.submit "Crear Servicio de Contratos", class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </fieldset>
+  </div>
+<% end %>

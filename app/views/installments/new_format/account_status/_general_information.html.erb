@@ -1,0 +1,67 @@
+
+<div class="payments-table" style="border: 0;">
+  <table class="table general-info table-striped table-payments">
+    <tbody class="account-status-table">
+    <tr>
+      <td class="green-row w-25">Cliente</td>
+      <td class="green-row w-25">Email</td>
+      <td class="green-row w-25">Teléfono</td>
+      <td class="green-row w-25">Folio</td>
+    </tr>
+    <tr>
+      <td><%= @folder.client.label %></td>
+      <td><%= @folder.client.email %></td>
+      <td><%= @folder.client.formatted_main_phone %></td>
+      <td><%= @folder.id %></td>
+    </tr>
+    </tbody>
+  </table>
+  <table class="table general-info table-striped table-payments">
+    <tbody class="account-status-table">
+    <tr>
+     <td class="green-row w-25"><%= @project_singular %></td>
+      <td class="green-row w-25"><%= @phase_singular %></td>
+      <td class="green-row w-25"><%= @stage_singular %></td>
+      <td class="green-row w-25">Unidad</td>
+    </tr>
+    <tr>
+      <td><%= @folder.project.name %></td>
+      <td><%= @folder.phase.name %></td>
+      <td><%= @folder.stage.name %></td>
+      <td><%= @folder.lot.name %></td>
+    </tr>
+    </tbody>
+  </table>
+  <table class="table general-info table-striped table-payments">
+    <tbody class="account-status-table">
+    <tr>
+      <td class="green-row w-25">Plazo</td>
+      <td class="green-row w-25">Referencia</td>
+      <td class="green-row w-25">Precio de Lista</td>
+      <td class="green-row w-25">Precio Final</td>
+    </tr>
+    <tr>
+      <td><%= @folder.payment_scheme.name %></td>
+      <td><%= @lot.reference %></td>
+      <td><%= number_to_currency(@payment_total_default) %></td>
+      <td><%= number_to_currency(@folder.total_sale) %></td>
+    </tr>
+    </tbody>
+  </table>
+  <table class="table general-info table-striped table-payments">
+    <tbody class="account-status-table">
+    <tr>
+      <td class="green-row w-25">Importe Pagado</td>
+      <td class="green-row w-25">Saldo Total</td>
+      <td class="green-row w-25">Saldo Vencido
+      <td class="green-row w-25">Pagos Proximos a Vencer</td>
+    </tr>
+    <tr>
+      <td><%= number_to_currency(@quotation_total_payments) %></td>
+      <td><%= number_to_currency(@pending_capital_amount) %></td>
+      <td><%= number_to_currency(@capital_amount_overdue) %></td>
+      <td><%= number_to_currency(@capital_next_overdue) %></td>
+    </tr>
+    </tbody>
+  </table>
+</div>

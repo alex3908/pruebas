@@ -1,0 +1,31 @@
+<div class="toolbar">
+  <div class="container">
+    <ul class="toolbar-items">
+      <li class="item<%= active_class(root_path) %>"><%= link_to "Dashboard", root_path %></li>
+      <% if can?(:read, Client) %>
+        <li class="item<%= active_class(clients_path) %>"><%= link_to "Clientes", clients_path %></li>
+      <% end %>
+      <% if can?(:read, Folder) %>
+        <li class="item<%= active_class(folders_path) %>"><%= link_to "Expedientes", folders_path %></li>
+      <% end %>
+      <% if can? :read, :sale %>
+        <li class="item<%= active_class(sales_path) %>"><%= link_to @evo_string, sales_path %></li>
+      <% end %>
+      <% if can?(:read, Project) %>
+        <li class="item<%= active_class(projects_path) %>"><%= link_to @project_plural, projects_path %></li>
+      <% end %>
+      <% if can?(:read, FileApproval) %>
+        <li class="item<%= active_class(file_approvals_path) %>"><%= link_to "Verificaciones", file_approvals_path %></li>
+      <% end %>
+      <% if can? :read, :catalog %>
+        <li class="item<%= active_class(catalogs_path) %>"><%= link_to "Catálogos", catalogs_path %></li>
+      <% end %>
+      <% if can? :read, :report %>
+        <li class="item<%= active_class(reports_path) %>"><%= link_to "Reportes", reports_path %></li>
+      <% end %>
+      <% if can?(:read, User) %>
+        <li class="item<%= active_class(users_path) %>"><%= link_to "Usuarios", users_path %></li>
+      <% end %>
+    </ul>
+  </div>
+</div>

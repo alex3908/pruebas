@@ -1,0 +1,58 @@
+<div class="accordion collapse-elements px-4 mb-4" id="accordion-filters">
+  <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Filtros</p>
+  </div>
+  <div class="row collapse show" id="collapse-section" data-parent="#accordion-filters">
+    <%= search_form_for @q, url: file_approvals_path(type: FileApproval::TYPE[:DOCUMENT]) do |f| %>
+      <div class="row form-group">
+
+        <div class="col-md-6 col-lg-3 mb-3 ">
+          <%= f.label :project_id do %> Buscar por <span class="text-lowercase"><%= @project_singular %>: </span>
+          <% end %>
+          <%= f.select :approvable_of_Document_type_documentable_of_Folder_type_lot_stage_phase_project_id_eq, @projects.map { |project| [project.name, { "data-phases" => project.phases.select(:id, :name).to_json(include: { stages: { only: [:id, :name] } }) }, project.id] }, { include_blank: "Todos" }, class: "form-control" %>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3 ">
+          <%= f.label :phase_id do %> Buscar por <span class="text-lowercase"><%= @phase_singular %>: </span>
+          <% end %>
+          <%= f.select :approvable_of_Document_type_documentable_of_Folder_type_lot_stage_phase_id_eq, [["Todas", ""]], { disabled: true }, class: "form-control input-white bg-input-disabled" %>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3 ">
+          <%= f.label :stage_id do %> Buscar por <span class="text-lowercase"><%= @stage_singular %>: </span>
+          <% end %>
+          <%= f.select :approvable_of_Document_type_documentable_of_Folder_type_lot_stage_id_eq, [["Todas", ""]], { disabled: true }, class: "form-control input-white bg-input-disabled" %>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3 ">
+          <%= f.label :lot_number, "Buscar por número de unidad:" %>
+          <%= f.search_field :approvable_of_Document_type_documentable_of_Folder_type_lot_number_eq, class: "form-control" %>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3 ">
+          <%= f.label :lot_label, "Buscar por clasificador de unidad:" %>
+          <%= f.search_field :approvable_of_Document_type_documentable_of_Folder_type_lot_label_cont, class: "form-control" %>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3 ">
+          <%= f.label :status, "Buscar por estado:" %>
+          <%= f.select :status_eq, [["Revisión", 0], ["Rechazado", 1], ["Aprobado", 2]], { include_blank: "Todos", class: "form-control" } %>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3 ">
+          <%= f.label :branch_id, "Buscar por sucursal:" %>
+          <%= f.select :approvable_of_Document_type_documentable_of_Folder_type_user_branch_id_eq, options_from_collection_for_select(@branches, :id, :name, params["branch"]), class: "form-control", include_blank: "Selecciona una sucursal" %>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-3 ">
+          <%= f.label :document_type, "Buscar por tipo de documento:" %>
+          <%= f.select :approvable_of_Document_type_documentable_type_eq, [["Expediente", "Folder"], ["Cliente", "Client"]], { include_blank: "Todos", class: "form-control" } %>
+        </div>
+
+        <div class="col-md-12 text-right">
+          <%= f.submit "Buscar", class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

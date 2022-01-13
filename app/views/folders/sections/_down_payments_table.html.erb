@@ -1,0 +1,19 @@
+<table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+  <thead>
+  <tr>
+    <th>Número de pago</th>
+    <th>Fecha</th>
+    <th>Total a pagar</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @down_payment_installments.each_with_index do |payment, payment_index| %>
+    <tr>
+      <td class="align-middle"><%= payment.number %></td>
+      <td class="align-middle"><%= payment.date.strftime("%d/%m/%Y") %></td>
+      <td class="align-middle"><%= number_to_currency(payment.total) %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

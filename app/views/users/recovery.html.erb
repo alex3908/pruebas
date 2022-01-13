@@ -1,0 +1,70 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Usuarios inactivos</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to("Regresar", users_path, class: "btn btn-secondary") %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <%= render "filters" %>
+</div>
+
+<% if @users.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se encontraron usuarios.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th><%= sortable "first_name", "Nombre" %></th>
+          <th><%= sortable "last_name", "Apellido" %></th>
+          <th><%= sortable "email", "Correo" %></th>
+          <th><%= sortable "phone", "Teléfono" %></th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td><%= user.first_name %></td>
+            <td><%= user.last_name %></td>
+            <td><%= user.email %></td>
+            <td><%= user.phone %></td>
+            <td class="text-center">
+                <% if can?(:update, User) %>
+                  <%= link_to edit_user_path(user), class: "table-link", data: { toggle: "tooltip" }, title: "Recuperar" do %>
+                    <i class="fa fa-recycle"></i>
+                  <% end %>
+                <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@users, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+      Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                              onchange: "if(this.value){window.location='?#{params[:stage].present? ? "stage=#{params[:stage]}&" : ""}per_page='+this.value;}" %>
+      por página
+      </div>
+    </div>
+  </div>
+<% end %>

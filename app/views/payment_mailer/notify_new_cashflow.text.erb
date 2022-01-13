@@ -1,0 +1,5 @@
+Estimado <%= @cash_flow.client.label %>:
+
+Se ha realizado un movimiento con pago a tu <%= @cash_flow.folder.project.lot_entity_name %> <%= @cash_flow.folder.lot.name %> de la <%= @stage_singular %> <%= @cash_flow.folder.stage.name %> de la <%= @phase_singular %> <%= @cash_flow.folder.phase.name %> del <%= @project_singular %> <%= @cash_flow.folder.project.name %>.
+
+Descarga tu estado de cuenta en el siguiente enlace: <%= download_account_status_url(@cash_flow.folder)  %>

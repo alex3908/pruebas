@@ -1,0 +1,50 @@
+<div class="container pdf-bg m-0 p-0">
+  <div class="content_format">
+    <%= render partial: "folders/files/partials/down_payment_receipt_cover", locals: { title: @title,
+                                                                                       total_payments: @folder.payment_scheme.total_payments,
+                                                                                       amount: @amount,
+                                                                                       clients_count: @folder.clients.count,
+                                                                                       clients: @folder.clients,
+                                                                                       client_label: @folder.client.label,
+                                                                                       concept: @concept,
+                                                                                       lot_name: @lot.name,
+                                                                                       phase_name: @phase.name,
+                                                                                       stage_name: @stage.name,
+                                                                                       project_name: @project.name,
+                                                                                       bank_accounts: @stage.enterprise.bank_accounts,
+                                                                                       stp_clabe: @folder.stp_clabe,
+                                                                                       enterprise_name: @folder.stage.enterprise.business_name,
+                                                                                       with_signature:@with_signature,
+                                                                                       key: @key } %>
+  </div>
+
+  <% if @with_copy %>
+
+  <div class="pdf-bg second_page">
+    <div class="copy_container">
+      <h1>COPIA</h1>
+    </div>
+
+    <div class="content_format">
+      <%= render partial: "folders/files/partials/down_payment_receipt_cover", locals: { title: @title,
+                                                                                         total_payments: @folder.payment_scheme.total_payments,
+                                                                                         amount: @amount,
+                                                                                         clients_count: @folder.clients.count,
+                                                                                         clients: @folder.clients,
+                                                                                         client_label: @folder.client.label,
+                                                                                         concept: @concept,
+                                                                                         lot_name: @lot.name,
+                                                                                         phase_name: @phase.name,
+                                                                                         stage_name: @stage.name,
+                                                                                         project_name: @project.name,
+                                                                                         bank_accounts: @stage.enterprise.bank_accounts,
+                                                                                         stp_clabe: @folder.stp_clabe,
+                                                                                         enterprise_name: @folder.stage.enterprise.business_name,
+                                                                                         with_signature:@with_signature,
+                                                                                         key: @key } %>
+    </div>
+  </div>
+
+  <% end %>
+
+</div>

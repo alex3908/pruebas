@@ -1,0 +1,53 @@
+<div class="modal fade" id="manageFiles<%= step_role.id %>" role="dialog"
+  aria-labelledby="manageFiles<%= step_role.id %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="manageFiles<%= step_role.id %>Label">Permisos de archivos (<%= step_role.role.name %>)</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <% if step_role.step_role_document_templates.any? %>
+            <hr>
+            <div class="row align-items-center mt-3">
+              <div class="col text-center">Documento</div>
+              <div class="col text-center">Leer</div>
+              <div class="col text-center">Editar</div>
+              <div class="col text-center">Subir</div>
+              <div class="col text-center">Consultar historial</div>
+            </div>
+            <% step_role.step_role_document_templates.order(:id).each do |step_role_document_templates| %>
+              <%= step_role_form.fields_for :step_role_document_templates, step_role_document_templates do |step_role_document_template_form| %>
+              <%= step_role_document_template_form.hidden_field :id %>
+              <div class="row align-items-center my-3">
+                <div class="col text-center">
+                  <%= tag.small(step_role_document_templates.document_template.name) %>
+                </div>
+                <div class="col text-center">
+                <%= checkbox(step_role_document_template_form, "sm", :readable) %>
+                </div>
+                <div class="col text-center">
+                <%= checkbox(step_role_document_template_form, "sm", :editable) %>
+                </div>
+                <div class="col text-center">
+                <%= checkbox(step_role_document_template_form, "sm", :uploadable) %>
+                </div>
+                <div class="col text-center">
+                <%= checkbox(step_role_document_template_form, "sm", :destroyable) %>
+                </div>
+              </div>
+              <hr>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

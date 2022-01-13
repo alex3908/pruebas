@@ -1,0 +1,104 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Sucursales</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+      <% if can?(:create, Branch) %>
+        <%= link_to "Nueva Sucursal", new_branch_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @branches.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ninguna sucursal.
+        <% if can?(:create, Branch) %>
+          <br> Comienza generando una nueva sucursal.
+        <% end %>
+      </p>
+      <% if can?(:create, Branch) %>
+        <div class="text-center mt-3">
+          <%= link_to "Nueva Sucursal", new_branch_path, class: "btn btn-primary jumping" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Nombre</th>
+          <th colspan="3"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @branches.each do |branch| %>
+          <tr>
+            <td><%= branch.name %></td>
+            <td class="text-right">
+              <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Opciones
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <% if can?(:read, Branch) %>
+                    <%= link_to "Ver", branch, class: "dropdown-item" %>
+                  <% end %>
+                  <% if can?(:update, Branch) %>
+                    <%= link_to "Editar", edit_branch_path(branch), class: "dropdown-item" %>
+                  <% end %>
+                </div>
+              </div>
+
+              <% if can?(:change_status, Branch) %>
+                <%= check_box_tag "complete", branch.active, branch.active,
+                                  data: {
+                                    activate: "toggle",
+                                    onstyle: "success",
+                                    offstyle: "secondary",
+                                    on: "Activa",
+                                    off: "Oculta",
+                                    remote: true,
+                                    url: change_status_branch_path(branch), method: :patch
+                                  } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <div class="row">
+        <div class="col-md-12">
+          <i class="fa fa-info-circle text-muted mx-2" aria-hidden="true"></i>
+          La visualización dinámica de las sucursales está presente en los siguientes archivos:
+        <ul>
+          <li>Comprobante de pago</li>
+          <li>Recibo de pago</li>
+        </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <%= will_paginate(@branches, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

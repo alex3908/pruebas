@@ -1,0 +1,46 @@
+<% if local_assigns[:error] == 'not_access' %>
+Swal.fire({
+    title: 'Error',
+    text: 'No puedes <%= local_assigns[:action] %> a este usuario.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu responsable.'
+})
+<% elsif local_assigns[:type] == 'reject' %>
+Swal.fire({
+    title: 'Cuenta rechazada',
+    text: 'El usuario <%= @user.label %> no podrá acceder al sistema.',
+    type: 'warning',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+}).then(function() {
+    Turbolinks.visit("<%= subordinates_structures_path(@structure.parent_id) %>")
+});
+<% elsif @user.structure.errors.count == 0 %>
+Swal.fire({
+    title: '¡Cuenta aprobada correctamente!',
+    text: 'Ahora <%= @user.label %> tendrá acceso a su cuenta',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+}).then(function() {
+
+    Turbolinks.visit("<%= subordinates_structures_path(@structure.parent_id) %>")
+});
+<% else %>
+Swal.fire({
+    title: 'Error',
+    text: 'Hubo un error al intentar aprobar la cuenta.',
+    type: 'error',
+    confirmButtonText: 'Continuar',
+    footer: 'Si tienes alguna duda, por favor comunícate con tu responsable.'
+})
+<% end %>

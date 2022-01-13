@@ -1,0 +1,499 @@
+<%= form_with(model: stage, local: true, url: [@project, @phase, stage]) do |form| %>
+  <% if stage.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(stage.errors.count, "error") %> prohibió que esta <span class="text-lowercase"><%= @stage_singular %></span> se guarde:</h2>
+
+      <ul>
+        <% stage.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <% if blueprint&.errors&.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(blueprint.errors.count, "error") %> prohibió que esta <span class="text-lowercase"><%= @stage_singular %></span> se guarde:</h2>
+
+      <ul>
+        <% blueprint.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <fieldset>
+
+    <legend>Información general</legend>
+
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :name, "Nombre" %>
+        <%= form.text_field :name, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :slug, "Clave URL" %>
+        <% if stage.persisted? && stage.slug.present? %>
+          <div class="font-weight-bold"><%= stage.slug %></div>
+        <% else %>
+          <%= form.text_field :slug, class: "form-control", required: true %>
+          <small class="form-text text-muted">Esta elemento no podrá ser editado una vez establecido.</small>
+        <% end %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :show_full_name, "Mostrar nombre completo" %>
+        <%= fa_tooltip("info-circle", "En caso de estar activo se mostrará el nombre de la #{@phase_singular} en los documentos") %>
+        <div>
+          <%= form.check_box :show_full_name,
+                          data: {
+                            activate: "toggle",
+                            onstyle: "success",
+                            offstyle: "secondary",
+                            on: "Si",
+                            off: "No",
+                          } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :reference, "Referencia" %>
+        <%= fa_tooltip("info-circle", "Se usa para construir el folio del #{@lot_singular}") %>
+        <%= form.text_field :reference, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :stage_type, "Tipo de #{@stage_singular}", class: "text-capitalize" %>
+        <%= form.select(:stage_type, options_for_select([ ["Comercial", "commercial"], ["Residencial", "residential"] ], @stage.stage_type), { include_blank: "Selecciona un tipo de #{@stage_singular}" }, class: "form-control", required: true) %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :enterprise_id, "Empresa cobrataria" %>
+        <%= form.select(:enterprise_id, Enterprise.all.collect { |u| [u.business_name, u.id] }, { include_blank: "Selecciona una Empresa" }, class: "form-control", required: true) %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :owner_enterprise_id, "Empresa propietaria" %>
+        <%= form.select(:owner_enterprise_id, Enterprise.all.collect { |u| [u.business_name, u.id] }, { include_blank: "Selecciona una Empresa" }, class: "form-control") %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :price, "Precio por m<sup>2</sup>".html_safe %>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= form.number_field :price, step: 0.01, class: "form-control text-left", required: true %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :release_date, "Fecha de salida" %>
+        <%= fa_tooltip("info-circle", "Indica la fecha en la que inició la venta de la #{@stage_singular}") %>
+        <%= form.date_field :release_date, class: "form-control datepicker-unlimited",
+                            placeholder: "yyyy-mm-dd",
+                            readonly: true,
+                            autocomplete: "off",
+                            required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 is_relative_down_payment_for_date">
+        <%= form.label :delivery_date, "Fecha de entrega" %>
+        <%= fa_tooltip("info-circle", "Esta fecha se usa para calcular los meses de financiamiento del enganche en caso de ser relativo") %>
+        <%= form.date_field :delivery_date, class: "form-control datepicker-unlimited",
+                            placeholder: "yyyy-mm-dd",
+                            readonly: true,
+                            autocomplete: "off" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :emails, "Correos receptores de pagos" %>
+        <%= fa_tooltip("info-circle", "Se envían las notificaciones de pagos realizados a través de la pasarela") %>
+        <%= form.text_field :emails, class: "form-control", value: @stage.payment_receptor_emails&.join(", ") %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :credit_scheme_id, "Esquema de crédito" %>
+        <%= fa_tooltip("info-circle", "Se usa para la construcción de la tabla de amortización") %>
+        <%= form.select(:credit_scheme_id, CreditScheme.where(status: true).collect { |u| [u.name, u.id] }, { include_blank: "Selecciona un esquema de crédito" }, class: "form-control", required: true) %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 d-none">
+        <%= form.label :active_messages, "Notificar por mensajes de texto" %>
+        <%= fa_tooltip("info-circle", "En caso de estar activo permitirá el envío de notificaciones a través de mensajes de texto") %>
+        <div>
+          <%= form.check_box :active_messages,
+                            disabled: true,
+                            data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: "SI",
+                              off: "NO",
+                            } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :active_mails, "Notificar por correo" %>
+        <%= fa_tooltip("info-circle", "En caso de estar activo permitirá el envío de notificaciones a través de correos") %>
+        <div>
+          <%= form.check_box :active_mails,
+                            data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: "SI",
+                              off: "NO",
+                            } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :is_expirable, "Expirable" %>
+        <%= fa_tooltip("info-circle", "En caso de estar activo las reservas generadas podrán expirar") %>
+        <div>
+          <%= form.check_box :is_expirable,
+                            data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: "SI",
+                              off: "NO",
+                            } %>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+
+    <legend>Comisiones</legend>
+
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :active_commissions, "Generar comisiones por ventas" %>
+        <%= fa_tooltip("info-circle", "En caso de estar activo el sistema generará comisiones de letras saldadas") %>
+        <div>
+          <%= form.check_box :active_commissions,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <div class="input-group">
+          <%= form.label :commission_scheme_id %>
+          <%= form.select(:commission_scheme_id, CommissionScheme.all.collect { |u| [u.name, u.id] }, { include_blank: t('select', article: t('articles.male.a'), item: CommissionScheme.model_name.human.downcase) }, class: "form-control", required: true, data: {project_id: @project.id, phase_id: @phase.id, stage_id: stage.id}) %>
+        </div>
+
+        <div class="col-sm-12 col-md-12" id="stage_commission">
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+  <fieldset>
+
+    <legend>Desbloqueos y penalizaciones</legend>
+
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :initial_payment_expiration, "Periodo de gracia para apartado" %>
+        <%= fa_tooltip("info-circle", "Se usa para considerar expirable un expediente a partir del pago de apartado") %>
+        <div class="input-group">
+          <%= form.number_field :initial_payment_expiration, step: 1, min: 0, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text">horas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :down_payment_expiration, "Periodo de gracia para enganche" %>
+        <%= fa_tooltip("info-circle", "Se usa para considerar expirable un expediente a partir del pago de enganche") %>
+        <div class="input-group">
+          <%= form.number_field :down_payment_expiration, step: 1, min: 0, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text">horas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :sudden_death, "Muerte súbita para expedientes" %>
+        <%= fa_tooltip("info-circle", "Se usa para extender el período de gracia de apartado y enganche") %>
+        <div class="input-group">
+          <%= form.number_field :sudden_death, step: 1, min: 0, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text">horas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :lock_seller_period, "Periodo de bloqueo de asesor" %>
+        <%= fa_tooltip("info-circle", "Se usa para que un asesor no pueda reservar el mismo lote en un período de tiempo") %>
+        <div class="input-group">
+          <%= form.number_field :lock_seller_period, step: 1, min: 0, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text">días</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :payment_expiration, "Periodo de gracia para considerar cartera vencida" %>
+        <%= fa_tooltip("info-circle", "Se usa para identificar los pagos vencidos o a punto de vencer") %>
+        <div class="input-group">
+          <%= form.number_field :payment_expiration, step: 1, min: 0, class: "form-control text-right" %>
+          <div class="input-group-append">
+            <span class="input-group-text">días</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <% if @stage.persisted? %>
+    <hr>
+    <%= form.fields_for :blueprint do |blueprint_form| %>
+      <fieldset>
+        <legend>Información de Plano Interactivo</legend>
+
+        <div class="row">
+          <div class="col-12 col-md-3">
+            <div class="form-group row">
+              <%= blueprint_form.label :available_color, "Venta", class: "col-6 col-form-label" %>
+              <div class="col-6">
+                <div data-color-rgba class="input-group" title="Venta">
+                  <%= blueprint_form.text_field :available_color, class: "form-control form-block", value: @stage.blueprint ? @stage.blueprint.available_color : "#27ae60" %>
+                  <span class="input-group-append">
+                    <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="form-group row">
+              <%= blueprint_form.label :reserved_color, "Apartado", class: "col-6 col-form-label" %>
+              <div class="col-6">
+                <div data-color-rgba class="input-group" title="Apartado">
+                  <%= blueprint_form.text_field :reserved_color, class: "form-control form-block", value: @stage.blueprint ? @stage.blueprint.reserved_color : "#e67e22" %>
+                  <span class="input-group-append">
+                    <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="form-group row">
+              <%= blueprint_form.label :locked_color, "Bloqueo", class: "col-6 col-form-label" %>
+              <div class="col-6">
+                <div data-color-rgba class="input-group" title="Bloqueo">
+                  <%= blueprint_form.text_field :locked_color, class: "form-control form-block", value: @stage.blueprint ? @stage.blueprint.locked_color : "#58606A" %>
+                  <span class="input-group-append">
+                    <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="form-group row">
+              <%= blueprint_form.label :sold_color, "Vendido", class: "col-6 col-form-label" %>
+              <div class="col-6">
+                <div data-color-rgba class="input-group" title="Vendido">
+                  <%= blueprint_form.text_field :sold_color, class: "form-control form-block", value: @stage.blueprint ? @stage.blueprint.sold_color : "#c0392b" %>
+                  <span class="input-group-append">
+                    <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="custom-file">
+            <% if @stage.blueprint && @stage.blueprint.has_assigned_lots %>
+              <p class="mt-3">Esta <span class="text-lowercase"><%= @stage_singular %></span> ya cuenta con <%= @lot_plural %> asignados, eliminalos para poder cambiar tu plano.</p>
+              <%= link_to "Descargar vector", url_for(@stage.blueprint.svg_file), target: "_blank", class: "btn btn-secondary" %>
+              <% if can?(:deallocate, Blueprint) %>
+                <%= link_to "Desasignar todos los #{@lot_plural}", deallocate_project_phase_stage_blueprint_path(@project, @phase, @stage, @stage.blueprint), method: :patch, class: "btn btn-warning", data: { confirm: "\u00BFEst\u00E1s seguro de desasignar todos los #{@project.lot_entity_plural}? Esta acción no puede recuperarse." } %>
+              <% end %>
+            <% else %>
+              <%= blueprint_form.file_field :file, class: "custom-file-input" %>
+              <%= blueprint_form.label :file, "Plano interactivo (Archivo SVG*)", class: "custom-file-label" %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="custom-file">
+            <%= blueprint_form.file_field :background, class: "custom-file-input" %>
+            <%= blueprint_form.label :background, "Fondo", class: "custom-file-label" %>
+          </div>
+        </div>
+      </fieldset>
+    <% end %>
+    <hr>
+  <% end %>
+  <fieldset>
+
+    <legend>Anexos <%= help_tooltip("Agrega aquí anexos que se presentaran a todos los #{@lot_plural} de esta etapa.") %></legend>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <label>Anexos PDF</label>
+        <div class="custom-file">
+          <%= form.file_field :pdf_annexes, multiple: true, accept: "application/pdf", class: "custom-file-input" %>
+          <%= form.label :pdf_annexes, "Elegir Archivo", class: "custom-file-label" %>
+        </div>
+      </div>
+    </div>
+    <% if @stage.pdf_annexes.attachments.size > 0 %>
+      <div class="row">
+        <div class="col-md-12">
+        <table class="table table-striped tablesaw tablesaw-stack">
+          <thead>
+            <tr>
+              <th width="70%">Archivos Configurados</th>
+              <th width="30%" class="text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @stage.pdf_annexes.attachments.each do |attachment| %>
+              <tr>
+                <td class="align-middle">
+                  <%= attachment.filename %>
+                </td>
+
+                <td class="align-middle text-center">
+                  <%= link_to attachment.service_url, target: "_blank", style: "text-decoration:none" do %>
+                    <i class="fa fa-eye mx-1"></i>
+                  <% end %>
+                  <%= link_to remove_file_project_phase_stage_path(@project, @phase, @stage, key: attachment.id), method: :delete, data: { confirm: "¿Estás seguro de eliminar el archivo #{attachment.filename}?" }, style: "text-decoration:none" do %>
+                    <i class="fa fa-trash-o fa-folder-size icon-red mx-1"></i>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :phase_description_title, "Anexo #{@phase_singular}" %>
+        <%= help_tooltip("Personaliza la descripción que aparecerá arriba de la chepina de cualquier lote para esta etapa.") %>
+        <%= form.text_field :phase_description_title, class: "form-control" %>
+      </div>
+
+       <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :stage_description_title, "Anexo #{@stage_singular}" %>
+        <%= help_tooltip("Personaliza la descripción que aparecerá arriba de la chepina de cualquier lote para esta etapa.") %>
+        <%= form.text_field :stage_description_title, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :lot_description_title, "Anexo #{@lot_singular}" %>
+        <%= help_tooltip("Personaliza la descripción que aparecerá arriba de la chepina de cualquier lote para esta etapa.") %>
+        <%= form.text_field :lot_description_title, class: "form-control" %>
+      </div>
+      <div class="form-group col-sm-12 col-md-12">
+        <div class="accordion collapse-elements px-4 mb-2 mt-2" id="accordion-lot-description">
+          <div class="d-flex justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-lot-description" aria-expanded="true" aria-controls="collapse-users">
+            <p class="text-left vertical-align m-0 py-3 color-primary">Editor de la información del Anexo <%= @lot_singular %> </p>
+          </div>
+          <div class="table-container collapse" id="collapse-lot-description" data-parent="#accordion-lot-description">
+            <div class="row">
+              <div class="form-group col-sm-12 col-md-12">
+                <%= form.text_area :lot_description, class: "tinymce", "v-pre": '' %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="label-container pt-3">
+          <% @tags.each do |tag| %>
+            <div class="square-label" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','{{<%= tag.key %>}}')"><%= tag.name %></div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+
+  <fieldset>
+    <legend>Observaciones <%= help_tooltip("Personaliza la descripción que aparecerá en la carátula de tu tabla de amortización, de tus cotizaciones y de los recibos.") %></legend>
+
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-12">
+        <div class="accordion collapse-elements px-4 mb-2 mt-2" id="accordion-observations">
+          <div class="d-flex justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-observations" aria-expanded="true" aria-controls="collapse-observations">
+            <p class="text-left vertical-align m-0 py-3 color-primary">Editor de observaciones para caratula de amortización y cotizaciones</p>
+          </div>
+          <div class="table-container collapse" id="collapse-observations" data-parent="#accordion-observations">
+            <div class="row">
+              <div class="form-group col-sm-12 col-md-12">
+                <%= form.text_area :observations, class: "tinymce", "v-pre": '' %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-12">
+        <div class="accordion collapse-elements px-4 mb-2 mt-2" id="accordion-receipt-observations">
+          <div class="d-flex justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-receipt-observations" aria-expanded="true" aria-controls="collapse-receipt-observations">
+            <p class="text-left vertical-align m-0 py-3 color-primary">Editor de observaciones de los recibos</p>
+          </div>
+          <div class="table-container collapse" id="collapse-receipt-observations" data-parent="#accordion-receipt-observations">
+            <div class="row">
+              <div class="form-group col-sm-12 col-md-12">
+                <%= form.text_area :receipt_observations, class: "tinymce", "v-pre": '' %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+
+  <fieldset>
+    <legend>Condiciones de compra <%= help_tooltip("Modifica la información desplegada en tu hoja de condiciones de compra.") %></legend>
+
+    <div class="accordion collapse-elements px-4 mb-2 mt-2" id="accordion-conditions">
+      <div class="d-flex justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-conditions" aria-expanded="true" aria-controls="collapse-conditions">
+        <p class="text-left vertical-align m-0 py-3 color-primary">Editor de condiciones de compra</p>
+      </div>
+      <div class="table-container collapse" id="collapse-conditions" data-parent="#accordion-conditions">
+        <div class="row">
+          <div class="form-group col-sm-12 col-md-12">
+            <%= form.text_area :purchase_conditions, class: "tinymce", "v-pre": '' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+
+  <div class="actions py-3">
+    <%= link_to "Cancelar", project_phase_stages_path(@project, @phase), class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<%= render "logs" %>

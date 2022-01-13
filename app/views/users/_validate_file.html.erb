@@ -1,0 +1,24 @@
+<tr>
+  <td class="align-middle"><%= name %></td>
+  <td class="align-middle text-center">
+    <% if file.attached? %>
+      <%= link_to rails_blob_path(file), target: "_blank", style: "text-decoration:none" do %>
+        <i class="fa fa-file-text-o fa-folder-size" aria-hidden="true"></i>
+      <% end %>
+      <% if User::FILES_WITH_APPROVAL.include? key %>
+        <i class="fa fa-info-circle fa-folder-size" aria-hidden="true" title="<%= approved_label_result @user.file_approve(key) %>" rel="tooltip"></i>
+        <% if can?(:verify_user_file, User) && (@user.file_approve(key).unchecked? if @user.file_approve(key).present?) %>
+          <%= link_to user_approve_file_path(@user, key: key), method: :patch, data: { confirm: "¿Estás seguro de aceptar el #{name}?" }, style: "text-decoration:none" do %>
+            <i class="fa fa-check-circle fa-folder-size text-success"></i>
+          <% end %>
+
+          <%= link_to rejectable_user_file_user_path(@user, key: key), data: { toggle: "modal", target: "#modal-window" }, style: "text-decoration:none", remote: true do %>
+            <i class="fa fa-times-circle fa-folder-size text-danger"></i>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <span> No se ha cargado el archivo. </span>
+    <% end %>
+  </td>
+</tr>

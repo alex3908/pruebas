@@ -1,0 +1,58 @@
+<%= form_with(model: bank_account, local: true, url: [@parent, bank_account]) do |form| %>
+  <% if bank_account.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(bank_account.errors.count, "error") %> no permitieron guardar esta cuenta de banco:</h2>
+
+      <ul>
+        <% bank_account.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <%= form.hidden_field :bank, value: bank_account.bank, id: "clabe" %>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :holder, "Titular" %>
+      <%= form.text_field :holder, class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :account_number, "Número de Cuenta" %>
+      <%= form.text_field :account_number, pattern: "[0-9]+", title: "Debe estar conformado solo por números", class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :currency, "Moneda" %>
+      <%= form.select :currency, [["MXN"], ["USD"]], class: "form-control", required: true %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :clabe, "CLABE" %>
+      <%= form.text_field :clabe, class: "form-control", required: true %>
+    </div>
+
+    <% if !bank_account.principal && @parent.bank_accounts.count >= 1 && @parent.class == User %>
+     <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :principal, "Cuenta principal" %>
+        <div>
+        <%= form.check_box :principal,
+                          data: {
+                            activate: "toggle",
+                            onstyle: "success",
+                            offstyle: "secondary",
+                            on: "SI",
+                            off: "NO",
+                          } %>
+        </div>
+    </div>
+    <% end %>
+  </div>
+
+  <div class="actions py-3">
+    <%= link_to "Cancelar", parent_bank_accounts_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

@@ -1,0 +1,71 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-10">
+            <h1 class="banner-title vertical-align p-0 m-0">Servicio Adicional: <%= @additional_concept.name %></h1>
+        </div>
+        <div class="col-sm-12 col-md-2 flex-middle-right">
+            <%= link_to "Regresar", additional_concepts_path, class: "btn btn-outline-secondary mr-2" %>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <hr class="divider">
+</div>
+<div class="container">
+    <%= render "stages/filters" %>
+</div>
+
+<% if @stages.empty? %>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="py-5">
+                <p class="text-center h5 leyend mb-5">
+                    No hay etapas disponibles para activar este servicio adicional.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<% else %>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-capitalize"><%= sortable "project_id", @project_singular %></th>
+                        <th class="text-capitalize"><%= sortable "phase_id", @phase_singular %></th>
+                        <th class="text-capitalize"><%= sortable "stage_id", @stage_singular %></th>
+                        <th colspan="2">Estatus del Servicio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @stages.each do |stage| %>
+                    <tr>
+                        <td class="align-middle"><%= stage.phase.project.name %></td>
+                        <td class="align-middle"><%= stage.phase.name %></td>
+                        <td class="align-middle"><%= stage.name %></td>
+                        <td class="align-middle">
+                            <%= check_box_tag "stage-#{stage.id}", "1", stage.has_additional_concept(@additional_concept),
+                            onchange: "$(this).data('params', 'status=' + this.checked)",
+                            disabled: !(can?(:change_status, AdditionalConcept)),
+                            data: {
+                              activate: "toggle",
+                              onstyle: "success",
+                              offstyle: "secondary",
+                              on: "Activado",
+                              off: "Desactivado",
+                              remote: true,
+                              url: activate_additional_concept_path(@additional_concept, stage: stage),
+                              method: :patch
+                            } %>
+                        </td>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<% end %>

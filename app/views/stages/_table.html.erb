@@ -1,0 +1,84 @@
+<div class="row mb-3">
+  <div class="col-4 pr-0">
+    <hr class="marker-bar-green">
+  </div>
+  <div class="col-8 pl-0">
+    <hr class="marker-bar-gray">
+  </div>
+</div>
+
+<div class="table-container">
+  <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+    <thead>
+    <tr>
+      <th>Nombre</th>
+      <th><%= @lot_plural %> disponibles</th>
+      <th></th>
+    </tr>
+    </thead>
+
+    <tbody class="<%= "sortable" if can?(:sort, Stage) %>">
+    <% if local_assigns[:stages].count > 0 %>
+      <% local_assigns[:stages].each_with_sortable_id do |stage, sortable_id| %>
+        <tr id="<%= sortable_id if can?(:sort, Stage) %>">
+          <td class="align-middle">
+            <% if can?(:sort, Stage) %>
+              <i class="fa fa-bars mr-2 text-secondary" aria-hidden="true"></i>
+            <% end %>
+            <b><%= stage.name %></b>
+          </td>
+          <td class="align-middle">
+            <b><%= stage.get_availability %></b>
+          </td>
+          <td class="text-right align-middle" data-id="<%= stage.id %>">
+            <% if can?(:update, Stage) %>
+                <%= button_tag(fa_icon("map-marker"), type: "button", class: "btn btn-outline-primary assign-button", data: { "stage-name": stage.name, "stage-id": stage.id, "project-id": @project.id, "phase-id": @phase.id, toggle: "modal", target: "#assignStageModal" }) if @phase.blueprint.present? && stage.blueprint_stage.nil? %>
+                <%= link_to(fa_stack("ban", "map-marker"), deallocate_project_phase_stage_path(@project, @phase, stage), method: :patch, remote: true, data: { confirm: "\u00BFEst\u00E1s seguro?" }, class: "btn btn-outline-warning deallocate-button", style: "#{ stage.blueprint_stage.present? ? '' : 'display:none;'}") %>
+            <% end %>
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Opciones
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <%= link_to("Asignar Usuarios", users_path(stage: stage), class: "dropdown-item") if can?(:assignment, User) %>
+                <% if cannot?(:reserve, :quote) && can?(:quote, :quote) %>
+                  <% if stage.commission_scheme.present? %>
+                    <%= link_to("Cotizar", project_phase_stage_path(@project, @phase, stage, client: params["client"]), class: "dropdown-item") %>
+                  <% else %>
+                    <span class="dropdown-item">Cotizar <i class="fa fa-info-circle" aria-hidden="true" title="Falta seleccionar un esquema de comisión"></i></span>
+                  <% end %>
+                <% end %>
+                <%= link_to("Venta", project_phase_stage_path(@project, @phase, stage, client: params["client"]), class: "dropdown-item") if can?(:reserve, :quote) && can?(:quote, :quote) %>
+                <%= link_to(@lot_plural, project_phase_stage_lots_path(@project, @phase, stage), class: "dropdown-item") if can?(:update, Lot) %>
+                <%= link_to("Editar", edit_project_phase_stage_path(@project, @phase, stage), class: "dropdown-item") if can?(:update, Stage) %>
+              </div>
+            </div>
+
+            <% if can?(:status, Stage) %>
+              <%= check_box_tag "complete-stage-#{stage.id}", stage.active, stage.active,
+                                data: {
+                                    activate: "toggle",
+                                    onstyle: "success",
+                                    offstyle: "secondary",
+                                    on: "Activado",
+                                    off: "Desactivado",
+                                    remote: true,
+                                    stage_id: stage.id,
+                                    project_id: @project.id,
+                                    phase_id: @phase.id
+                                } %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="4" class="text-center">
+          No hay <span class="text-lowercase"><%= @stage_plural %></span> creadas para esta
+          <span class="text-lowercase"><%= @phase_singular %></span>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>

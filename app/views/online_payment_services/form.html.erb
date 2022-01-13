@@ -1,0 +1,25 @@
+<% if local_assigns.has_key? :error %>
+  <div class="text-center d-flex align-items-center justify-content-center">
+    <div class="w-50">
+      <i class="fa fa-times-circle fa-5x text-danger"></i>
+      <h5 class="m-0 py-3">Error</h5>
+      <div class="text-center">
+        <%= error %>
+      </div>
+    </div>
+  </div>
+<% elsif @missing_fields.any? %>
+  <div class="mt-5 p-5 text-danger">
+    <label class="font-weight-bold">Falta información del cliente.</label>
+    Comuníquese con su asesor para completar la siguiente información:
+    <div class="ml-5">
+      <ul>
+        <% @missing_fields.each do |field| %>
+          <li><%= field %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% else %>
+<%= render "#{@online_payment_service.provider}_form", service: service, subscription: local_assigns.fetch(:subscription, false) %>
+<% end %>

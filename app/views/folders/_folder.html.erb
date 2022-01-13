@@ -1,0 +1,57 @@
+<div class="folder-card my-2 py-2 px-1 rounded border bg-light position-relative">
+  <%= link_to folder_path(folder), class: "text-decoration-none text-dark d-block text-left" do %>
+    <div class="card-main-data"><%= folder.project.name %> <%= ", #{folder.phase.name}" if folder.stage.show_full_name %></div>
+    <%= tag.div("#{folder.stage.name}, #{folder.lot.project.lot_entity_name} #{folder.lot.name}", class: "card-main-data") %>
+    <%= tag.div("Folio: #{folder.id}", class: "card-main-data") %>
+    <%= tag.small("Cliente: #{folder.client.label}", class: "card-secondary-data") %>
+    <%= tag.small("Asesor: #{folder.user.label}", class: "card-secondary-data") %>
+    <% if @role_view == :director %>
+      <small class="card-secondary-data">Subdirectores responsables:</small>
+      <div class="card-secondary-data ml-3">
+        <% folder.folder_users.filter { |fu| fu.user.role.key == "vice_director" }.each do |folder_user| %>
+          <small>- <%= folder_user.user.label %></small>
+        <% end %>
+      </div>
+    <% elsif @role_view == :vice_director %>
+      <small class="card-secondary-data">Gerentes responsables:</small>
+      <div class="card-secondary-data ml-3">
+        <% folder.folder_users.filter { |fu| fu.user.role.key == "manager" }.each do |folder_user| %>
+          <small>- <%= folder_user.user.label %></small>
+        <% end %>
+      </div>
+    <% elsif @role_view == :manager %>
+      <small class="card-secondary-data">Coordinadores responsables:</small>
+      <div class="card-secondary-data ml-3">
+        <% folder.folder_users.filter { |fu| fu.user.role.key == "coordinator" }.each do |folder_user| %>
+          <small>- <%= folder_user.user.label %></small>
+        <% end %>
+      </div>
+    <% elsif @role_view == :coordinator %>
+      <small class="card-secondary-data">Asesores responsables:</small>
+      <div class="card-secondary-data ml-3">
+        <% folder.folder_users.filter { |fu| fu.user.role.key == "salesman" }.each do |folder_user| %>
+          <small>- <%= folder_user.user.label %></small>
+        <% end %>
+      </div>
+    <% else %>
+      <small class="card-secondary-data">Responsable:</small>
+      <div class="card-secondary-data ml-3">
+        <small>- <%= folder.user.label %></small>
+      </div>
+    <% end %>
+    <%= tag.small("Tiempo de operación: #{operation_time(folder)}", class: "card-secondary-data") %>
+    <%= tag.small("Tiempo en el paso: #{time_in_step(folder, true)}", class: "card-secondary-data") if folder.step.present? && folder.step_logs.present? %>
+    <%= tag.small("Documentos: #{folder.required_documents_progress}", class: "card-secondary-data") %>
+    <%= tag.small("Monto de venta: #{number_to_currency(folder.total_sale)}", class: "card-secondary-data") %>
+    <% back_to_step = folder.times_in_step - 1 %>
+    <% back_to_step_label = back_to_step == 1 ? "una vez" : "#{back_to_step} veces" %>
+    <%= tag.i(class: "fa fa-info-circle pl-2", title: "Este expediente ha sido regresado #{back_to_step_label} a este paso", "aria-hidden": true, rel: "tooltip") if back_to_step > 0 %>
+  <% end %>
+  <%= image_tag folder.user.image_nil,
+                class: "step-avatar avatar-image rounded-circle p-1",
+                data: {
+                    toggle: "tooltip",
+                    placement: "top",
+                    title: "Vendedor: #{folder.user.label}"
+                } %>
+</div>

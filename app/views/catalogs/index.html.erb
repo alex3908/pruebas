@@ -1,0 +1,413 @@
+<div class="container">
+  <div class="row pb-5">
+    <div class="d-flex align-content-center flex-wrap col-sm-12 col-md-6">
+      <h2 class="project-name vertical-align m-0 p-0">Catálogos</h2>
+    </div>
+    <div class="col-sm-12 col-md-6 d-flex flex-middle-right flex-wrap">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row mb-3">
+    <% if can?(:read, Role) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to roles_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-user-circle-o fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Roles</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @roles %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Enterprise) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to enterprises_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-asterisk fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Empresas</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @enterprises %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Branch) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to branches_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-circle-o-notch fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Sucursales</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @branches %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Setting) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to settings_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-cogs fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Configuraciones</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @settings %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, PaymentMethod) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to payment_methods_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-money fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Métodos de Pago</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @payment_methods %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, IdentificationType) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to identification_types_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-id-card-o fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Identificaciones of.</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @identification_types %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Promotion) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to promotions_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-sort-amount-desc fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Promociones</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @promotions %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Evaluation) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to evaluations_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-check-square-o fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Evaluaciones</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @evaluations %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Signer) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to signers_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-pencil-square-o fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Firmantes</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @signers %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, LeadSource) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to lead_sources_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-key fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Llaves de Origen</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @lead_sources %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, CreditScheme) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to credit_schemes_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-dollar fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Crédito</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @credit_schemes %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, CommissionScheme) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to commission_schemes_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-dollar fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Comisiones</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @commission_schemes %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Tag) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to tags_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-tag fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Etiquetas</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @tags %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Contract) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to contracts_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-file-text-o fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Contratos</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @contracts %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Step) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to steps_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-th-list fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Pipeline</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @steps %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, DocumentTemplate) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to document_templates_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-file fa-4x" aria-hidden="true"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Documentos</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @document_templates %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, DocumentSection) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to document_sections_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-book fa-4x" aria-hidden="true"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Sección de Docs</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @document_sections %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, EmailTemplate) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to email_templates_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-tag fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Plantillas correos</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @document_email_templates %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, FolderUserConcept) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to folder_user_concepts_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-tag fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary">Responsables</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @folder_user_concepts %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, AdditionalConcept) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to additional_concepts_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-list-alt fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary text-no-wrap">Servicios Adicionales</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @additional_concepts %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @imports %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to imports_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-list-alt fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary text-no-wrap">Importadores</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, Classifier) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to classifiers_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-list-alt fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary text-no-wrap">Clasificadores</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @classifiers %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read_logs, JobStatus) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to read_logs_job_statuses_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-list-alt fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary text-no-wrap">Tareas</h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if can?(:read, ClientUserConcept) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to client_user_concepts_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-list-alt fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary text-no-wrap">Conceptos de cliente</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @client_user_concepts %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <% if can?(:read, FrequentQuestion) %>
+      <div class="col-xl-3 col-sm-6 py-2">
+        <%= link_to frequent_questions_path, class: "text-decoration-none" do %>
+          <div class="card bg-light text-white">
+            <div class="card-body bg-light">
+              <div class="rotate">
+                <i class="fa fa-question-circle-o fa-4x"></i>
+              </div>
+              <h6 class="text-uppercase text-secondary text-no-wrap">Preguntas Frecuentes</h6>
+              <h2 class="display-4 text-secondary border-0 p-0 m-0"><%= @frequent_questions %></h2>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

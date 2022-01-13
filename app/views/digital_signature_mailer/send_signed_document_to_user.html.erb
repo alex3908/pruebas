@@ -1,0 +1,7 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Estimado colaborador</span></h1>
+  <div style="text-align: center;">
+    <p>El expediente con número de folio <%= @folder.id %> correspondiente al <%= @folder.project.lot_entity_name %> <%= @folder.lot.name %> de <%= @folder.stage.name %> <%= @folder.phase.name %> ha finalizado su proceso de firma digital exitosamente.</p>
+    <p>Para visualizar el expediente, <a title="¡haz clic aquí!" href="<%= folder_url(@folder) %>">¡haz clic aquí!</a></p>
+  </div>
+<% end %>

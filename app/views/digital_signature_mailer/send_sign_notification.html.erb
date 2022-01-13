@@ -1,0 +1,10 @@
+ <%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">ESTIMADO <%= @signer_name %></span></h1>
+  &nbsp;
+  <div style="text-align: center;">
+    <p>
+        <span>TE INFORMAMOS QUE EL PROCESO DE FIRMA DEL EXPEDIENTE CON FOLIO <%= @folder.id %> DE <%= @project.name.upcase %> <%= @project.stage_entity_name.upcase %> <%= @stage.id %> <%= @project.lot_entity_name.upcase %> <%= @lot.id %> YA FUE REALIZADO POR EL CLIENTE <%= @participant_name %>.</span>
+    </p>
+    <p>SALUDOS</p>
+  </div>
+ <% end %>

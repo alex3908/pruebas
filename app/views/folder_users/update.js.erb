@@ -1,0 +1,38 @@
+$('#modal-window').modal('hide')
+
+<% if exist_folder_user %>
+  Swal.fire({
+    title: 'Este usuario ya es un responsable de esta venta',
+    type: 'warning',
+    confirmButtonText: 'Continuar',
+    customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  });
+<% elsif @updated_folder_user %>
+  Swal.fire({
+      title: '¡Responsable actualizado!',
+      type: 'success',
+      confirmButtonText: 'Continuar',
+      customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false
+  });
+<% else %>
+  Swal.fire({
+      title: 'Hubo un error al actualizar el responsabe',
+      type: 'error',
+      confirmButtonText: 'Continuar',
+      customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+      },
+      buttonsStyling: false
+  });
+<% end %>
+
+$("#folder-users-table").html("<%= escape_javascript(render partial: 'folders/sections/folder_users') %>"); 

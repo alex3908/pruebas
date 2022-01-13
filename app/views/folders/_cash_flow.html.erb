@@ -1,0 +1,64 @@
+<div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-additional">
+  <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Flujo de caja</p>
+  </div>
+  <div class="collapse" id="collapse-section" data-parent="#accordion-additional">
+    <div class="widget-body">
+      <div class="mt">
+        <div class="width-200 float-right">
+        </div>
+        <% if @show_cash_flows.empty? %>
+          <p class="pb-3 m-0">No se tienen registros en Representa un ingreso</p>
+        <% end %>
+        <div class="log-container">
+          <div class="py-2">
+            <div class="table-container-without-height">
+              <table class="table table-bordered background-white">
+                <thead>
+                <tr>
+                  <th width="20%">Fecha</th>
+                  <th width="20%">Cliente</th>
+                  <th width="20%">Sucursal</th>
+                  <th width="20%">Metodo de pago</th>
+                  <th width="20%">Cuenta Bancaria</th>
+                  <th width="20%">Monto</th>
+                  <th width="20%">Concepto</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @show_cash_flows.each do |values| %>
+                  <% if values.payment_method.payment_is_income == true %>
+                    <tr>
+                      <td>
+                        <%= values.date %>
+                      </td>
+                      <td>
+                        <%= values.client.name %>
+                      </td>
+                      <td>
+                        <%= values.branch.name %>
+                      </td>
+                      <td>
+                        <%= values.payment_method.name %>
+                      </td>
+                      <td>
+                        <%= values.bank_account.bank if values.bank_account.present? %>
+                      </td>
+                      <td>
+                        <%= values.amount %>
+                      </td>
+                      <td>
+                        <%= concept_with_percentage(values) %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

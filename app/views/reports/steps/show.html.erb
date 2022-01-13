@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Reporte de pipeline</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Reportes", reports_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Pipeline</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<%= form_tag(step_reports_path, method: :post, data: { controller: "export", 'target': "export.form", 'export-url': export_historic_steps_url(format: :json) }) do %>
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-md-6 col-lg-3 mb-3">
+        <%= label_tag :report_date, "Buscar desde la fecha:" %>
+        <%= text_field_tag :report_date, true, { id: "pipeline-report-date", class: "form-control", value: params[:report_date], required: false, placeholder: "dd-mm-yyyy hh:mm" } %>
+      </div>
+
+      <div class="col-md-12 col-lg-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar histórico
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+<%= form_tag(step_reports_path, method: :post, data: { controller: "export", 'target': "export.form", 'export-url': export_average_times_steps_url(format: :json) }) do %>
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-md-12 col-lg-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar promedios por paso
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%= form_tag(step_reports_path, method: :post, data: { controller: "export", 'target': "export.form", 'export-url': export_elapsed_times_per_folder_steps_url(format: :json) }) do %>
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-md-12 col-lg-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar tiempos por expediente
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

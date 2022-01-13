@@ -1,0 +1,73 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Etiquetas</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+      <%= link_to("Nueva Etiqueta", new_tag_path, class: "btn btn-primary") if can?(:create, Tag) %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @tags.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado etiquetas.
+      </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container-without-height">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Titulo</th>
+          <th>Llave</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @tags.each do |tag| %>
+          <tr>
+            <td><%= tag.name %></td>
+            <td><%= tag.key %></td>
+            <td class="text-center">
+              <% if can?(:change_status, Tag) %>
+                <div class="p-2">
+                  <%= check_box_tag "complete", tag.active, tag.active,
+                                    data: {
+                                        activate: "toggle",
+                                        onstyle: "success",
+                                        offstyle: "secondary",
+                                        on: "Activa",
+                                        off: "Oculta",
+                                        remote: true,
+                                        url: change_status_tag_path(tag), method: :patch
+                                    } %>
+                </div>
+              <% end %>
+              <%= link_to(fa_icon("edit"), edit_tag_path(tag), class: "table-link", data: { toggle: "tooltip" }, title: "Editar") if can?(:update, Tag) %>
+              <%= link_to(fa_icon("trash"), tag_path(tag), class: "table-link", method: :delete, data: { toggle: "tooltip", confirm: "¿Estás seguro?" }, title: "Eliminar") if can?(:destroy, Tag) %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@tags, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

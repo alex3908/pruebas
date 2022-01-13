@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h3 class="banner-title vertical-align p-0 m-0">Descuentos Base</h3>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Esquemas de crédito", credit_schemes_path, class: "text-capitalize" %></li>
+        <li class="breadcrumb-item active" aria-current="page">Editar Descuento</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <%= render "form", discount: @discount %>
+</div>

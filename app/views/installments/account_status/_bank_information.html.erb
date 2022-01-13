@@ -1,0 +1,42 @@
+<hr class="accent-line">
+<div class="primary-light-background">Información Bancaria</div>
+<hr class="accent-line">
+<% if @stage.enterprise.online_payment_services.stp.any? %>
+  <div class="payments-table pt-3">
+  <table class="table">
+    <tbody>
+    <tr>
+      <th class="normal-header">Banco</th>
+      <th class="normal-header">Titular</th>
+      <th class="normal-header">Clabe</th>
+    </tr>
+    <tr class="no-border">
+      <td class="gray-light-row">STP</td>
+      <td class="gray-light-row"><%= @stage.enterprise.business_name %></td>
+      <td class="gray-row"><%= @folder.stp_clabe %></td>
+    </tr>
+    </tbody>
+  </table>
+  </div>
+<% elsif @bank_accounts.count == 0 %>
+  <div class="d-block text-center mt-3">No se ha encontrado ninguna cuenta bancaria.</div>
+<% else %>
+  <div class="payments-table pt-3">
+  <table class="table">
+    <tbody>
+    <tr>
+      <th class="normal-header">Banco</th>
+      <th class="normal-header">Cuenta</th>
+      <th class="normal-header">Clabe</th>
+    </tr>
+    <% @bank_accounts.each do |bank_account| %>
+      <tr class="no-border">
+        <td class="gray-light-row"><%= bank_account.bank %></td>
+        <td class="gray-light-row"><%= bank_account.account_number %></td>
+        <td class="gray-row"><%= bank_account.clabe %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  </div>
+<% end %>

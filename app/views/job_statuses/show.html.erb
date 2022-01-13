@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Solicitudes de Archivos</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Archivos</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <ul>
+        <li>Archivo: <b><%= @job_status.name %></b></li>
+        <li>Solicitado: <b><%= I18n.l(@job_status.created_at, format: "%l:%M %P %d/%b/%y") %></b></li>
+        <li>Expira: <b><%= I18n.l(@job_status.expires_at, format: "%l:%M %P %d/%b/%y") if @job_status.expires_at.present? %></b></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div data-controller="job-status"
+        data-job-status-url="<%= job_status_path(@job_status, format: :json) %>"
+        data-job-status-cancel-url="<%= cancel_job_status_path(@job_status, format: :json) %>">
+
+        <figure class="highlight">
+          <pre>
+            <code data-target="job-status.log">
+              <%= @job_status.log %>
+            </code>
+          </pre>
+        </figure>
+
+        <%= link_to "Descargar", "#", class: "btn btn-secondary d-none", data: { target: "job-status.download" } %>
+        <%= link_to "Cancelar", "#", class: "btn btn-danger d-none", data: { target: "job-status.cancel", action: "job-status#cancel" } if can?(:cancel, JobStatus) && @job_status.status == "pending" %>
+      </div>
+    </div>
+  </div>
+</div>

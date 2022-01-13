@@ -1,0 +1,27 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1>Confirmación de correo</h1>
+  &nbsp;
+  <p>
+    <strong><span>Hola <%= @client.email %>!</span></strong>
+  </p>
+  <p>
+    <span>
+      Puedes confirmar tu correo electrónico a través del siguiente enlace:
+    </span>
+  </p>
+<% end %>
+<%= render layout: "components/mailer_block" do %>
+  <%= render partial: "components/mailer_button", locals: { title: "Confirmar mi correo", url: confirm_email_client_url(@client), target: "_blank"  } %>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <span>
+      Si tiene preguntas no dude en contactarnos
+    </span>
+      <br>
+    <span>
+      ¡Saludos!
+    </span>
+  </p>
+<% end %>

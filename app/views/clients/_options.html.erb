@@ -1,0 +1,20 @@
+<div class="btn-toolbar mb-4 pb-3 section-buttons" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group" role="group">
+    <%= link_to "Regresar", clients_path, class: "btn btn-secondary custom-button-size vertical-align" %>
+    <%= link_to "Editar", edit_client_path(@client), class: "btn btn-dark custom-button-size vertical-align" %>
+    <% if @client.official_identification.attached? || @client.curp.attached? || @client.address_proof.attached? || @client.constitutional_act.attached? || @client.fiscal_act.attached? %>
+      <div class="btn-group" role="group">
+        <button id="client_files" type="button" class="btn btn-secondary custom-button-size dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Archivos
+        </button>
+        <div class="dropdown-menu" aria-labelledby="client_files">
+          <%= link_to("Identificación Oficial", rails_blob_path(@client.official_identification), class: "dropdown-item", target: "_blank") if @client.official_identification.attached? %>
+          <%= link_to("CURP", rails_blob_path(@client.curp), class: "dropdown-item", target: "_blank") if @client.curp.attached? %>
+          <%= link_to("Comprobante de Domicilio", rails_blob_path(@client.address_proof), class: "dropdown-item", target: "_blank") if @client.address_proof.attached? %>
+          <%= link_to("Acta Constitucional", rails_blob_path(@client.constitutional_act), class: "dropdown-item", target: "_blank") if @client.constitutional_act.attached? %>
+          <%= link_to("Acta Fiscal", rails_blob_path(@client.fiscal_act), class: "dropdown-item", target: "_blank") if @client.fiscal_act.attached? %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

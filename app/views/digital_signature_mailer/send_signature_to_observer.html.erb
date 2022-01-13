@@ -1,0 +1,10 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">¡HOLA <%= @participant_name %>!</span></h1>
+  <div style="text-align: center;">
+    <p>
+      Se ha enviado para su revisión la firma digital de <%= @folder.project.stage_entity_name %> <%= @folder.stage.name %> <%= @folder.project.lot_entity_name %>
+      <%= @folder.lot.name %> del proyecto <%= @folder.project.name %>.
+    </p>
+    <p>Para consultar el proceso de firma del contrato, <a title="¡haz clic aquí!" href="<%= @document_link %>">¡haz clic aquí!</a>
+  </div>
+<% end %>

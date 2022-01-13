@@ -1,0 +1,139 @@
+identificacion_base: &identificacion
+  t: Identificacón
+  fecha: Fecha
+  institucion: Institución
+  tipo: Tipo
+  numero: Número
+
+clientes: Clientes
+
+cliente:
+  t: Cliente
+  nombre: Nombre
+  primer_apellido: Primer apellido 
+  segundo_apellido: Segundo apellido
+  telefono: Teléfono
+  telefono_secundario_presente: Teléfono secundario presente
+  telefono_secundario: Teléfono secundario
+  email: Correo electrónico
+  es_mujer: Sexo femenino
+  es_hombre: Sexo masculino
+  genero: Género
+  pronombre_el: Pronombre el
+  pronombre_al: Pronombre al
+  identificacion: *identificacion
+  empresa:
+    t: Empresa
+    rfc: RFC
+    nombre: Nombre
+    notaria: Notaría
+    actividad: Actividad
+    fecha_de_constitucion: Fecha de constitución
+    identificacion: *identificacion
+  notario_publico:
+    t: Notario Público
+    nombre: Nombre
+    numero: Número
+    catalogo_de_la_republica: Catálogo de la República
+  numero_de_folio_electronico_mercantil: Número de folio electrónico mercantil
+  estado_del_registro_publico: Estado del registro público de la propiedad y comercio
+  fecha_del_registro_publico: Fecha del registro público de la propiedad y comercio
+  representante_legal:
+    t: Representante legal
+    nombre: Nombre
+    rfc: RFC
+    curp: CURP
+    fecha_de_nacimiento: Fecha de nacimiento
+    nacionalidad: Nacionalidad
+    pais_de_nacimiento: País de nacimiento
+    identificacion: *identificacion
+  rfc: RFC
+  curp: CURP
+  ocupacion: Ocupación
+  estado_civil: Estado civil
+  regimen_matrimonio: Régimen matrimonio
+  fecha_de_nacimiento: Fecha de nacimiento
+  nacionalidad: Nacionalidad
+  pais_de_nacimiento: País de nacimiento
+  direccion:
+    t: Dirección
+    domicilio: Domicilio
+    numero_exterior: Número exterior
+    tiene_numero_interior: ¿Tiene número interior?
+    numero_interior: Número interior
+    colonia: Colonia
+    tiene_localidad: ¿Tiene Localidad?
+    localidad: Localidad
+    ciudad: Ciudad
+    estado: Estado
+    pais: País
+    codigo_postal: Código postal
+
+lote:
+  t: Lote
+  referencia: Referencia
+  nombre: Nombre
+  area: Área
+  nivel_2: Nivel 2
+  nivel_2_fecha: Fecha de inicio
+  nivel_1: Nivel 1
+  nivel_0: Nivel 0
+  folio: Folio catastral
+  tablaje: Tablaje
+  proindiviso: Proindiviso
+
+reserva:
+  t: Reserva
+  fecha_de_reserva: Fecha de reserva
+  folio: Folio de la reserva
+  status: Paso de la reserva
+  esta_cancelado: Esta cancelado
+  esta_expirado: Esta expirado
+  razones_de_rechazo: Razones de rechazo
+  razon_de_cancelacion: Razón de cancelación
+  stp_clabe: Clabe STP
+
+financiamiento:
+  t: Financiamiento
+  total: Total
+  pagos: Pagos
+  saldo: Saldo
+  metro_cuadrado: Metro cuadrado
+  actualizaciones: Actualizaciones
+  parcialidades: Parcialidades
+  enganche:
+    t: Enganche
+    total: Total
+    saldo: Saldo
+    anticipo: Anticipo
+    porcentaje: Porcentaje
+    pagos: Pagos
+
+pago:
+  t: Pago
+  pago: Pago
+  fecha: Fecha
+  numero: Número
+
+actualizacion:
+  t: Actualizacion
+  monto: Monto
+  total_pagos: Total pagos
+  interes: Interés
+
+parcialidad:
+  t: Parcialidad
+  pago: Pago
+  fecha: Fecha
+  numero: Número
+  capital: Capital
+  interes: Interés
+
+proyecto:
+  t: Proyecto
+  entidad:
+    t: Entidades de venta
+    primer_nivel: Primer nivel
+    segundo_nivel: Segundo nivel
+    tercer_nivel: Tercer nivel
+    cuarto_nivel: Cuarto nivel

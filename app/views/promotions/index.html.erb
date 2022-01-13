@@ -1,0 +1,116 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0"><%= Promotion.model_name.human(count: 2) %></h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to t('buttons.back'), catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+      <% if can?(:create, Promotion) %>
+        <%= link_to t('.new', item: Promotion.model_name.human), new_promotion_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <div class="accordion collapse-elements px-4 mb-4" id="accordion-additional">
+    <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+      <p class="text-left vertical-align m-0 py-3 color-primary"><%= t('filters') %></p>
+    </div>
+    <div class="collapse show" id="collapse-section" data-parent="#accordion-additional">
+      <%= form_tag(promotions_path, method: :get) do %>
+        <%= hidden_field_tag :direction, params[:direction] %>
+        <%= hidden_field_tag :sort, params[:sort] %>
+        <div class="container py-3">
+          <div class="row">
+            <div class="col-md-12">
+              <%= label_tag :search_name, t('.search_for_name') %>
+              <%= text_field_tag :search_name, params[:search_name], class: "form-control" %>
+            </div>
+            <div class="col-md-12 col-lg-12 text-right pt-3">
+              <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+                <i class="fa fa-search" aria-hidden="true"></i> <%= t('buttons.search') %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if @promotions.empty? %>
+  <div class="container">
+    <p><%= t('table.no_records_yet', model: Promotion.model_name.human(count: 2)) %></p>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th><%= sortable "name", t('.table.name') %></th>
+          <th><%= sortable "start_date", t('.table.start_date') %></th>
+          <th><%= sortable "end_date", t('.table.end_date') %></th>
+          <th><%= sortable "amount", t('.table.amount') %></th>
+          <th><%= sortable "min_area", t('.table.min_area') %></th>
+          <th><%= sortable "term_min", t('.table.term_min') %></th>
+          <th><%= sortable "downpayment_min", t('.table.downpayment_min') %></th>
+          <th><%= sortable "operation", t('.table.operation') %></th>
+          <th><%= t('.table.state') %></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @promotions.each do |promotion| %>
+          <tr>
+            <td class="align-middle"><%= promotion.name %></td>
+            <td class="align-middle"><%= promotion.start_date %></td>
+            <td class="align-middle"><%= promotion.end_date || "∞" %></td>
+            <td class="align-middle"><%= "%.2f" % (promotion.amount * 100) %> <% if promotion.discount_type == "amount" %> $ <% else %> % <% end %> </td>
+            <td class="align-middle"><%= promotion.min_area %> - <%= promotion.max_area || "∞" %></td>
+            <td class="align-middle"><%= promotion.term_min %> - <%= promotion.term_max || "∞" %></td>
+            <td class="align-middle"><%= promotion.downpayment_min %> - <%= promotion.downpayment_max || "∞" %></td>
+            <td class="align-middle"><%= promotion.operation_label %></td>
+            <td class="align-middle">
+              <% if promotion.active %>
+                <span class="badge badge-success"><%= t('on_') %></span>
+              <% else %>
+                <span class="badge badge-light"><%= t('off_') %></span>
+              <% end %>
+              <br>
+              <% if promotion.coupons.any? %>
+                <span class="badge badge-light"><%= t('.coupon') %></span>
+              <% end %>
+            </td>
+            <td class="text-right">
+              <% if can?(:update, Promotion) %>
+                <%= link_to(fa_icon("edit"), edit_promotion_path(promotion), class: "table-link") %>
+              <% end %>
+              <% if can?(:activate_promotion, Promotion) %>
+                <%= link_to(fa_icon("eye"), promotion_path(promotion), class: "table-link") %>
+              <% end %>
+              <% if can?(:read, Coupon) && promotion.enabled_coupons %>
+                <%= link_to(fa_icon("tag"), promotion_coupons_path(promotion), class: "table-link") %>
+              <% end %>
+              <% if can?(:destroy, Promotion) %>
+                <%= link_to(fa_icon("trash"), promotion, method: :delete, data: { confirm: t('confirmations.destroy?') }, class: "table-link") %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@promotions, renderer: WillPaginate::ActionView::LinkRenderer) %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        <%= t('show') %> <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> <%= t('per_page') %>
+      </div>
+    </div>
+  </div>
+<% end %>

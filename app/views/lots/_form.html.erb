@@ -1,0 +1,492 @@
+<%= form_with(model: lot, local: true, url: [@project, @phase, @stage, lot, page: params[:page]]) do |form| %>
+  <% if lot.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(lot.errors.count, "error") %> prohibited this lot from being saved:</h2>
+
+      <ul>
+        <% lot.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <fieldset>
+    <legend>General</legend>
+    <div class="row">
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :identification_name %>
+        <%= form.text_field :identification_name, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :colloquial_name %>
+        <%= form.text_field :colloquial_name, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :number, "Número" %>
+        <%= form.number_field :number, step: 1, class: "form-control", required: true %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :label, "Clasificador" %>
+        <%= form.text_field :label, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :depth, "Fondo" %>
+        <div class="input-group">
+          <%= form.number_field :depth, step: 0.001, class: "form-control" %>
+          <div class="input-group-append">
+            <span class="input-group-text">metros</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :front, "Frente" %>
+        <div class="input-group">
+          <%= form.number_field :front, step: 0.001, class: "form-control" %>
+          <div class="input-group-append">
+            <span class="input-group-text">metros</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :acquisition_cost %>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= form.number_field :acquisition_cost, step: 0.001, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :area, "Área" %>
+        <div class="input-group">
+          <%= form.number_field :area, step: 0.001, class: "form-control", required: true %>
+          <div class="input-group-append">
+            <span class="input-group-text">m<sup>2</sup></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :price do %> Precio adicional por m<sup>2</sup> <% end %>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= form.number_field :price, step: 0.001, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :fixed_price do %> Precio fijo final <%= help_tooltip("Ingresa el costo total final de tu #{@lot_singular}. NOTA: Si utilizas este campo se ignorará el precio de la global configurado.") %><% end %>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <%= form.number_field :fixed_price, step: 0.001, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :color do %>Color de Disponibilidad <%= help_tooltip("Elige un color personalizado para este #{@lot_singular} para sobreescribir el color original.") %><% end %>
+        <div data-color-rgba class="input-group" title="Disponibilidad">
+          <%= form.text_field :color, class: "form-control" %>
+          <span class="input-group-append">
+            <span class="input-group-text colorpicker-input-addon"><i></i></span>
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :status, "Estado", class: "text-capitalize" %>
+        <%= form.select(:status, options_for_select(Lot.statuses.keys.map { |key| [I18n.t("activerecord.attributes.lot.statuses.#{key}"), key] }, @lot.status), { include_blank: "Selecciona un estado" }, class: "form-control", required: true) %>
+      </div>
+    </div>
+  </fieldset>
+
+  <hr>
+
+  <fieldset>
+    <legend>Gráficos</legend>
+    <div class="row">
+
+      <div class="form-group col-sm-12 col-md-6">
+        <label>Mapa Ilustrativo</label>
+        <div class="custom-file">
+          <%= form.file_field :chepina, accept: "image/*", class: "custom-file-input" %>
+          <%= form.label :chepina, "Elegir Archivo" + (@lot.chepina.attached? ? " (Se reemplazará el existente)" : ""), class: "custom-file-label" %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <label>Plano del <%= @lot_singular %></label>
+        <div class="custom-file">
+          <%= form.file_field :map, accept: "image/*", class: "custom-file-input" %>
+          <%= form.label :map, "Elegir Archivo" + (@lot.map.attached? ? " (Se reemplazará el existente)" : ""), class: "custom-file-label" %>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <hr>
+
+  <fieldset>
+
+    <legend>Anexos <%= help_tooltip("Agrega aquí anexos que se presentaran únicamente en este #{@lot_singular}.") %></legend>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <label>Anexos PDF</label>
+        <div class="custom-file">
+          <%= form.file_field :pdf_annexes, multiple: true, accept: "application/pdf", class: "custom-file-input" %>
+          <%= form.label :pdf_annexes, "Elegir Archivo", class: "custom-file-label" %>
+        </div>
+      </div>
+    </div>
+    <% if @lot.pdf_annexes.attachments.size > 0 %>
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-striped tablesaw tablesaw-stack">
+            <thead>
+              <tr>
+                <th width="70%">Archivos Configurados</th>
+                <th width="30%" class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @lot.pdf_annexes.attachments.each do |attachment| %>
+                <tr>
+                  <td class="align-middle">
+                    <%= attachment.filename %>
+                  </td>
+
+                  <td class="align-middle text-center">
+                    <%= link_to attachment.service_url, target: "_blank", style: "text-decoration:none" do %>
+                      <i class="fa fa-eye mx-1"></i>
+                    <% end %>
+                    <%= link_to remove_file_project_phase_stage_lot_path(@project, @phase, @stage, key: attachment.id), method: :delete, data: { confirm: "¿Estás seguro de eliminar el archivo #{attachment.filename}?" }, style: "text-decoration:none" do %>
+                      <i class="fa fa-trash-o fa-folder-size icon-red mx-1"></i>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+
+  </fieldset>
+
+  <hr>
+
+  <fieldset>
+
+    <legend>Anexo <%= @lot_singular %> Chepina <%= help_tooltip("Personaliza la descripción que aparecerá arriba de la chepina de este #{@lot_singular} específico. Se ignorará la configuración de la etapa.") %></legend>
+
+    <div class="form-group col-sm-12 col-md-12">
+      <%= form.label :description, "Descripción de Anexo #{@lot_singular} Chepina" %>
+      <%= form.text_area :description, class: "tinymce", "v-pre": '' %>
+
+      <div class="label-container pt-3">
+        <% @tags.each do |tag| %>
+          <div class="square-label" draggable="true" ondragstart="event.dataTransfer.setData('text/plain','{{<%= tag.key %>}}')"><%= tag.name %></div>
+        <% end %>
+      </div>
+    </div>
+
+  </fieldset>
+
+  <hr>
+
+  <%= render "collapsible", identifier: "optionals" do %>
+    <% content_for :content, flush: true do %>
+      <div class="mx-1">
+        <fieldset>
+          <%= render "collapsible", identifier: "inventario" do %>
+            <% content_for :toggler, flush: true do %>
+              <legend>Inventario</legend>
+            <% end %>
+            <% content_for :content, flush: true do %>
+              <div class="row">
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :market_price %>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">$</span>
+                    </div>
+                    <%= form.number_field :market_price, step: 0.001, class: "form-control" %>
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :planking, "Tablaje" %>
+                  <%= form.text_field :planking, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :folio, "Folio catastral" %>
+                  <%= form.text_field :folio, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :undivided, "Proindiviso" %>
+                  <div class="input-group">
+                    <%= form.text_field :undivided, class: "form-control" %>
+                    <div class="input-group-append">
+                      <span class="input-group-text">%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :exchange_rate %>
+                  <%= form.number_field :exchange_rate, step: 0.001, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :owner_name %>
+                  <%= form.text_field :owner_name, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :vocation %>
+                  <%= form.text_field :vocation, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :descriptive_status %>
+                  <%= form.text_field :descriptive_status, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :blocks %>
+                  <%= form.text_field :blocks, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :geographic_location %>
+                  <%= form.text_field :geographic_location, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :ownership_percent %>
+                  <%= form.number_field :ownership_percent, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :coowners %>
+                  <%= form.text_field :coowners, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :liquidity %>
+                  <%= form.text_field :liquidity, class: "form-control" %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </fieldset>
+
+        <hr>
+
+        <fieldset>
+          <%= render "collapsible", identifier: "direccion" do %>
+            <% content_for :toggler, flush: true do %>
+              <legend>Dirección</legend>
+            <% end %>
+            <% content_for :content, flush: true do %>
+              <%= form.fields_for :address do |additional_form| %>
+                <%= render "addresses/form", form: additional_form %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </fieldset>
+
+        <hr>
+
+        <fieldset>
+          <%= render "collapsible", identifier: "estructuras" do %>
+            <% content_for :toggler, flush: true do %>
+              <legend>Escrituras y permisos</legend>
+            <% end %>
+            <% content_for :content, flush: true do %>
+              <div class="row">
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <label>Escrituras</label>
+                  <div class="custom-file">
+                    <%= form.file_field :scripture, accept: "image/*,application/pdf", class: "custom-file-input" %>
+                    <%= form.label :scripture, "Elegir Archivo" + (@lot.scripture.attached? ? " (Se reemplazará el existente)" : ""), class: "custom-file-label" %>
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <label>Permisos</label>
+                  <div class="custom-file">
+                    <%= form.file_field :permission, accept: "image/*,application/pdf", class: "custom-file-input" %>
+                    <%= form.label :permission, "Elegir Archivo" + (@lot.permission.attached? ? " (Se reemplazará el existente)" : ""), class: "custom-file-label" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </fieldset>
+
+        <hr>
+
+        <fieldset>
+          <%= render "collapsible", identifier: "colindancias" do %>
+            <% content_for :toggler, flush: true do %>
+              <legend>Colindancias</legend>
+            <% end %>
+            <% content_for :content, flush: true do %>
+              <div class="row">
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :north, "Norte" %>
+                  <div class="input-group">
+                    <%= form.number_field :north, step: 0.001, class: "form-control" %>
+                    <div class="input-group-append">
+                      <span class="input-group-text">metros</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :adjoining_north, "Colinda al Norte con" %>
+                  <%= form.text_field :adjoining_north, step: 0.001, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :south, "Sur" %>
+                  <div class="input-group">
+                    <%= form.number_field :south, step: 0.001, class: "form-control" %>
+                    <div class="input-group-append">
+                      <span class="input-group-text">metros</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :adjoining_south, "Colinda al Sur con" %>
+                  <%= form.text_field :adjoining_south, step: 0.001, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :east, "Este" %>
+                  <div class="input-group">
+                    <%= form.number_field :east, step: 0.001, class: "form-control" %>
+                    <div class="input-group-append">
+                      <span class="input-group-text">metros</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :adjoining_east, "Colinda al Este con" %>
+                  <%= form.text_field :adjoining_east, step: 0.001, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :west, "Oeste" %>
+                  <div class="input-group">
+                    <%= form.number_field :west, step: 0.001, class: "form-control" %>
+                    <div class="input-group-append">
+                      <span class="input-group-text">metros</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :adjoining_west, "Colinda al Oeste con" %>
+                  <%= form.text_field :adjoining_west, step: 0.001, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :northeast, "Noreste" %>
+                  <div class="input-group">
+                    <%= form.number_field :northeast, step: 0.001, class: "form-control" %>
+                    <div class="input-group-append">
+                      <span class="input-group-text">metros</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :adjoining_northeast, "Colinda al Noreste con" %>
+                  <%= form.text_field :adjoining_northeast, step: 0.001, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :southeast, "Sureste" %>
+                  <div class="input-group">
+                    <%= form.number_field :southeast, step: 0.001, class: "form-control" %>
+                    <div class="input-group-append">
+                      <span class="input-group-text">metros</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :adjoining_southeast, "Colinda al Sureste con" %>
+                  <%= form.text_field :adjoining_southeast, step: 0.001, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :northwest, "Noroeste" %>
+                  <div class="input-group">
+                    <%= form.number_field :northwest, step: 0.001, class: "form-control" %>
+                    <div class="input-group-append">
+                      <span class="input-group-text">metros</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :adjoining_northwest, "Colinda al Noroeste con" %>
+                  <%= form.text_field :adjoining_northwest, step: 0.001, class: "form-control" %>
+                </div>
+
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :southwest, "Suroeste" %>
+                  <div class="input-group">
+                    <%= form.number_field :southwest, step: 0.001, class: "form-control" %>
+                    <div class="input-group-append">
+                      <span class="input-group-text">metros</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-sm-12 col-md-6">
+                  <%= form.label :adjoining_southwest, "Colinda al Suroeste con" %>
+                  <%= form.text_field :adjoining_southwest, step: 0.001, class: "form-control" %>
+                </div>
+
+              </div>
+            <% end %>
+          <% end %>
+        </fieldset>
+      </div>
+    <% end %>
+
+    <%#= This :toggler should go at the bottom to avoid getting replaced by the nested togglers %>
+    <% content_for :toggler, flush: true do %>
+      <h3>Opcionales</h3>
+    <% end %>
+  <% end %>
+
+  <hr>
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-12">
+      <div class="actions py-3">
+        <div class="actions py-3">
+          <%= link_to "Cancelar", project_phase_stage_lots_path, class: "btn btn-secondary" %>
+          <%= form.submit "Guardar", class: "btn btn-primary" %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

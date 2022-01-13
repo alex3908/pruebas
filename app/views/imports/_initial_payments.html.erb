@@ -1,0 +1,47 @@
+<div class="modal" tabindex="-1" id="initialPaymentsModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Pagos iniciales</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= form_tag(import_charges_imports_path, method: :post, multipart: true, class: "", data: { "controller": "importfilters", "target": "importfilters.form", "importfilters-url": import_charges_imports_path(format: :json) }) do %>
+          <%= select_tag "project",
+                          options_for_select(Project.order(:name).pluck(:name, :id)),
+                          include_blank: t('selecciona un proyecto'),
+                          data: {
+                            controller: "corrections",
+                            action: "change->corrections#phasesChange",
+                            targetbox: "phasespayments"
+                          }, class: "form form-group form-control" %>
+
+          <%= select_tag "phasespayments",
+                          options_for_select(Phase.order(:name).pluck(:name, :id)),
+                          include_black: t('Selecciona una fase'),
+                          disabled: true,
+                          data: {
+                            controller: "corrections",
+                            action: "change->corrections#stagesChange",
+                            targetbox: "stagespayments"
+                          }, class: "form form-group form-control" %>
+
+           <%= select_tag "stagespayments",
+                          options_for_select(Stage.order(:name).pluck(:name, :id)),
+                          include_black: t('Selecciona un estado'),
+                          disabled: true,
+                          data: {
+                            target: "importfilters.filter"
+                          }, class: "form form-group form-control" %>
+
+          <input type="file" class="d-none" accept=".xls, .xlsx" id="import_initialPaymentsFile" data-target="importfilters.input" data-action="importfilters#upload">
+          <label class="btn btn-outline-primary mr-1 ml-1 float-right" for="import_initialPaymentsFile">
+          Importar
+          </label>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

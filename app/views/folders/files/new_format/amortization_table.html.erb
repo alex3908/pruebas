@@ -1,0 +1,28 @@
+  <%= render partial: "folders/files/new_format/partials/amortization_cover" %>
+  <% if @folder.canceled? %>
+    <%= render partial: "quotes/new_format/amortization_table_for_pdf", locals: { valid_for_folder: true,
+                                                                                amr: @amr,
+                                                                                have_capital_payment: @quotation.have_capital_payment,
+                                                                                down_payment_monthly_payments: @quotation.down_payment_monthly_payments,
+                                                                                capital_total: @capital_total,
+                                                                                interest_total: @interest_total,
+                                                                                down_payment_total: @down_payment_total,
+                                                                                payment_total: @payment_total,
+                                                                                capital_payments_total: @capital_payments_total
+    } %>
+
+<% else %>
+  <%= render partial: @smaller_amortization ? "folders/files/partials/amortization_table_squashed_for_pdf" : "folders/files/new_format/partials/amortization_table_for_pdf",
+                                                                locals: {
+                                                                   valid_for_folder: true,
+                                                                   amr: @amr,
+                                                                   have_capital_payment: @quotation.have_capital_payment,
+                                                                   down_payment_monthly_payments: @down_payment_installments,
+                                                                   capital_total: @capital_total,
+                                                                   interest_total: @interest_total,
+                                                                   down_payment_total: @down_payment_total,
+                                                                   payment_total: @payment_total,
+                                                                   capital_payments_total: @capital_payments_total,
+                                                                   show_interest: @folder.show_interest
+  } %>
+<% end %>

@@ -1,0 +1,97 @@
+
+<%= form_with(model: @automated_email, local: true, url: [@email_template, @automated_email]) do |form| %>
+  <%= form.hidden_field :automated_type, value: :folders %>
+
+  <div class="row">
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :step_id, "Paso" %>
+      <%= form.select(:step_id, @steps.collect { |u| [u.name, u.id] }, { include_blank: "Selecciona un paso" }, class: "form-control", required: true) %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :reciever_type, "Tipo", class: "text-capitalize" %>
+      <%= form.select(:reciever_type, options_for_select(AutomatedEmail.recievers.keys.map { |key| [I18n.t("activerecord.attributes.automated_email.recievers.#{key}"), key] }, @automated_email.reciever_type), { include_blank: "Selecciona un tipo de usuario" }, class: "form-control", required: true) %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6" id="responsable">
+      <%= form.label :folder_user_concept_ids, "Tipo de responsable" %>
+      <div id="folder_user">
+        <%= form.select :folder_user_concept_ids, @folder_user_concepts.collect { |fuc| [fuc.name, fuc.id] }, {}, multiple: true, required: false %>
+      </div>
+      <div id="client_user">
+        <%= form.select :client_user_concept_ids, @client_user_concepts.collect { |fuc| [fuc.name, fuc.id] }, {}, multiple: true, required: false %>
+      </div>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :emails, "Correos adicionales" %>
+      <%= form.text_field :emails, class: "form-control", value: @automated_email.emails_information&.join(", ") %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :execution_type, "Tipo de ejecución" %>
+      <%= form.select(:execution_type, options_for_select(AutomatedEmail.executions.keys.map { |key| [I18n.t("activerecord.attributes.automated_email.executions.#{key}"), key] }, @automated_email.execution_type), { include_blank: "Selecciona un tipo de ejecución" }, class: "form-control", required: true) %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :hidden_state, "Estado oculto" %>
+      <%= form.select(:hidden_state, options_for_select(AutomatedEmail.hidden_states.keys.map { |key| [I18n.t("activerecord.attributes.automated_email.hidden_states.#{key}"), key] }, @automated_email.hidden_state), { include_blank: "Selecciona un tipo de ejecución" }, class: "form-control") %>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="actions py-3">
+      <%= link_to "Cancelar", email_template_automated_emails_path(@email_template), class: "btn btn-secondary" %>
+      <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+
+  </div>
+
+<% end %>
+
+<% if @automated_email.new_record? %>
+  <script>
+    function defaultActions() {
+      const email_reciever = $('#automated_email_reciever_type');
+      const hidden_state = $('#automated_email_hidden_state');
+      const execution_type = $('#automated_email_execution_type');
+
+      if (email_reciever) {
+        setDefaultFolderUser(email_reciever);
+        email_reciever.on('change', function() {
+          setDefaultFolderUser(email_reciever);
+        });
+      }
+
+      if (hidden_state) {
+        setStepAsOptional(hidden_state);
+        hidden_state.on('change', function() {
+          setStepAsOptional(hidden_state);
+        });
+      }
+
+      if (execution_type) {
+        execution_type.on('change', function() {
+          disabledhiddenStates(execution_type);
+        });
+      }
+
+      $('select').each(function() {
+        initSelect2(this);
+      });
+    }
+
+    defaultActions();
+  </script>
+<% else %>
+  <% content_for :scripts do %>
+    <script>
+      document.addEventListener('vue:mounted', () => {
+        defaultActions();
+      });
+    </script>
+  <% end %>
+<% end %>

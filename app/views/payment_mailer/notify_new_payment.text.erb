@@ -1,0 +1,5 @@
+Estimado <%= @payment.client.label %>:
+
+Se ha realizado un movimiento con restructura a tu <%= @payment.installment.folder.project.lot_entity_name %> <%= @payment.installment.folder.lot.name %> de la <%= @stage_singular %> <%= @payment.installment.folder.stage.name %> de la <%= @phase_singular %> <%= @payment.installment.folder.phase.name %> del <%= @project_singular %> <%= @payment.installment.folder.project.name %>.
+
+Descarga tu estado de cuenta en el siguiente enlace: <%= download_account_status_url(@payment.installment.folder) %>

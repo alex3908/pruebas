@@ -1,0 +1,27 @@
+<style>
+  .phase-blueprint {
+    margin-top: 100px;
+  }
+
+  p {
+    font-size: 18px;
+    text-align: justify;
+  }
+
+  .color-square {
+    width: 20px;
+    height: 20px;
+    border: 1px #000 solid;
+  }
+</style>
+
+<div class="padding-top-50" style="page-break-after: always">
+  <div class="container p-5 text-center">
+    <h1><%= stage.phase_description_title.presence || "Anexo" %></h1>
+    <div class="w-100 phase-blueprint">
+      <% if blueprint_phase.present? %>
+        <%= image_tag "data:image/png;base64,#{Base64.encode64(PdfService.instance.svg_to_png(blueprint_phase))}", class: "img-fluid", style: "max-height: 900px" %></div>
+      <% end %>
+    </div>
+  </div>
+</div>

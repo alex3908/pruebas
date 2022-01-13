@@ -1,0 +1,99 @@
+document.addEventListener('vue:mounted', () => {
+  const env_api = "<%= ENV["API_POSTAL_CODE"] %>"
+
+  const inside_mexico = $('.inside-mexico');
+  const outside_mexico = $('.outside-mexico');
+    $('#country').on('change', function () {
+        const country_selected = $('#country option:selected');
+
+        if (env_api == '' || country_selected.val() !== 'México') {
+            outside_mexico
+                .removeClass('d-none')
+                .find('input').prop('disabled', false);
+            inside_mexico
+                .addClass('d-none')
+                .find('input').prop('disabled', true);
+        } else {
+            if (country_selected.val() === '') {
+                inside_mexico
+                    .addClass('d-none')
+                    .find('input').prop('disabled', true);
+                outside_mexico
+                    .addClass('d-none')
+                    .find('input').prop('disabled', true);
+            } else {
+                if (country_selected.val() === 'México') {
+                    inside_mexico
+                        .removeClass('d-none')
+                        .find('input').prop('disabled', false)
+                        .find('select').prop('disabled', false);
+                    outside_mexico.addClass('d-none')
+                        .find('input').prop('disabled', true);
+                }
+            }
+        }
+    });
+
+    $('#postal_code').on('focusout', function () {
+      const zipcode = $(this).val();
+      if (zipcode.length < 5 || env_api == '') return;
+      $.get(`${env_api}${zipcode}`, function(body) {
+        const state_select = $('#state');
+        state_select
+          .find('option')
+          .not(':first')
+          .remove();
+        if (body.estado && typeof body.estado == 'string') {
+          state_select.append(
+            $('<option>', {
+              value: body.estado,
+              text: body.estado,
+              selected: true,
+            })
+          );
+        }
+        const city_select = $('#city');
+        city_select
+          .find('option')
+          .not(':first')
+          .remove();
+        if (body.municipio && typeof body.municipio == 'string') {
+          city_select.append(
+            $('<option>', {
+              value: body.municipio,
+              text: body.municipio,
+              selected: true,
+            })
+          );
+        }
+        $('#colony')
+          .find('option')
+          .not(':last')
+          .not(':first')
+          .remove();
+        if (body.colonias && body.colonias.length) {
+          for (const colonia of body.colonias) {
+            $('#colony option:last').before(
+              $('<option>', {
+                value: colonia,
+                text: colonia,
+              })
+            );
+          }
+        }
+      });
+    });
+
+  $('#colony').on('change', function () {
+    const colony_selected = $('#colony option:selected').val();
+    const custom_colony = $('.custom-colony');
+
+    if (colony_selected === 'custom') {
+      custom_colony.removeClass('d-none');
+      custom_colony.find('input').prop('disabled', false);
+    } else {
+      custom_colony.addClass('d-none');
+      custom_colony.find('input').prop('disabled', true);
+    }
+  });
+});

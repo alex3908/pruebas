@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Identificaciones Oficiales</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+      <% if can?(:create, IdentificationType) %>
+        <%= link_to "Nueva Identificación", new_identification_type_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @identification_types.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ningún tipo de identificación.
+        <% if can?(:create, IdentificationType) %>
+          <br> Comienza registrando uno.
+        <% end %>
+      </p>
+      <% if can?(:create, IdentificationType) %>
+        <div class="text-center mt-3">
+          <%= link_to "Nueva Identificación", new_identification_type_path, class: "btn btn-primary jumping" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="">
+      <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Institución</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @identification_types.each do |identification_type| %>
+          <tr>
+            <td class="align-middle">
+              <%= identification_type.name %>
+            </td>
+            <td class="align-middle">
+              <%= identification_type.institution %>
+            </td>
+            <td class="text-right">
+              <% if can?(:update, IdentificationType) %>
+                <%= link_to edit_identification_type_path(identification_type), class: "table-link" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:destroy, IdentificationType) %>
+                <%= link_to identification_type, class: "table-link", method: :delete, data: { confirm: "¿Estás seguro?" } do %>
+                  <i class="fa fa-trash-o"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@identification_types, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

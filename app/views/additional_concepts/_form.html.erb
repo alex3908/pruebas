@@ -1,0 +1,57 @@
+<%= form_with(model: additional_concept, local: true) do |form| %>
+
+<% if additional_concept.errors.any? %>
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-warning" role="alert">
+            <h6 class="alert-heading">No se pudo guardar
+                por
+                <%= pluralize_without_count(additional_concept.errors.count, "la siguiente razón", "las siguientes razones") %>:
+            </h6>
+            <ul class="mb-0">
+                <% additional_concept.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+                <% end %>
+            </ul>
+        </div>
+    </div>
+</div>
+<% end %>
+<div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :name, "Nombre" %>
+        <%= form.text_field :name, class: "form-control", required: true %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :description, "Descripción" %>
+        <%= form.text_field :description, class: "form-control" %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :amount_type, "Tipo de Monto" %>
+        <%= form.select(:amount_type, options_for_select(amount_type_options, additional_concept.amount_type), { include_blank: "Selecciona un tipo de ejecución" }, class: "form-control", required: true) %>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :amount, "Monto" %>
+        <div class="input-group">
+            <%= form.number_field :amount, class: "form-control", required: true %>
+            <div class="input-group-append">
+                <span class="input-group-text">$</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group col-sm-12 col-md-6">
+      <%= form.label :enterprise_id, "Empresa cobrataria" %>
+      <%= form.select(:enterprise_id, Enterprise.all.collect { |u| [u.business_name, u.id] }, { include_blank: "Selecciona una Empresa" }, class: "form-control", required: true) %>
+    </div>
+
+    <div class="actions py-3">
+        <%= link_to "Cancelar", additional_concepts_path, class: "btn btn-secondary" %>
+        <%= form.submit "Guardar", class: "btn btn-primary" %>
+    </div>
+
+</div>
+
+<% end %>

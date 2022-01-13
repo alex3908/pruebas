@@ -1,0 +1,171 @@
+<div style="padding-top: 100px">
+  <div class="header-title">
+    <h1 style="font-size:16px">ANEXO PLD PERSONA MORAL</h1>
+    <h1 style="font-size:16px">RESIDENTE EN TERRITORIO NACIONAL</h1>
+    <h3 class="pt-3" style="font-size:15px">DATOS REQUERIDOS DEL CLIENTE O USUARIO</h3>
+
+    <div class="purchase_promise container pl-5 pr-5" style="font-size: 12px">
+      <div class="row align-items-center">
+        <div class="col-xs-12 text-left m-0 p-2">
+          Estimado cliente le solicitamos muy amablemente brindarnos los siguientes datos:
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 py-0 m-0">
+          <div class="single-page-purchase_promise-input"><%= client.name %></div>
+          <div class="pt-1"><h1 style="font-size: 12px">RAZÓN SOCIAL</h1></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>FECHA DE CREACIÓN</h1>
+        </div>
+        <div class="col-xs-9 m-0">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.birthdate %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>LUGAR DE CREACIÓN</h1>
+        </div>
+        <div class="col-xs-3 m-0">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.country %>
+          </div>
+        </div>
+        <div class="col-xs-2 single-page-purchase_promise-title">
+            <h1>NACIONALIDAD</h1>
+        </div>
+        <div class="col-xs-4 m-0">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.country_nationality %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>GIRO</h1>
+        </div>
+        <div class="col-xs-9 m-0">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.activity %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>DOMICILIO FISCAL</h1>
+        </div>
+        <div class="col-xs-9">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.street %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>NO. EXTERIOR</h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.house_number %>
+          </div>
+        </div>
+
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>NO. INTERIOR</h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.interior_number %>
+          </div>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>COLONIA</h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.colony %>
+          </div>
+        </div>
+
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>MUNICIPIO</h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.location %>
+          </div>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>CIUDAD/POBLACIÓN</h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.city %>
+          </div>
+        </div>
+
+        <div class="col-xs-3 single-page-purchase_promise-title">
+            <h1>PAÍS</h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.country %>
+          </div>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+            <h1>CÓDIGO POSTAL</h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.postal_code %>
+          </div>
+        </div>
+
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1><%= t("activerecord.attributes.client.main_phone").upcase %></h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.formatted_main_phone %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1><%= t("activerecord.attributes.client.optional_phone").upcase %></h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.formatted_optional_phone %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3 single-page-purchase_promise-title">
+          <h1>RFC</h1>
+        </div>
+        <div class="col-xs-3">
+          <div class="single-page-purchase_promise-input">
+            <%= client.moral_client&.rfc_company %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

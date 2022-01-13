@@ -1,0 +1,77 @@
+<div class="container">
+  <% can_pay = false %>
+
+  <div class="text-center mt-5 pt-5 row">
+    <% if !@folder.payment_scheme.opening_commission.zero? %>
+      <% can_pay = true %>
+      <div class="col-md-12">
+      <%= link_to("Pagar cuota de apertura", folder_concept_details_path(concept_key: :reserve_fee), class: "m-1 btn btn-primary", data: { action: "content-loader#load" }) %>
+      </div>
+    <% end %>
+
+    <% if @folder.payment_scheme.initial_payment_active &&
+        !@folder.payment_scheme.initial_payment.zero? %>
+      <% can_pay = true %>
+      <div class="col-md-12">
+        <%= link_to("Pagar apartado", folder_concept_details_path(concept_key: :reserve), class: "m-1 btn btn-primary", data: { action: "content-loader#load" }) %>
+      </div>
+    <% end %>
+
+    <% if @folder.payment_scheme.initial_payment_active &&
+        !@folder.payment_scheme.initial_payment.zero? &&
+        !@folder.first_down_payment.total.zero? %>
+      <% can_pay = true %>
+      <div class="col-md-12">
+        <%= link_to("Pagar apartado con enganche", folder_concept_details_path(concept_key: :down_payment), class: "m-1 btn btn-primary", data: { action: "content-loader#load" }) %>
+      </div>
+    <% end %>
+
+    <% if !@folder.first_down_payment.total.zero? %>
+      <% can_pay = true %>
+      <div class="col-md-12">
+        <%= link_to("Pagar enganche", folder_concept_details_path(concept_key: :balance_down), class: "m-1 btn btn-primary", data: { action: "content-loader#load" }) %>
+      </div>
+    <% end %>
+
+    <div class="pt-5 pb-2 col-md-12 text-center">
+    <%= content_tag("h5", "Servicios adicionales", class: "text-muted") unless @folder.stage.additional_concepts.active.empty? %>
+    </div>
+    <% @folder.stage.additional_concepts.active.each do |concept| %>
+      <% can_pay = true %>
+      <div class="col-md-12">
+          <%= link_to("Pagar #{concept.name}", folder_concept_details_path(concept_id: concept.id), class: "m-1 btn btn-primary", data: { action: "content-loader#load" }) %>
+      </div>
+    <% end %>
+
+    <% unless can_pay %>
+      <div class="col-md-12">
+        <b class="text-danger">No quedan más pagos por realizar.</b>
+      </div>
+    <% end %>
+  </div>
+
+</div>
+
+<% content_for(:side) do %>
+  <div class="py-3 text-center">
+    <h4 class="d-inline"><b><%= @project.name %></b> - </h4>
+    <h4 class="d-inline"><b><%= @phase.name %></b> - </h4>
+    <h4 class="d-inline"><b><%= @stage.name %></b></h4>
+    <h4><b>Expediente </b>#<%= @folder.id %></h4>
+  </div>
+
+  <div class="row">
+    <div class="col-3 col-md-5 text-right">
+      <b>Cliente(s):</b>
+    </div>
+    <div class="col-6 col-md-6">
+      <% if @folder.clients.size > 1 %>
+        <% @folder.clients.each do |client| %>
+          <label><%= client.label %></label>
+        <% end %>
+      <% else %>
+        <label><%= @folder.client.label %></label>
+      <% end %>
+    </div>
+  </div>
+<% end %>

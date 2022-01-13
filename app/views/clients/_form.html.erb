@@ -1,0 +1,517 @@
+<%= form_with(model: client, local: true, html: { id: "client-form" }) do |form| %>
+  <% if client.errors.any? %>
+    <div id="error_explanation">
+      <p><%= pluralize(client.errors.count, "error") %> impidió que se guardara la información:</p>
+      <ul>
+        <% client.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="form-group col-12 col-md-6">
+      <%= form.label :name, "Nombre", class: "client_name_label" %>
+      <%= form.text_field :name, class: "form-control", required: true if can?(:rename, Client) || @client.new_record? %>
+      <% unless can?(:rename, Client) || @client.new_record? %>
+      <div class="vertical-align p-2">
+        <%= tag.b @client.name %>
+      </div>
+      <% end %>
+    </div>
+
+    <div class="form-group col-12 col-md-6 hide-container">
+      <%= form.label :first_surname, "Primer Apellido" %>
+      <%= form.text_field :first_surname, class: "form-control", required: true if can?(:rename, Client) || @client.new_record? %>
+      <% unless can?(:rename, Client) || @client.new_record? %>
+      <div class="vertical-align p-2">
+        <%= tag.b @client.first_surname %>
+      </div>
+      <% end %>
+    </div>
+
+    <div class="form-group col-12 col-md-6 hide-container">
+      <%= form.label :second_surname, "Segundo Apellido" %>
+      <%= form.text_field :second_surname, class: "form-control" if can?(:rename, Client) || @client.new_record? || @client.second_surname.blank? %>
+      <% unless can?(:rename, Client) || @client.new_record? || @client.second_surname.blank? %>
+      <div class="vertical-align p-2">
+        <%= tag.b @client.second_surname %>
+      </div>
+      <% end %>
+    </div>
+
+    <div class="form-group col-12 col-md-6">
+      <%= form.label :email, "Correo" %>
+      <%= form.email_field :email, class: "form-control", required: true, id: "client_email" if can?(:edit_email, Client) || @client.new_record? %>
+      <% unless can?(:edit_email, Client) || @client.new_record? %>
+      <div class="vertical-align p-2">
+        <%= tag.b @client.email %>
+      </div>
+      <% end %>
+    </div>
+
+    <div class="form-group col-12 col-md-6 d-flex flex-column">
+      <%= form.label :main_phone, "Teléfono Principal" %>
+      <%= form.phone_field :main_phone, class: "form-control", required: true, title: "Debe contener solo números" %>
+    </div>
+
+    <div class="form-group col-12 col-md-6 d-flex flex-column">
+      <%= form.label :optional_phone, "Teléfono Opcional" %>
+      <%= form.phone_field :optional_phone, class: "form-control", minlength: "10", title: "Debe contener solo números" %>
+    </div>
+
+    <div class="form-group col-12 col-md-6">
+      <%= form.label :gender, "Género" %>
+      <%= form.select :gender, options_for_select([["Seleccione un género", nil],
+                                                        ["Masculino", Client::GENDER[:MALE]],
+                                                        ["Femenino", Client::GENDER[:FEMALE]]], @client.gender),
+                                                        { class: "form-control", required: true } %>
+    </div>
+
+    <div class="form-group col-12 col-md-6">
+      <%= form.label :person, "Tipo" %>
+      <%= form.select :person, options_for_select([["Seleccione un tipo", nil],
+                                                        ["Persona Física", Client::PHYSICAL],
+                                                        ["Persona Moral", Client::MORAL]], @client.person),
+                                                        { class: "form-control", required: true } %>
+    </div>
+
+    <% if @lead_sources.any? %>
+    <div class="form-group col-12 col-md-6">
+      <%= form.label :lead_source_id %>
+      <%= form.collection_select(:lead_source_id, @lead_sources, :id, :name, { include_blank: "Selecciona una llave de origen"  }, { class: "form-control", required: true  }) %>
+    </div>
+    <% end %>
+  </div>
+  <div class="accordion collapse-elements px-4 py-2" id="accordion-additional">
+    <div class="d-flex flex-wrap justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse"
+      data-target="#collapse-section" aria-expanded="true" aria-controls="collapse-section">
+      <p class="text-left vertical-align m-0 py-3 color-primary">ADICIONAL</p>
+    </div>
+    <div class="row <%= "collapse" if params[:type] != "additional" %>" id="collapse-section"
+      data-parent="#accordion-additional">
+      <%= form.fields_for :additional do |additional_form| %>
+
+      <div class="form-group col-12 col-md-6 physical-person <%= "d-none" if @client.moral? %>">
+        <%= additional_form.label :curp, "CURP" %>
+        <%= additional_form.text_field :curp, class: "form-control input-white text-uppercase",
+                                                disabled: @client.person != "physical" && @client.person.present?,
+                                                onkeyup: "upperCase(this);",
+                                                onblur: "ValidateCurp(this.value)",
+                                                value: @client.physical_client&.curp %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 physical-person <%= "d-none" if @client.moral? %>">
+        <%= additional_form.label :rfc, "RFC" %>
+        <%= additional_form.text_field :rfc, class: "form-control input-white text-uppercase",
+                                                onkeyup: "upperCase(this);",
+                                                onblur: "ValidateRfc(this.value)",
+                                                disabled: @client.moral?,
+                                                value: @client.physical_client&.rfc %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 physical-person <%= "d-none" if @client.moral? %>">
+        <%= additional_form.label :place_birth, "Lugar de Nacimiento" %>
+        <%= additional_form.text_field :place_birth, class: "form-control",
+                                              disabled: @client.moral?,
+                                              value: @client.physical_client&.place_birth %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 physical-person <%= "d-none" if @client.moral? %>">
+        <%= additional_form.label :occupation, "Ocupación" %>
+        <%= additional_form.text_field :occupation, class: "form-control",
+                                              disabled: @client.moral?,
+                                              value: @client.physical_client&.occupation %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 physical-person <%= "d-none" if @client.moral? %>">
+        <%= additional_form.label :nationality, "Nacionalidad" %>
+        <%= additional_form.select :nationality, options_for_select(nationalities,
+                                                        @client.physical_client&.nationality),
+                                                        { include_blank: "Seleccione su nacionalidad", disabled: @client.moral? } %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 physical-person <%= "d-none" if @client.moral? %>">
+        <%= additional_form.label :civil_status, "Estado Civil" %>
+        <%= additional_form.select :civil_status, options_for_select([["Selecciona un estado civil", nil],
+                                                                            "Soltero",
+                                                                            "Casado"],
+                                                                            @client.physical_client&.civil_status),
+                                                                            { class: "form-control", disabled: @client.moral? } %>
+      </div>
+
+      <div
+        class="form-group col-12 col-md-6 physical-person <%= "d-none" if @client.moral? || !@client.physical_client&.married? %>">
+        <%= additional_form.label :regime, "Régimen" %>
+        <%= additional_form.select :regime, options_for_select([["Selecciona un régimen", nil],
+                                                                        "Bienes mancomunados",
+                                                                        "Separación de bienes",
+                                                                        "Sociedad legal"],
+                                                                        @client.physical_client&.regime),
+                                                                        { class: "form-control", disabled: @client.moral? } %>
+      </div>
+
+      <div class="col-12 col-md-12 moral-person <%= "d-none" if @client.physical? %>">
+        <div class="d-flex flex-wrap justify-content-between pt-3">
+          <h6 class="text-left vertical-align m-0 py-3">Información del Representante Legal</h6>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-gray">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-green">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :legal_name, "Nombre" %>
+        <%= additional_form.text_field :legal_name, class: "form-control",
+                                              disabled: @client.physical?,
+                                              value: @client.moral_client&.legal_name %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= additional_form.label :identification_type, "Tipo de Identificación" %>
+        <%= additional_form.collection_select(:identification_type_id, @identification_types, :id, :name, { include_blank: "Selecciona un tipo de identificación", selected: @client.physical? ? @client.physical_client&.identification_type&.id : @client.moral_client&.identification_type&.id }, { class: "form-control" }) %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= additional_form.label :identification_number, "Número de Identificación" %>
+        <%= additional_form.text_field :identification_number, class: "form-control",
+                                              value: @client.physical? ? @client.physical_client&.identification_number : @client.moral_client&.identification_number %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= additional_form.label :validity_identification, "Vigencia de Identificación" %>
+        <%= additional_form.text_field :validity_identification, class: "form-control datepicker-future",
+                                                placeholder: "dd/mm/yyyy",
+                                                readonly: true,
+                                                autocomplete: "off",
+                                                value: @client.physical? ? @client.physical_client&.validity_identification : @client.moral_client&.validity_identification %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= additional_form.label :birthdate, "Fecha de Nacimiento" %>
+        <%= additional_form.text_field :birthdate, class: "form-control datepicker",
+                                              placeholder: "dd/mm/yyyy",
+                                              readonly: true,
+                                              autocomplete: "off",
+                                              value: @client.physical? ? @client.physical_client&.birthdate : @client.moral_client&.birthdate %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :country_nationality, "País de nacionalidad" %>
+        <%= additional_form.select :country_nationality, options_for_select(ISO3166::Country.translations("ES").values,
+                                                                @client.moral_client&.country_nationality),
+                                                                { include_blank: "Selecciona un país" } %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :legal_rfc, "RFC" %>
+        <%= additional_form.text_field :legal_rfc, class: "form-control input-white text-uppercase",
+                                                onkeyup: "upperCase(this);",
+                                                onblur: "ValidateRfc(this.value)",
+                                                disabled: @client.physical?,
+                                                value: @client.moral_client&.legal_rfc %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :curp, "CURP" %>
+        <%= additional_form.text_field :curp, class: "form-control input-white text-uppercase",
+                                                onkeyup: "upperCase(this);",
+                                                disabled: @client.physical?,
+                                                value: @client.moral_client&.curp %>
+      </div>
+
+      <div class="col-12 col-md-12 moral-person <%= "d-none" if @client.physical? %>">
+        <div class="d-flex flex-wrap justify-content-between pt-3">
+          <h6 class="text-left vertical-align m-0 py-3">Información de la Razón Social</h6>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-gray">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-green">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :business_name, "Razón Social" %>
+        <%= additional_form.text_field :business_name, class: "form-control", disabled: @client.physical?, value: @client.moral_client&.business_name %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :rfc_company, "RFC de la Empresa" %>
+        <%= additional_form.text_field :rfc_company, class: "form-control input-white text-uppercase",
+                                                onkeyup: "upperCase(this);",
+                                                onblur: "ValidateRfc(this.value)",
+                                                disabled: @client.physical?,
+                                                value: @client.moral_client&.rfc_company %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :activity, "Actividad o Giro" %>
+        <%= additional_form.text_field :activity, class: "form-control", disabled: @client.physical?, value: @client.moral_client&.activity %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :company_identification_type, "Tipo de Identificación de la empresa" %>
+        <%= additional_form.collection_select(:company_identification_type_id, @identification_types, :id, :name, { disabled: @client.physical? && @client.person.present?, include_blank: "Selecciona un tipo de identificación", selected: @client.moral_client&.company_identification_type&.id }, { class: "form-control" }) %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :company_identification_number, "Número de Identificación de la empresa" %>
+        <%= additional_form.text_field :company_identification_number, class: "form-control",
+                                              disabled: @client.physical?,
+                                              value: @client.moral_client&.company_identification_number %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :company_validity_identification, "Vigencia de Identificación de la empresa" %>
+        <%= additional_form.text_field :company_validity_identification, class: "form-control datepicker-future",
+                                                placeholder: "dd/mm/yyyy",
+                                                readonly: true,
+                                                autocomplete: "off",
+                                                disabled: @client.physical?,
+                                                value: @client.moral_client&.company_validity_identification %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :notary_name, "Nombre de la Notaria" %>
+        <%= additional_form.text_field :notary_name, class: "form-control",
+                                        disabled: @client.physical?,
+                                        value: @client.moral_client&.notary_name %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :notary_public_name, "Nombre del Notario Público" %>
+        <%= additional_form.text_field :notary_public_name, class: "form-control",
+                                                  disabled: @client.physical?,
+                                                  value: @client.moral_client&.notary_public_name %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :notary_public_number, "Número del Notario Público" %>
+        <%= additional_form.text_field :notary_public_number, class: "form-control",
+                                              disabled: @client.physical?,
+                                              value: @client.moral_client&.notary_public_number %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :public_registry_state, "Estado del Registro Público de la Propiedad y Comercio" %>
+        <%= additional_form.text_field :public_registry_state, class: "form-control",
+                                          disabled: @client.physical?,
+                                          value: @client.moral_client&.public_registry_state %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :public_registry_date, "Fecha del Registro Público de la Propiedad y Comercio" %>
+        <%= additional_form.text_field :public_registry_date, class: "form-control datepicker-unlimited",
+                                            placeholder: "dd/mm/yyyy",
+                                            readonly: true,
+                                            autocomplete: "off",
+                                            disabled: @client.physical? && @client.person.present?,
+                                            value: @client.moral_client&.public_registry_date %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :constitution_date, "Fecha de constitución" %>
+        <%= additional_form.text_field :constitution_date, class: "form-control datepicker",
+                                                placeholder: "dd/mm/yyyy",
+                                                readonly: true,
+                                                autocomplete: "off",
+                                                disabled: @client.physical?,
+                                                value: @client.moral_client&.constitution_date %>
+      </div>
+
+      <div class="form-group col-12 col-md-6 moral-person <%= "d-none" if @client.physical? %>">
+        <%= additional_form.label :commercial_electronic_folio_number, "Número de Folio Electrónico Mercantil" %>
+        <%= additional_form.text_field :commercial_electronic_folio_number, class: "form-control",
+                                              disabled: @client.physical?,
+                                              value: @client.moral_client&.commercial_electronic_folio_number %>
+      </div>
+
+      <div class="col-12 col-md-12">
+        <div class="d-flex flex-wrap justify-content-between pt-3">
+          <h6 class="text-left vertical-align m-0 py-3">Domicilio</h6>
+        </div>
+        <div class="row mb-3">
+          <div class="col-4 pr-0">
+            <hr class="marker-bar-gray">
+          </div>
+          <div class="col-8 pl-0">
+            <hr class="marker-bar-green">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= additional_form.label :country, "País" %>
+        <%= additional_form.select :country, options_for_select(ISO3166::Country.translations("ES").values,
+                                                    @client.physical_client&.country || @client.moral_client&.country),
+                                                    { include_blank: "Selecciona un país" } %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= additional_form.label :postal_code, "Código Postal" %>
+        <%= additional_form.text_field :postal_code, class: "form-control",
+                                                value: @client.physical? ? @client.physical_client&.postal_code : @client.moral? ? @client.moral_client&.postal_code : "" %>
+      </div>
+
+      <div
+        class="form-group col-12 col-md-6 inside-mexico
+                <%= "d-none" if @client.new_record? || @client.physical_client.nil? && @client.moral_client.nil? || @client.physical_client&.country.blank? && @client.moral_client&.country.blank? || @client.physical? && @client.physical_client&.country != "México" || @client.moral? && @client.moral_client&.country != "México" %>">
+        <%= additional_form.label :state, "Estado" %>
+        <%= additional_form.select :state, options_for_select(state_options(@client), actual_state(@client)),
+                                                  { class: "form-control", disabled: @client.physical_client&.country != "México" && @client.moral_client&.country != "México" ? "disabled" : "" } %>
+        <div class="custom-state d-none">
+          <%= additional_form.label :custom, "Escribe el nombre del estado:", class: "my-2" %>
+          <%= additional_form.text_field :state, class: "form-control", disabled: true %>
+        </div>
+      </div>
+
+      <div
+        class="form-group col-12 col-md-6 inside-mexico
+                <%= "d-none" if @client.new_record? || @client.physical_client.nil? && @client.moral_client.nil? || @client.physical_client&.country.blank? && @client.moral_client&.country.blank? || @client.physical? && @client.physical_client&.country != "México" || @client.moral? && @client.moral_client&.country != "México" %>">
+        <%= additional_form.label :city, "Ciudad" %>
+        <%= additional_form.select :city, options_for_select(city_options(@client), actual_city(@client)),
+                                                { class: "form-control", disabled: @client.physical_client&.country != "México" && @client.moral_client&.country != "México" ? "disabled" : "" } %>
+        <div class="custom-city d-none">
+          <%= additional_form.label :custom, "Escribe el nombre de la ciudad:", class: "my-2" %>
+          <%= additional_form.text_field :city, class: "form-control", disabled: true %>
+        </div>
+      </div>
+
+      <div
+        class="form-group col-12 col-md-6 inside-mexico
+            <%= "d-none" if @client.new_record? || @client.physical_client.nil? && @client.moral_client.nil? || @client.physical_client&.country.blank? && @client.moral_client&.country.blank? || @client.physical? && @client.physical_client&.country != "México" || @client.moral? && @client.moral_client&.country != "México" %>">
+        <%= additional_form.label :colony, "Colonia" %>
+        <%= additional_form.select :colony, options_for_select(colony_options(@client), actual_colony(@client)),
+                                                  { class: "form-control", disabled: @client.physical_client&.country != "México" && @client.moral_client&.country != "México" ? "disabled" : "" } %>
+        <div class="custom-colony d-none">
+          <%= additional_form.label :custom, "Escribe el nombre de la colonia:", class: "my-2" %>
+          <%= additional_form.text_field :colony, class: "form-control", disabled: true %>
+        </div>
+      </div>
+
+      <div
+        class="form-group col-12 col-md-6 outside-mexico
+            <%= "d-none" if @client.new_record? || @client.physical_client.nil? && @client.moral_client.nil? || @client.physical_client&.country.blank? && @client.moral_client&.country.blank? || @client.physical? && @client.physical_client&.country == "México" || @client.moral? && @client.moral_client&.country == "México" %>">
+        <%= additional_form.label :state, "Estado" %>
+        <%= additional_form.text_field :state, class: "form-control",
+                                              disabled: @client.physical_client&.country == "México" || @client.moral_client&.country == "México",
+                                              value: @client.physical_client&.state.present? ? @client.physical_client.state : @client.moral_client&.state.present? ? @client.moral_client.state : "" %>
+      </div>
+
+      <div
+        class="form-group col-12 col-md-6 outside-mexico
+            <%= "d-none" if @client.new_record? || @client.physical_client.nil? && @client.moral_client.nil? || @client.physical_client&.country.blank? && @client.moral_client&.country.blank? || @client.physical? && @client.physical_client&.country == "México" || @client.moral? && @client.moral_client&.country == "México" %>">
+        <%= additional_form.label :city, "Ciudad" %>
+        <%= additional_form.text_field :city, class: "form-control",
+                                              disabled: @client.physical_client&.country == "México" || @client.moral_client&.country == "México",
+                                              value: @client.physical_client&.city.present? ? @client.physical_client.city : @client.moral_client&.city.present? ? @client.moral_client.city : "" %>
+      </div>
+
+      <div
+        class="form-group col-12 col-md-6 outside-mexico
+            <%= "d-none" if @client.new_record? || @client.physical_client.nil? && @client.moral_client.nil? || @client.physical_client&.country.blank? && @client.moral_client&.country.blank? || @client.physical? && @client.physical_client&.country == "México" || @client.moral? && @client.moral_client&.country == "México" %>">
+        <%= additional_form.label :colony, "Colonia" %>
+        <%= additional_form.text_field :colony, class: "form-control",
+                                              disabled: @client.physical_client&.country == "México" || @client.moral_client&.country == "MéxicO",
+                                              value: @client.physical_client&.colony.present? ? @client.physical_client.colony : @client.moral_client&.colony.present? ? @client.moral_client.colony : "" %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= additional_form.label :street, "Calle" %>
+        <%= additional_form.text_field :street, class: "form-control",
+                                              value: @client.physical_client&.street.present? ? @client.physical_client.street : @client.moral_client&.street.present? ? @client.moral_client.street : "" %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= additional_form.label :location, "Localidad" %>
+        <%= additional_form.text_field :location, class: "form-control",
+                                              value: @client.physical_client&.location.present? ? @client.physical_client.location : @client.moral_client&.location.present? ? @client.moral_client.location : "" %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= additional_form.label :house_number, "Número exterior" %>
+        <%= additional_form.text_field :house_number, class: "form-control",
+                                              value: @client.physical_client&.house_number.present? ? @client.physical_client.house_number : @client.moral_client&.house_number.present? ? @client.moral_client.house_number : "" %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= additional_form.label :interior_number, "Número interior" %>
+        <%= additional_form.text_field :interior_number, class: "form-control",
+                                              value: @client.physical_client&.interior_number.present? ? @client.physical_client.interior_number : @client.moral_client&.interior_number.present? ? @client.moral_client.interior_number : "" %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+  <% if can?(:read, ReferredClient) %>
+    <div class="accordion collapse-elements px-4 py-2 my-4" id="reffered-client">
+        <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse"
+            data-target="#collapse-reffered-client" aria-expanded="false" aria-controls="collapse-step-log">
+            <p class="text-left vertical-align m-0 py-3 color-primary">Referidos</p>
+        </div>
+        <div class="collapse" id="collapse-reffered-client" data-parent="#reffered-client">
+                <referred-customers <%= ":client-id='#{@client.id}'" if @client.id.present? %>
+                        :can-add-referred-client="<%= can?(:create, ReferredClient) %>"
+                        :can-delete-referred-client="<%= can?(:destroy, ReferredClient) %>"
+                        :can-autocomplete="<%= can?(:autocomplete, ReferredClient) %>" />
+        </div>
+    </div>
+  <% end %>
+
+  <div class="actions pt-3">
+    <%= link_to "Cancelar", clients_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary", disabled: true if @client.new_record? %>
+    <% unless @client.new_record? %>
+    <%= hidden_field_tag(:folder, params[:folder]) %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+<% end %>
+<hr class="divider">
+
+  <div class="row">
+    <div class="form-group col-12 col-md-12">
+      <div><b>DOCUMENTOS</b></div>
+    </div>
+  </div>
+  <% if @client.new_record? %>
+    <p>Los documentos los podrás añadir una vez que se complete el registro de tu cliente.<p>
+  <% else %>
+    <%= form_with(model: @client, local: true, url: "/clients/#{@client.id}/update_files") do |form| %>
+      <table class="table table-striped">
+        <thead>
+          <tr class="bg-white">
+            <td width="70%"></td>
+            <td width="30%" class="text-center">
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <% @client_documents.each do |document| %>
+            <%= render partial: "clients/document_input",
+              locals: {
+                form: form,
+                document: document,
+                client: @client
+              } %>
+          <% end %>
+        </tbody>
+      </table>
+      <table class="table table-striped">
+        <tr class="bg-white">
+          <td width="70%"></td>
+          <td width="30%" class="text-center">
+            <%= form.submit("Guardar", class: "btn btn-primary file-submit", disabled: true) %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  <% end %>

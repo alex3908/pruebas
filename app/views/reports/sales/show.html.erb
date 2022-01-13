@@ -1,0 +1,75 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Reporte de ventas realizadas</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Reportes", reports_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Ventas realizadas</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<%= form_tag(sales_reports_path, method: :post, data: { controller: "export", 'target': "export.form", 'export-url': sales_reports_url(format: :json) }) do %>
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-md-6">
+        <h6>Buscar por fecha de inicio de operación</h6>
+      </div>
+      <div class="col-md-6">
+        <h6>Buscar por fecha de venta</h6>
+      </div>
+      <div class="col-md-3">
+        <%= label_tag :from_date, "Desde la fecha:" %>
+        <%= text_field_tag :from_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker", value: params[:from_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+
+      <div class="col-md-3">
+        <%= label_tag :to_date, "Hasta la fecha:" %>
+        <%= text_field_tag :to_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker disabled", value: params[:to_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+
+      <div class="col-md-3">
+        <%= label_tag :approved_date_from_date, "Desde la fecha:" %>
+        <%= text_field_tag :approved_date_from_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker", value: params[:approved_date_from_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+
+      <div class="col-md-3">
+        <%= label_tag :approved_date_to_date, "Hasta la fecha:" %>
+        <%= text_field_tag :approved_date_to_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker disabled", value: params[:approved_date_to_date], required: false, placeholder: "dd/mm/yyyy" } %>
+      </div>
+
+    </div>
+    <div class="row">
+      <hr>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <%= label_tag :status, "Buscar por estado:" %>
+        <%= select_tag :status, options_for_select([["Todos", nil],
+                                                    ["Activo", Folder::STATUS[:ACTIVE]],
+                                                    ["Rechazado", Folder::STATUS[:REJECTED]],
+                                                    ["Revision", Folder::STATUS[:REVISION]],
+                                                    ["Aceptado", Folder::STATUS[:ACCEPTED]],
+                                                    ["Expirado", Folder::STATUS[:EXPIRED]],
+                                                    ["Aprobado", Folder::STATUS[:APPROVED]],
+                                                    ["Cancelado", Folder::STATUS[:CANCELED]]]) %>
+      </div>
+
+      <div class="col-md-3">
+        <%= label_tag :step, "Buscar por paso:" %>
+        <%= select_tag :step, options_for_select(@steps.collect { |s| [s.name, s.id] }), { include_blank: true , class: "form-control", id: "step_id"} %>
+      </div>
+
+      <div class="col-md-12 col-lg-12 text-right">
+        <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+          <i class="fa fa-file-text" aria-hidden="true"></i> Exportar
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

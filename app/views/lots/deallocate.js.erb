@@ -1,0 +1,41 @@
+<% if @lot.errors.any? %>
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    type: 'error',
+    title: "Hubo un error al intentar hacer el cambio."
+  });
+<% else %>
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    type: 'success',
+    title: "El <%= @stage.phase.project.lot_entity_name %> se ha desasignado correctamente."
+  });
+
+  <% if @stage.blueprint.present? %>    
+    $("[data-id=<%=@lot.id%>]")
+    .find(".assign-button")
+    .show();
+  <% end %>
+
+  <% if @stage.blueprint.present? && @lot.for_sale? && !@lot.has_blueprint? && !@lot.has_folder? && can?(:destroy, Lot) %>
+    $("[data-id=<%=@lot.id%>]")
+    .find(".delete-button")
+    .show();
+  <% end %>
+
+  $("[data-id=<%=@lot.id%>]")
+  .find(".deallocate-button")
+  .hide();
+  <% if @blueprint_lot.present? %>
+    $("[data-blueprint-lot-id=<%= @blueprint_lot.id %>]")
+    .attr("data-original-title", "<%= tooltip_label(@blueprint_lot.lot, sale_map: false).html_safe %>")
+    .removeClass("assigned")
+    .addClass("assignable");
+  <% end %>
+<% end %>

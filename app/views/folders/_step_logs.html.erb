@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="accordion collapse-elements px-4 py-2 my-4" id="accordion-step-log">
+    <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse"
+      data-target="#collapse-step-log" aria-expanded="false" aria-controls="collapse-step-log">
+      <p class="text-left vertical-align m-0 py-3 color-primary">Línea de tiempo</p>
+    </div>
+    <div class="collapse" id="collapse-step-log" data-parent="#accordion-step-log">
+      <div class="widget-body">
+        <% if @folder.step_logs.empty? %>
+          <p class="pb-3 m-0">No se tienen registros en la bitácora</p>
+        <% else %>
+        <div class="log-container">
+          <h5>Bitácora de movimientos</h5>
+          <div class="container">
+            <% @folder.step_logs.includes([:folder, :user, :step]).each_with_index do |log, index| %>
+            <div class="my-3 mr-5">
+              <div class="row">
+                <div class="col-1"></div>
+                <div>
+                  <%= tag.small(time_in_step_log(log), class: "text-secondary") %>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-1 text-secondary text-right">
+                  <i class="fa <%= step_log_icon(log, index) %> fa-2x" aria-hidden="true"></i>
+                </div>
+                <div class="col p-0 text-justify">
+                  <%= step_log_header(log) %>
+                  <%= step_log_body(log, index) %>
+                  <%= step_log_timestamp(log) %>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-1"></div>
+                <div>
+                  <%= image_tag log.user.present? ? log.user.image_nil : "base-avatar.png", class: "step-avatar avatar-image" %>
+                </div>
+              </div>
+            </div>
+            <% end %>
+          </div>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

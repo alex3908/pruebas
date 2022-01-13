@@ -1,0 +1,8 @@
+<% folder_paginated = @step.filtered_folders(params).paginate(page: params[:page], per_page: @max_rows) %>
+$('#folders<%= @step.id %>').append('<%= j render(folder_paginated) %>');
+$('#step_pagination_<%= @step.id %>').addClass('.d-none');
+<% if folder_paginated.next_page %>
+$('#step_pagination_<%= @step.id %>').replaceWith('<%= j will_paginate(folder_paginated, id: "step_pagination_#{@step.id}", params: { step: @step.id }) %>');
+<% else %>
+$('#step_pagination_<%= @step.id %>').remove();
+<% end %>

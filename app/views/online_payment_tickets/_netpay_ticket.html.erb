@@ -1,0 +1,15 @@
+<% if @service_response[:status] == "review" %>
+  <div class="text-center" data-controller="netpay" data-netpay-redirect-url="<%= @service_response[:redirect] %>">
+    <i class="fa fa-circle-o-notch fa-spin fa-5x"></i>
+  </div>
+<% elsif @service_response[:status] == "error" %>
+  <div class="text-center d-flex align-items-center justify-content-center">
+    <div class="w-50">
+      <i class="fa fa-times-circle fa-5x text-danger"></i>
+      <h5 class="m-0 py-3">Error en el pago</h5>
+      <div class="text-center">Ha ocurrido un error al intentar procesar tu pago.
+        <small><%= @service_response[:message] %></small>
+      </div>
+    </div>
+  </div>
+<% end %>

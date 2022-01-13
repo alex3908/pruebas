@@ -1,0 +1,19 @@
+<div class="pdf-bg">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h3 class="mb-4">Estado de cuenta</h3>
+        <%= form_with(url: send_account_status_path(@folder), remote: true) do |form| %>
+          <div class="form-group">
+            <%= form.label :coowner, "Seleccionar cliente:" %>
+            <%= form.select :coowner, @folder.clients.map { |coowner| [encrypt_string(coowner.name), coowner.id] }, { selected: params["coowner"] }, { class: "form-control" } %>
+          </div>
+
+          <div class="actions text-center pt-3">
+            <%= form.submit "Enviar", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Cupones</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+      <%= link_to "Regresar", promotions_path(@project, @phase), class: "btn btn-outline-secondary mr-2" %>
+      <% if can?(:create, Coupon) %>
+        <%= link_to "Nuevo cupón", new_promotion_coupon_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @coupons.empty? %>
+  <div class="container">
+    <p>Aún no hay cupones.</p>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Cupón</th>
+          <th>Usos</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @coupons.each do |coupon| %>
+          <tr>
+            <td class="align-middle"><%= coupon.promotion_code %></td>
+            <td class="align-middle"><%= coupon.get_usages %></td>
+            <td class="align-middle">
+              <% if coupon.draft %>
+                Borrador
+              <% else %>
+                <% if can?(:activate, Coupon) %>
+                  <%= check_box_tag "coupon-#{coupon.id}", "1", coupon.active?,
+                    onchange: "$(this).data('params', 'status=' + this.checked)",
+                    data: {
+                      activate: "toggle",
+                      onstyle: "success",
+                      offstyle: "secondary",
+                      on: "Activado",
+                      off: "Desactivado",
+                      remote: true,
+                      url: activate_promotion_coupon_path(@promotion, coupon),
+                      method: :patch
+                      } %>
+                <% else %>
+                  Activo
+                <% end %>
+              <% end %>
+            </td>
+            <td class="text-right">
+              <% if can?(:activate, Coupon) && coupon.draft %>
+                <%= link_to activate_promotion_coupon_path(@promotion, coupon), method: :patch,  data: { toggle: "tooltip", confirm: "\u00BFEst\u00E1s seguro de activar este cupón?" }, title: "Activar cupón", remote: true, class: "table-link" do %>
+                  <i class="fa fa-check" aria-hidden="true"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:update, coupon) %>
+                <%= link_to edit_promotion_coupon_path(@promotion, coupon), class: "table-link" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+              <% if can?(:destroy, coupon) %>
+                <%= link_to promotion_coupon_path(@promotion, coupon), method: :delete, data: { confirm: "\u00BFEs\u00E1s seguro?" }, class: "table-link" do %>
+                  <i class="fa fa-trash-o"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

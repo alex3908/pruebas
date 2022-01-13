@@ -1,0 +1,58 @@
+<%= form.fields_for :documents, document do |document_form| %>
+  <tr class="<%= document_approved_tr_class(document) %>">
+    <td class="align-middle">
+      <%= document.document_template.name %>
+      <% if can?(:read_files_date, Folder) && document.latest_file_version.present? %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Última modificación: <%= document.latest_file_version.created_at.strftime("%d/%m/%Y") %> a las <%= document.latest_file_version.created_at.strftime("%I:%M%p") %>"></i>
+      <% end %>
+    </td>
+    <td class="align-middle text-center">
+    <div class="custom-file d-flex justify-content-center align-items-center">
+      <%= document_form.file_field :file, class: "d-none", accept: document.document_template.get_formats %>
+      <% if document.latest_file_version.present? && document.latest_file_version.file.present? %>
+        <% if @folder.not_active? || @step_role.present? && @step_role.readable_file?(document.document_template.key) %>
+          <%= link_to url_for(document.latest_file_version.file), target: "_blank", style: "text-decoration:none" do %>
+            <i class="fa fa-file-text-o fa-folder-size mx-1" aria-hidden="true"></i>
+          <% end %>
+        <% else %>
+          <i class="fa fa-file-text-o fa-folder-size text-warning mx-1" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="No tienes permisos para ver este documento"></i>
+        <% end %>
+        <% if @step_role.present? && @step_role.editable_file?(document.document_template.key) %>
+          <%= document_form.fields_for :file_versions, document_form.object.file_versions.new do |file_version_form| %>
+            <%= file_version_form.file_field :file, class: "d-none", accept: document.document_template.get_formats %>
+            <%= file_version_form.label :file, class: "mb-0" do |label| %>
+              <i class="fa fa-pencil icon-click fa-folder-size mx-1" aria-hidden="true"></i>
+            <% end %>
+          <% end %>
+        <% end %>
+        <% if @step_role.present? && @step_role.destroyable_file?(document.document_template.key) %>
+          <%= link_to [@folder, document], style: "text-decoration:none" do %>
+            <i class="fa fa-history fa-folder-size mx-1"></i>
+          <% end %>
+        <% end %>
+        <% if document.requires_approval? %>
+          <i class="fa fa-info-circle fa-folder-size" aria-hidden="true" title="<%= approved_label_result document.file_approval %>" rel="tooltip"></i>
+          <% if can?(:verify, DocumentTemplate) && document.file_approval.try(:unchecked?) %>
+            <%= link_to approve_folder_document_path(document.documentable, document), method: :patch, data: { confirm: "¿Estás seguro de aceptar el #{document.document_template.name}?" }, style: "text-decoration:none" do %>
+              <i class="fa fa-check-circle fa-folder-size text-success mx-1"></i>
+            <% end %>
+
+            <%= link_to rejectable_file_folder_path(@folder, file_approval_id: document.file_approval.id), method: :patch, data: { toggle: "modal", target: "#modal-window" }, style: "text-decoration:none", remote: true do %>
+              <i class="fa fa-times-circle fa-folder-size text-danger mx-1"></i>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% if @step_role.present? && @step_role.uploadable_file?(document.document_template.key) %>
+          <%= document_form.fields_for :file_versions, document_form.object.file_versions.new do |file_version_form| %>
+              <%= file_version_form.file_field :file, class: "d-none", accept: document.document_template.get_formats, data: { document_input: true } %>
+              <%= file_version_form.label :file, class: "mb-0" do |label| %>
+                <i data-upload-icon class="fa fa-cloud-upload fa-folder-size icon-click mx-1" aria-hidden="true"></i>
+              <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+      </div>
+    </td>
+  </tr>
+<% end %>

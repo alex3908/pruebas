@@ -1,0 +1,24 @@
+<div class="modal fade" id="missingTagInformationModal" tabindex="-1" role="dialog" aria-labelledby="missingTagInformationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="missingFilesModalLabel">Informacion faltante en el contrato</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Hace falta información para los siguientes datos que se solicitan en el contrato:
+        <hr>
+        <ul class="text-warning">
+          <% @tags_without_value.each do |missing_tag_value| %>
+            <li><%= missing_tag_value.to_s.titleize %></li>
+          <% end %>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Entendido</button>
+      </div>
+    </div>
+  </div>
+</div>

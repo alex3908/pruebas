@@ -1,0 +1,81 @@
+<%= form_with(model: phase, local: true, url: [@project, phase]) do |form| %>
+  <% if phase.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(phase.errors.count, "error") %> prohibió que esta <span class="text-lowercase"><%= @phase_singular %></span> se guarde:</h2>
+
+      <ul>
+        <% phase.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <fieldset>
+    <legend>Información general</legend>
+
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :name, "Nombre" %>
+        <%= form.text_field :name, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :slug, "Clave URL" %>
+        <% if phase.persisted? && phase.slug.present? %>
+          <div class="font-weight-bold"><%= phase.slug %></div>
+        <% else %>
+          <%= form.text_field :slug, class: "form-control", required: true %>
+          <small class="form-text text-muted">Esta elemento no podrá ser editado una vez establecido.</small>
+        <% end %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :reference, "Referencia" %>
+        <%= form.text_field :reference, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :start_date, "Fecha de inicio" %>
+        <%= form.date_field :start_date, class: "form-control datepicker-unlimited",
+                            placeholder: "yyyy-mm-dd",
+                            readonly: true,
+                            autocomplete: "off",
+                            required: true %>
+      </div>
+    </div>
+  </fieldset>
+
+  <% if @phase.persisted? %>
+    <hr>
+    <%= form.fields_for :blueprint do |blueprint_form| %>
+      <fieldset>
+        <legend>Información del plano interactivo</legend>
+
+        <div class="form-group">
+          <div class="custom-file">
+            <% if @phase.blueprint && @phase.blueprint.has_assigned_stages %>
+              <%= link_to "Descargar vector", url_for(@phase.blueprint.svg_file), target: "_blank", class: "btn btn-secondary" %>
+              <p class="mt-3">Esta <span class="text-lowercase"><%= @phase_singular %></span> ya cuenta con <span class="text-lowercase"><%= @stage_plural %></span> asignadas, desasignalas para poder cambiar tu plano.</p>
+            <% else %>
+              <%= blueprint_form.file_field :file, class: "custom-file-input" %>
+              <%= blueprint_form.label :file, "Plano interactivo (Archivo SVG*)", class: "custom-file-label" %>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="custom-file">
+            <%= blueprint_form.file_field :background, class: "custom-file-input" %>
+            <%= blueprint_form.label :background, "Fondo", class: "custom-file-label" %>
+          </div>
+        </div>
+      </fieldset>
+    <% end %>
+    <hr>
+  <% end %>
+
+  <div class="actions py-3">
+    <%= link_to "Cancelar", project_path(@project.id), class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

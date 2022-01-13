@@ -1,0 +1,196 @@
+<div class="container">
+<div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-binnacle">
+  <div class="d-flex justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-binnacle" aria-expanded="false" aria-controls="collapse-binnacle">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Bitácora</p>
+  </div>
+  <div class="collapse" id="collapse-binnacle" data-parent="#accordion-binnacle" v-pre="">
+    <div class="widget-body">
+      <div class="mt">
+        <div class="width-200 float-right">
+        </div>
+        <% if @logs_folder.empty? && @logs_scheme.empty? && @logs_users.empty? %>
+          <p class="pb-3 m-0">No se tienen registros en la bitácora</p>
+        <% end %>
+        <div class="log-container">
+          <% if @logs_folder.any? %>
+            <h5>Expediente</h5>
+            <% @logs_folder.each do |log| %>
+              <div class="py-2">
+                <div class="text-center pb-2"><%= tag.b(log.user.present? ? log.user.label : "El servidor") %> editó los siguientes campos
+                  el <%= log.date.strftime("%d/%m/%Y") %> a las <%= log.date.strftime("%I:%M%p") %></div>
+                <div class="table-container-without-height">
+                  <table class="table table-bordered background-white">
+                    <thead>
+                    <tr>
+                      <th width="20%">Campo</th>
+                      <th width="40%">Antiguo valor</th>
+                      <th width="40%">Nuevo valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% log.json_parse.each do |key, values| %>
+                      <tr>
+                        <td><%= get_translate(key) %></td>
+                        <td>
+                          <% if values[0].present? %>
+                            <% case key %>
+                            <% when 'payment_plan_id' || 'discount_id' %>
+                              <%= Discount.exists?(values[0]) ? Discount.find(values[0]).name : "No existe la entidad" %>
+                            <% when 'lot_id' %>
+                              <%= Lot.exists?(values[0]) ? Lot.find(values[0]).name : "No existe la entidad" %>
+                            <% when 'client_id', 'client_2_id', 'client_3_id', 'client_4_id', 'client_5_id', 'client_6_id' %>
+                              <%= Client.exists?(values[0]) ? Client.find(values[0]).label : "No existe la entidad" %>
+                            <% when 'user_id' %>
+                              <%= User.exists?(values[0]) ? User.find(values[0]).label : "No existe la entidad" %>
+                            <% when 'status' %>
+                              <%= get_status(values[0]) %>
+                            <% when 'buyer' %>
+                              <%= get_buyer(values[0]) %>
+                            <% when 'step_id' %>
+                              <%= Step.exists?(values[0]) ? Step.find(values[0]).name : "No existe el paso" %>
+                            <% else %>
+                              <%= values[0] %>
+                            <% end %>
+                          <% else %>
+                            <i>Sin valor</i>
+                          <% end %>
+                        </td>
+                        <td>
+                          <% if values[1].present? %>
+                            <% case key %>
+                          <% when 'payment_plan_id' || 'discount_id' %>
+                              <%= Discount.exists?(values[1]) ? Discount.find(values[1]).name : "No existe la entidad" %>
+                            <% when 'lot_id' %>
+                              <%= Lot.exists?(values[1]) ? Lot.find(values[1]).name : "No existe la entidad" %>
+                            <% when 'client_id', 'client_2_id', 'client_3_id', 'client_4_id', 'client_5_id', 'client_6_id' %>
+                              <%= Client.exists?(values[1]) ? Client.find(values[1]).label : "No existe la entidad" %>
+                            <% when 'user_id' %>
+                              <%= User.exists?(values[1]) ? User.find(values[1]).label : "No existe la entidad" %>
+                            <% when 'status' %>
+                              <%= get_status(values[1]) %>
+                            <% when 'buyer' %>
+                              <%= get_buyer(values[1]) %>
+                            <% when 'step_id' %>
+                              <%= Step.exists?(values[1]) ? Step.find(values[1]).name : "No existe el paso" %>
+                            <% else %>
+                              <%= values[1] %>
+                            <% end %>
+                          <% else %>
+                            <i>Sin valor</i>
+                          <% end %>
+                          </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+
+          <% if @logs_scheme.any? %>
+            <h5>Esquema</h5>
+            <% @logs_scheme.each do |log| %>
+              <div class="py-2">
+                <div class="text-center pb-2"><b><%= log.user.label %></b> editó los siguientes campos
+                  el <%= log.date.strftime("%d/%m/%Y") %> a las <%= log.date.strftime("%I:%M%p") %></div>
+                <div class="table-container-without-height">
+                  <table class="table table-bordered background-white">
+                    <thead>
+                    <tr>
+                      <th width="20%">Campo</th>
+                      <th width="40%">Antiguo valor</th>
+                      <th width="40%">Nuevo valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% log.json_parse.each do |key, values| %>
+                      <tr>
+                        <td><%= get_translate(key) %></td>
+                        <td>
+                          <% if values[0].present? %>
+                            <% case key %>
+                            <% when 'down_payment_paid' %>
+                              <%= values[0] ? "Pagado" : "No Pagado" %>
+                            <% else %>
+                              <%= values[0] %>
+                            <% end %>
+                          <% else %>
+                            <i>Sin valor</i>
+                          <% end %>
+                        </td>
+                        <td>
+                          <% if values[1].present? %>
+                            <% case key %>
+                            <% when 'down_payment_paid' %>
+                              <%= values[1] ? "Pagado" : "No Pagado" %>
+                            <% else %>
+                              <%= values[1] %>
+                            <% end %>
+                          <% else %>
+                            <i>Sin valor</i>
+                          <% end %>
+                          </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+
+          <% if @logs_users.any? %>
+            <h5>Responsables</h5>
+            <% @logs_users.each do |log| %>
+              <div class="py-2">
+                <div class="text-center"><%= tag.b(log.user.present? ? log.user.label : "El servidor") %> editó los siguientes campos de
+                  <b><%= FolderUser.with_deleted.find_by(id: log.element_id).user.label %></b> el <%= log.date.strftime("%d/%m/%Y") %> a las <%= log.date.strftime("%I:%M%p") %></div>
+                <div class="table-container-without-height">
+                  <table class="table table-bordered background-white">
+                    <thead>
+                    <tr>
+                      <th width="20%">Campo</th>
+                      <th width="40%">Antiguo valor</th>
+                      <th width="40%">Nuevo valor</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% log.json_parse.each do |key, values| %>
+                      <tr>
+                        <td><%= get_translate(key) %></td>
+                        <td>
+                          <% if values[0].present? %>
+                            <% case key %>
+                            <% when 'user_id' %>
+                              <%= User.exists?(values[0]) ? User.find(values[0]).label : "No existe la entidad" %>
+                            <% else %>
+                              <%= values[0] %>
+                            <% end %>
+                          <% else %>
+                            <i>Sin valor</i>
+                          <% end %>
+                        </td>
+                        <td>
+                          <% if values[1].present? %>
+                            <% case key %>
+                            <% when 'user_id' %>
+                              <%= User.exists?(values[1]) ? User.find(values[1]).label : "No existe la entidad" %>
+                            <% else %>
+                              <%= values[1] %>
+                            <% end %>
+                          <% else %>
+                            <i>Sin valor</i>
+                          <% end %>
+                          </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,79 @@
+<div class="row">
+  <div class="form-group col-12 col-md-6">
+    <%= form.label :country, "País" %>
+    <%= form.select :country, options_for_select(ISO3166::Country.translations("ES").values,
+                                                form.object&.country),
+                                                { include_blank: "Selecciona un país" },  id: "country" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6">
+    <%= form.label :postal_code, "Código Postal" %>
+    <%= form.number_field :postal_code, class: "form-control", pattern: "[0-9]{1,5}", id: "postal_code" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6 inside-mexico
+      <%= "d-none" if form.object.nil? || @lot.new_record? || form.object.country&.blank? || form.object&.country != "México" %>">
+    <%= form.label :state, "Estado" %>
+    <%= form.select :state, options_for_select(state_options_(form.object), form.object&.state),
+                                      { class: "form-control", disabled: form.object&.country != "México" ? "disabled" : "" },
+                                      id: "state" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6 inside-mexico
+        <%= "d-none" if form.object.nil? || form.object.new_record? || form.object&.country.blank? || form.object&.country != "México" %>">
+    <%= form.label :city, "Ciudad" %>
+    <%= form.select :city, options_for_select(city_options_(form.object), form.object&.city),
+                                      { class: "form-control", disabled: form.object&.country != "México" ? "disabled" : "" },
+                                      id: "city" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6 inside-mexico
+        <%= "d-none" if form.object.nil? || form.object.new_record? || form.object&.country.blank? || form.object&.country != "México" %>">
+    <%= form.label :colony, "Colonia" %>
+    <%= form.select :colony, options_for_select(colony_options_(form.object), form.object&.colony),
+                                        { class: "form-control", disabled:form.object&.country != "México" ? "disabled" : "" },
+                                        id: "colony" %>
+    <div class="custom-colony d-none">
+      <%= form.label :colony, "Escribe el nombre de la colonia:", class: "my-2" %>
+      <%= form.text_field :colony, class: "form-control", disabled: true %>
+    </div>
+  </div>
+
+  <div class="form-group col-12 col-md-6 outside-mexico
+      <%= "d-none" if form.object.nil? || form.object.new_record? || form.object&.country.blank? || form.object&.country == "México" %>">
+    <%= form.label :state, "Estado" %>
+    <%= form.text_field :state, class: "form-control", disabled: form.object&.country == "México" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6 outside-mexico
+        <%= "d-none" if form.object.nil? || form.object.new_record? || form.object&.country.blank? || form.object&.country == "México" %>">
+    <%= form.label :city, "Ciudad" %>
+    <%= form.text_field :city, class: "form-control", disabled: form.object&.country == "México" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6 outside-mexico
+        <%= "d-none" if form.object.nil? || form.object.new_record? || form.object&.country.blank? || form.object&.country == "México" %>">
+    <%= form.label :colony, "Colonia" %>
+    <%= form.text_field :colony, class: "form-control", disabled: form.object&.country == "México" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6">
+    <%= form.label :street, "Calle" %>
+    <%= form.text_field :street, class: "form-control" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6">
+    <%= form.label :location, "Localidad" %>
+    <%= form.text_field :location, class: "form-control" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6">
+    <%= form.label :house_number, "Número exterior" %>
+    <%= form.text_field :house_number, class: "form-control" %>
+  </div>
+
+  <div class="form-group col-12 col-md-6">
+    <%= form.label :interior_number, "Número interior" %>
+    <%= form.text_field :interior_number, class: "form-control" %>
+  </div>
+</div>

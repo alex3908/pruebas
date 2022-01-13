@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Descuentos Base</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Esquemas de crédito", credit_schemes_path, class: "text-capitalize" %></li>
+        <li class="breadcrumb-item active" aria-current="page">Ver Descuento</li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-6">
+      <strong>Límite inferior:</strong> <%= @discount.total_payments %>
+    </div>
+    <div class="form-group col-sm-12 col-md-6">
+      <strong>Descuento:</strong> <%= "%.2f" % (@discount.discount * 100) %> %
+    </div>
+  </div>
+
+  <div class="actions py-3">
+    <%= link_to "Regresar", credit_scheme_discounts_path(@credit_scheme), class: "btn btn-secondary" %>
+    <%= link_to "Editar", edit_credit_scheme_discount_path(@credit_scheme, @discount), class: "btn btn-primary" %>
+  </div>
+
+</div>

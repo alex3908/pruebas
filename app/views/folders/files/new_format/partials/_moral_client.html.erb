@@ -1,0 +1,245 @@
+<div class="pdf-new-bg">
+    <div class="new-complementary-header">
+        <table style="width:100%">
+            <tr>
+                <td>
+                    <p class="header-text">
+                    FORMULARIO  OBLIGATORIO  PARA  LOS  CLIENTES  O  USUARIOS  QUE  SEAN  <b>PERSONAS
+                    MORALES</b>   DE   NACIONALIDAD   MEXICANA,   DEFINIDO   COMO
+                    <b>ANEXO 4</b> POR EL ACUERDO POR EL QUE SE EMITEN LAS REGLAS DE CARÁCTER
+                    GENERAL  DE  LA  LEY  FEDERAL  PARA  LA  PREVENCIÓN  E  IDENTIFICACIÓN  DE
+                    OPERACIONES CON RECURSOS DE PROCEDENCIA ILÍCITA.
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="conditions-container" style="padding-top: 15%">
+        <table class="mt-3 mb-3" style="width:100%">
+            <tr>
+                <td>
+                    <div class="text-center m-0 pt-2 pb-1">
+                        <p>PERSONA MORAL</p>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <div class="bg-date text-center m-0 pt-2 pb-1">
+                        <p class="text-bold">DATOS REQUERIDOS DEL USUARIO O CLIENTE</p>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <div class="text-center m-0 pt-2 pb-1">
+                        <p>Estimado cliente le solicitamos muy amablemente brindarnos los siguientes datos:</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table class="required-data text-nowrap mt-5">
+
+            <tr>
+                <th><span id="pre-wrap">Determinación o razón social:</span></th>
+                <td colspan="3" scope="colgroup"><%= client&.moral_client&.business_name %></td>
+            </tr>
+            <tr>
+                <th>Fecha de constitución:</th>
+                <td><span><%= client&.moral_client&.constitution_date %></span></td>
+                <th class="pl-3">Nacionalidad:</th>
+                <td><span><%= client&.moral_client&.nationality %></span></td>
+            </tr>
+            <tr>
+                <th>País de nacionalidad:</th>
+                <td colspan="3"><%= client&.moral_client&.country_nationality %></td>
+            </tr>
+
+            <tr>
+                <th><span id="pre-wrap">Actividad, Giro mercantil u objeto social:</span></th>
+                <td colspan="3" scope="colgroup"><%= client&.moral_client&.activity %></td>
+            </tr>
+            <tr>
+                <th>Domicilio:</th>
+                <td colspan="3" scope="colgroup"><span id="pre-wrap"><%= client&.moral_client&.street %></span></td>
+            </tr>
+            <tr>
+                <th>No. exterior:</th>
+                <td><%= client&.moral_client&.house_number %></td>
+                <th class="pl-3">No. interior:</th>
+                <td><%= client&.moral_client&.interior_number %></td>
+            </tr>
+            <tr>
+                <th>Colonia:</th>
+                <td><%= client&.moral_client&.colony %></td>
+                <th class="pl-3">Municipio:</th>
+                <td><%= client&.moral_client&.location %></td>
+            </tr>
+            <tr>
+                <th>Ciudad/Población:</th>
+                <td><%= client&.moral_client&.city %></td>
+                <th class="pl-3">Entidad federativa:</th>
+                <td><%= client&.moral_client&.state %></td>
+            </tr>
+            <tr>
+                <th>País:</th>
+                <td><%= client&.moral_client&.country %></td>
+                <th class="pl-3">Código postal:</th>
+                <td><%= client&.moral_client&.postal_code %></td>
+            </tr>
+            <tr>
+                <th>Teléfono:</th>
+                <td><%= client&.main_phone %></td>
+                <th class="pl-3">Tel. adicional:</th>
+                <td><%= client&.optional_phone %></td>
+            </tr>
+            <tr>
+                <th>RFC:</th>
+                <td><%= client&.moral_client&.rfc_company %></td>
+                <th class="pl-3">Correo electrónico:</th>
+                <td><%= client&.email %></td>
+            </tr>
+            <tr></tr>
+        </table>
+        <div style="width:33%;margin-left:34%;margin-top:100px;">
+            <div class="text-center sign-tag-color"><%= client&.sign_tag %></div>
+            <div class="secondary-bar-sign new_format">
+                <p>Firma de conformidad<br>Representante legal</p>
+            </div>
+        </div>
+        <div style="margin-top:20px;">
+                <p>*Todos los campos son de carácter obligatorio.</p>
+
+        </div>
+    </div>
+</div>
+
+<div class="pdf-new-bg">
+    <div class="conditions-container" style="padding-top: 15%">
+        <table class="mt-3 mb-3" style="width:100%">
+            <tr>
+                <th>
+                    <div class="bg-date text-center m-0 pt-2 pb-1">
+                        <p class="text-bold">DATOS REQUERIDOS DEL REPRESENTANTE LEGAL</p>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <div class="text-center m-0 pt-2 pb-1">
+                        <p>Estimado cliente le solicitamos muy amablemente brindarnos los siguientes datos:</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table id="conditions-info" class="text-nowrap text-center mt-5">
+
+            <tr>
+                <th class="new_format">
+                <div class="purchase_promise-input text-center"><%= client&.name %></div>
+                <hr style="border-top: 1px solid #000;margin-top: 0;margin-bottom: 0;">
+                </th>
+            </tr>
+            <tr>
+                <th class="new_format">
+                Nombre del comercio o empresa
+                </th>
+            </tr>
+        </table>
+                <table class="required-data text-nowrap mt-5 mb-1 pb-1">
+            <tr>
+                <th>Fecha de nacimiento:</th>
+                <td colspan="3" scope="colgroup"><%= client&.moral_client&.birthdate %></td>
+            </tr>
+            <tr>
+                <th>Teléfono:</th>
+                <td><%= client&.main_phone %></td>
+                <th class="pl-3">Correo electrónico:</th>
+                <td><%= client&.email %></td>
+            </tr>
+            <tr>
+                <th>CURP:</th>
+                <td><%= client&.moral_client&.curp %></td>
+                <th class="pl-3">RFC:</th>
+                <td><%= client&.moral_client&.legal_rfc %></td>
+            </tr>
+            <tr>
+                <th><span id="pre-wrap">No. de la identificación:</span></th>
+                <td><%= client&.moral_client&.identification_number %></td>
+                <th class="pl-3">Autoridad que lo emite:</th>
+                <td><%= client&.moral_client&.company_identification_type %></td>
+            </tr>
+            <tr>
+                <th>Vigencia:</th>
+                <td><%= client&.moral_client&.company_validity_identification %></td>
+            </tr>
+        </table>
+        <div style="width:33%;margin-left:34%;margin-top:100px;">
+            <div class="secondary-bar-sign new_format">
+                <p>Representante Legal<br>Firma</p>
+            </div>
+        </div>
+        <div style="margin-top:20px;">
+                <p>*Todos los campos son de carácter obligatorio.</p>
+
+        </div>
+    </div>
+</div>
+
+  <div class="container pdf-new-bg m-0 p-0">
+    <div class="sign-promise new_format m-5">
+        <h1>GRUPO ORVE</h1>
+        <h1>PRESENTE</h1>
+        <p class="pt-3">En relación con su solicitud respecto de la información de mi conocimiento sobre la existencia de Dueño
+        Beneficiario o Beneficiario Controlador, y en su caso de los datos, documentos o información que permita
+        identificarlo, en términos del Artículo 3 Fracción III de la Ley Federal para la Prevención e Identificación de
+        Operaciones con Recursos de Procedencia Ilícita que define:</p>
+
+        <p class="italic">“...Beneficiario Controlador, a la persona o grupo de personas que:</p>
+        <ol type="a">
+        <li class="italic">Por medio de otra o de cualquier acto, obtiene el beneficio derivado de éstos y es quien, en última
+        instancia, ejerce los derechos de uso, goce, disfrute, aprovechamiento o disposición
+            de un bien o servicio, o</li>
+        <li class="italic">Ejerce el control de aquella persona moral que, en su carácter de cliente o usuario, lleve a cabo actos u
+        operaciones con quien realice Actividades Vulnerables, así como las personas por cuenta de quienes celebra alguno de ellos. <br>Se entiende que una persona o grupo de personas controla a una persona moral cuando, a través de la titularidad de valores, por contrato o de cualquier otro acto, puede:
+            <ol type="I">
+            <li class="italic">Imponer,directa o indirectamente, decisiones en las asambleas generales de accionistas, socios u órganos equivalentes, o nombrar o destituir a la mayoría de los consejeros, administradores o sus equivalentes;</li>
+            <li class="italic">Mantener la titularidad de los derechos que permitan, directa o indirectamente, ejercer el voto respecto de más del cincuenta por ciento del capital social, o</li>
+            <li class="italic">Dirigir, directa o indirectamente, la administración, la estrategia o las principales políticas de la misma...”.</li>
+            </ol>
+
+        </li>
+        </ol>
+
+        <p>Así como del Artículo 14 del Reglamento de la Ley Federal para la Prevención e Identificación de Operaciones
+        con Recursos de Procedencia Ilícita que establece: </p>
+
+        <p class="italic">“...Artículo 14.-Para efectos del cumplimiento a lo previsto en la fracción III del artículo 18 de la Ley, se
+        entenderá como dueño beneficiario al Beneficiario Controlador...”.</p>
+
+        <p>Bajo protesta de decir verdad, le hago saber que sí tengo conocimiento de la existencia de un
+        Beneficiario Controlador o Dueño Beneficiario, y ante usted manifiesto que dicho beneficiario es
+        _________________________________________________, por ser quien en
+        última instancia ejerce los derechos de uso, goce, disfrute o disposición del bien o servicio objeto de la
+        presente operación, en los términos de los preceptos arriba mencionados. </p>
+
+        <p>Sin más por el momento, quedo de Usted. </p>
+
+        <h1 class="pt-3">ATENTAMENTE</h1>
+        <div class="row">
+        <div class="col-xs-6">
+            <div class="col-xs-4"><h1>Nombre:</h1></div>
+            <div class="col-xs-7 name-sign">
+                <p><%= client&.label %></p>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="col-xs-3"><h1>Firma:</h1></div>
+            <div class="col-xs-8 name-sign">
+                <p class="sign-tag-color"><%= client&.sign_tag %></p>
+            </div>
+        </div>
+
+        </div>
+    </div>
+</div>

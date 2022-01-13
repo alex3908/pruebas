@@ -1,0 +1,40 @@
+
+<%if !@lot.status_previously_changed? %>
+Swal.fire({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  type: 'warning',
+  title: "No es posible realizar esta accion para un <%= @lot_singular %> <%= @lot.sold? ? 'vendido' : 'reservado' %>."
+});
+<%elsif @lot.errors.count > 0%>
+Swal.fire({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  type: 'error',
+  title: "Hubo un error al intentar hacer el cambio."
+});
+<%else%>
+Swal.fire({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  type: 'success',
+  title: "El <%= @lot_singular %> se ha <%= @lot.for_sale? ? 'puesto a la venta' : 'bloqueado'%> correctamente."
+});
+$("[data-id=<%=@lot.id%>]").find(".badge").removeClass("badge-secondary badge-success");
+$("[data-id=<%=@lot.id%>]").find(".badge").addClass('<%= escape_javascript lot_status_class(@lot) %>');
+$("[data-id=<%=@lot.id%>]").find(".badge").text('<%= escape_javascript @lot.status_label %>');
+
+<% if @lot.for_sale? %>
+$("[data-id=<%=@lot.id%>]").find(".lock-button").html("<%= escape_javascript fa_icon('lock') %>");
+$("[data-id=<%=@lot.id%>]").find(".lock-button").removeAttr('data-confirm');
+<% elsif @lot.locked_sale? %>
+$("[data-id=<%=@lot.id%>]").find(".lock-button").html("<%= escape_javascript fa_icon('unlock') %>");
+$("[data-id=<%=@lot.id%>]").find(".lock-button").attr('data-confirm', '¿Estás seguro de desbloquear este <%= @lot_singular %>? Cualquier asesor podrá reservarlo.');
+<% end %>
+<% end %>

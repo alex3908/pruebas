@@ -1,0 +1,58 @@
+<div class="accordion collapse-elements px-4 mb-4 mt-4" id="accordion-users">
+  <div class="d-flex justify-content-between cursor-pointer collapsed accordion-toggle" data-toggle="collapse" data-target="#collapse-users" aria-expanded="true" aria-controls="collapse-users">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Responsables</p>
+  </div>
+  <div class="table-container collapse" id="collapse-users" data-parent="#accordion-users">
+    <% if @step_role&.can_add_folder_user? || can?(:create, FolderUser) || can?(:create_only_hidden, FolderUser) && @folder.not_active? %>
+      <%= link_to "Agregar", "#sellerModal", 'data-toggle': "modal", 'data-folder_id': @folder.id, class: "btn btn-primary float-right" %>
+    <% end %>
+
+    <% if @folder.folder_users.empty? %>
+      <div class="container">
+        <div class="py-5">
+          <p class="text-center h5 leyend mb-5">No se encontraron responsables registrados.</p>
+        </div>
+      </div>
+    <% else %>
+      <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+          <tr>
+            <th> Asesor </th>
+            <th> Correo </th>
+            <th> Porcentaje de comisión </th>
+            <th> <%= t("activerecord.attributes.folder_user.rol") %> </th>
+            <th> <%= t("activerecord.attributes.folder_user.concept") %> </th>
+            <th> Visible </th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @folder.folder_users.includes(:folder_user_concept, :role, :user).each do |folder_user| %>
+            <tr>
+              <td><%= folder_user.user.label %></td>
+              <td><%= folder_user.user.email %></td>
+              <td><%= number_to_percentage(folder_user.percentage, precision: 2) %></td>
+              <td><%= folder_user.try(:role).try(:name) %></td>
+              <td><%= folder_user.folder_user_concept.name %></td>
+              <td><%= folder_user.visible ? "Si" : "No" %></td>
+              <td>
+                <% if @step_role&.can_edit_folder_user? || can?(:update, FolderUser) || can?(:update_only_hidden, FolderUser) && @folder.not_active? %>
+                  <%= link_to edit_folder_folder_user_path(@folder, folder_user), class: "table-link", data: { toggle: "modal", target: "#modal-window" }, remote: true do %>
+                    <i class="fa fa-pencil-square-o"></i>
+                  <% end %>
+                <% end %>
+
+                <% if @step_role&.can_remove_folder_user? || can?(:destroy, FolderUser) || can?(:destroy_only_hidden, FolderUser) && @folder.not_active? %>
+                  <%= link_to folder_folder_user_path(@folder, folder_user), class: "table-link", method: :delete, data: { toggle: "tooltip", confirm: "¿Estás seguro?" }, title: "Remover responsable" do %>
+                    <i class="fa fa-trash"></i>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>

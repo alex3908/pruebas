@@ -1,0 +1,37 @@
+<% identifier ||= SecureRandom.alphanumeric %>
+<% content_for :opener_attributes, "data-toggle=modal data-target=##{identifier}" %>
+
+<%= yield %>
+
+<% if content_for? :opener %>
+  <%= content_for :opener %>
+<% else %>
+  <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#<%= identifier %>">
+    Abrir
+  </button>
+<% end %>
+
+<% content_for :modal do %>
+  <div class="modal fade" id="<%= identifier %>" role="dialog" aria-hidden="true" <%= 'data-backdrop="static"' if local_assigns[:static_backdrop] %>>
+    <div class="modal-dialog modal-dialog-center" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <% if defined?(:title) %>
+            <h5 class="modal-title"><%= title %></h5>
+          <% end %>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <%= content_for :modal_content %>
+        </div>
+        <% if local_assigns.fetch(:footer, true) %>
+          <div class="modal-footer pt-2">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

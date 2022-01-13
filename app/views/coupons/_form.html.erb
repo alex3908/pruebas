@@ -1,0 +1,26 @@
+<%= form_with(model: coupon, local: true, url: [@promotion, coupon]) do |form| %>
+  <fieldset>
+    <legend>Información general</legend>
+    <div class="row">
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :promotion_code, "Cupón" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" data-html="true" title="<%= "El cupón puede contener: <br> - <i>Letras</i> <br> - <i>Números</i> <br> - <i>Caracteres especiales</i> <br> No debe contener <br> - <i>Espacios en blanco</i>".html_safe %>"></i>
+        <%= form.text_field :promotion_code, class: "form-control", readonly: !coupon.draft %>
+      </div>
+
+      <div class="form-group col-12 col-md-6">
+        <%= form.label :usage_limit, "Límite de usos" %>
+        <div class="input-group">
+          <%= form.number_field :usage_limit, min: coupon.persisted? ? coupon.usages : 1, step: 1, class: "form-control text-right", value: coupon.usage_limit %>
+        </div>
+        <small class="form-text text-muted">Dejar en blanco para considerar sin limite.</small>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <div class="actions">
+    <%= link_to "Cancelar", promotion_coupons_path, class: "btn btn-secondary" %>
+    <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

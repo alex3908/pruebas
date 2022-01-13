@@ -1,0 +1,32 @@
+<div class="container">
+  <section class="images">
+    <h3 class="text-left vertical-align m-0 py-3">Lista de Archivos</h3>
+    <div class="row mb-3">
+      <div class="col-4 pr-0">
+        <hr class="marker-bar-green">
+      </div>
+      <div class="col-8 pl-0">
+        <hr class="marker-bar-gray">
+      </div>
+    </div>
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th class="align-middle">Nombre</th>
+        <th class="text-right">Opciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% email_template.attachments.each do |attachment| %>
+        <tr>
+          <td class="align-middle"><%= attachment.filename %></td>
+          <td class="text-right">
+          <%= link_to(fa_icon("eye"), rails_blob_path(attachment), target: "_blank", class: "table-link", data: { toggle: "tooltip" }, title: "Ver") %>
+            <%= link_to(fa_icon("trash"), remove_file_email_template_path(email_template, file_id: attachment.id), method: :delete, data: { toggle: "tooltip", confirm: "\u00BFEs\u00E1s seguro?" }, class: "table-link", title: "Eliminar") %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </section>
+</div>

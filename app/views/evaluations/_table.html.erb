@@ -1,0 +1,44 @@
+<div class="row mb-3">
+  <div class="col-4 pr-0">
+    <hr class="marker-bar-green">
+  </div>
+  <div class="col-8 pl-0">
+    <hr class="marker-bar-gray">
+  </div>
+</div>
+
+<div class="table-container-without-height">
+  <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+    <thead>
+    <tr>
+      <th>Pregunta</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% evaluations.each do |evaluation| %>
+      <tr>
+        <td><%= evaluation.question %></td>
+        <td class="text-right">
+          <% if can?(:change_status, Evaluation) %>
+            <div class="p-2">
+              <%= check_box_tag "complete", evaluation.active, evaluation.active,
+                                data: {
+                                    activate: "toggle",
+                                    onstyle: "success",
+                                    offstyle: "secondary",
+                                    on: "Activa",
+                                    off: "Oculta",
+                                    remote: true,
+                                    url: change_status_evaluation_path(evaluation), method: :patch
+                                } %>
+            </div>
+          <% end %>
+          <%= link_to(fa_icon("edit"), edit_evaluation_path(evaluation), class: "table-link", data: { toggle: "tooltip" }, title: "Editar") if can?(:update, Evaluation) %>
+          <%= link_to(fa_icon("trash"), evaluation_path(evaluation), class: "table-link", method: :delete, data: { toggle: "tooltip", confirm: "¿Estás seguro?" }, title: "Eliminar") if evaluation.evaluation_folders.count <= 0 && can?(:destroy, Evaluation) %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>

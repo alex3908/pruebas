@@ -1,0 +1,118 @@
+<%= yield %>
+<div class="accordion collapse-elements px-4 mb-4" id="accordion-additional">
+  <div class="d-flex flex-wrap justify-content-between cursor-pointer accordion-toggle" data-toggle="collapse" data-target="#collapse-section" aria-expanded="false" aria-controls="collapse-section">
+    <p class="text-left vertical-align m-0 py-3 color-primary">Filtros</p>
+  </div>
+  <div class="row collapse show" id="collapse-section" data-parent="#accordion-additional">
+    <%= form_tag(@filter_path, method: :get, data: { controller: "export", 'target': "export.form", 'export-url': export_folders_url(format: :json) }) do %>
+      <%= hidden_field_tag :for_reports_view, current_page?(controller: 'reports', action: 'folders') %>
+      <%= hidden_field_tag :direction, params[:direction] %>
+      <%= hidden_field_tag :sort, params[:sort] %>
+      <div class="container py-3">
+        <div class="row">
+          <%= content_for(:additional_filters) %>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :from_date, "Buscar desde la fecha de inicio:" %>
+            <%= text_field_tag :from_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker", value: params[:from_date], required: false, placeholder: "dd/mm/yyyy" } %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :to_date, "Buscar hasta la fecha:" %>
+            <%= text_field_tag :to_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker disabled", value: params[:to_date], required: false, placeholder: "dd/mm/yyyy" } %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :approved_from_date, "Buscar finalizados desde la fecha:" %>
+            <%= text_field_tag :approved_from_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker", value: params[:from_date], required: false, placeholder: "dd/mm/yyyy" } %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :approved_to_date, "Buscar finalizados hasta la fecha:" %>
+            <%= text_field_tag :approved_to_date, Time.zone.now.strftime("%d/%m/%Y"), { class: "form-control datepicker disabled", value: params[:to_date], required: false, placeholder: "dd/mm/yyyy" } %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :folio, "Buscar por folio:" %>
+            <%= text_field_tag :folio, params[:folio], class: "form-control" %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :email, "Buscar por correo:" %>
+            <%= text_field_tag :email, params[:email], class: "form-control" %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :name, "Buscar por cliente:" %>
+            <%= text_field_tag :name, params[:name], class: "form-control" %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :lot_number, "Buscar por número de unidad:" %>
+            <%= number_field_tag :lot_number, params[:lot_number], class: "form-control" %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :lot_label, "Buscar por clasificador de unidad:" %>
+            <%= text_field_tag :lot_label, params[:lot_label], class: "form-control" %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :salesman, "Buscar por asesor:" %>
+            <%= text_field_tag :salesman, params[:salesman], class: "form-control" %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :project do %> Buscar por <span class="text-lowercase"><%= @project_singular %>: </span>
+            <% end %>
+            <%= select_tag :project, options_for_select(@projects.map { |project| [project.name, { "data-phases" => project.phases.select(:id, :name).to_json(include: { stages: { only: [:id, :name] } }) }, project.id] }, selected: params["project"].to_s), { class: "form-control", include_blank: ("Todos") } %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :phase do %> Buscar por <span class="text-lowercase"><%= @phase_singular %>: </span>
+            <% end %>
+            <%= select_tag :phase, options_for_select([["Todas", ""]]), class: "form-control input-white bg-input-disabled", disabled: true %>
+          </div>
+          <div class="col-md-6 col-lg-3 mb-3">
+            <%= label_tag :stage do %> Buscar por <span class="text-lowercase"><%= @stage_singular %>: </span>
+            <% end %>
+            <%= select_tag :stage, options_for_select([["Todas", ""]]), class: "form-control input-white bg-input-disabled", disabled: true %>
+          </div>
+          <% unless current_page?(:controller => 'steps', :action => 'index') %>
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :status, "Buscar por estado:" %>
+              <%= select_tag :status, options_for_select([["Todos", nil],
+                                                          ["Activo", { "data-steps" => @steps.to_json() }, Folder::STATUS[:ACTIVE]],
+                                                          ["Expirado", Folder::STATUS[:EXPIRED]],
+                                                          ["Cancelado", Folder::STATUS[:CANCELED]]], params["status"]), class: "form-control" %>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :step, "Buscar por pipeline:" %>
+              <%= select_tag :step, options_for_select([["Todos", nil]]),
+                  class: "form-control input-white bg-input-disabled",
+                  include_blank: true,
+                  disabled: true %>
+            </div>
+          <% end %>
+          <% if can?(:see_all_branches, Folder) %>
+            <div class="col-md-6 col-lg-3 mb-3">
+              <%= label_tag :branch, "Buscar por sucursal" %>
+              <%= select_tag :branch, options_for_select(@branches.map { |branch| [branch.name, branch.id] }, selected: params["branch"].to_s), { class: "form-control", include_blank: ("Todos") } %>
+            </div>
+          <% end %>
+          <% if current_page?(:controller => 'folders', :action => 'index') %>
+            <% if can?(:see_all, Folder) || (current_user.role.is_evo && current_user.structure.present?) %>
+              <div class="col-md-6 col-lg-3 mb-3 <%= "d-none" if @first_evo_searcher.nil? %>">
+                <%= label_tag "#{@subordinate&.key}_node", "Buscar por #{@subordinate&.name&.downcase}:" %>
+                <%= select_tag "#{@subordinate&.key}_node", options_for_select(@first_evo_searcher.map { |first| [first.user.label, first.user.id] }, selected: params["#{@subordinate&.key}_node"].to_s), { class: "form-control search-subordinates", include_blank: ("Todos"), data: { child: @subordinate&.next&.key, key: @subordinate&.key } } %>
+              </div>
+              <%= subordinate_tag @subordinate, params %>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-lg-12 text-right">
+          <% if current_page?(:controller => 'folders', :action => 'index') || current_page?(controller: "steps", action: "show_pipeline") %>
+            <%= button_tag(type: "submit", class: "btn btn-primary") do %>
+              <i class="fa fa-search" aria-hidden="true"></i> Buscar
+            <% end %>
+          <% end %>
+          <% if can?(:folders, :report) && current_page?(controller: 'reports', action: 'folders') || can?(:report, Folder) && current_page?(controller: 'folders', action: 'index') %>
+            <%= button_tag(type: "button", class: "btn btn-secondary", data: { action: "export#generate" }) do %>
+              <i class="fa fa-file-text" aria-hidden="true"></i> Exportar
+            <% end %>
+          <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

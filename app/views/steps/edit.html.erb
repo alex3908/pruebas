@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-8">
+      <h1 class="banner-title vertical-align p-0 m-0">Editar Paso</h1>
+    </div>
+    <div class="col-sm-12 col-md-4 flex-middle-right">
+        <%= link_to "Regresar", steps_path, class: "btn btn-secondary float-right mr-2" %>
+    </div>
+  </div>
+  <hr class="divider">
+</div>
+<%= render partial: "form", locals: { step: @step,
+                                      other_steps: @other_steps,
+                                      folder_user_concepts: @folder_user_concepts,
+                                      client_user_concepts: @client_user_concepts,
+                                      step_roles: @step_roles,
+                                      unassigned_roles: @unassigned_roles
+} %>

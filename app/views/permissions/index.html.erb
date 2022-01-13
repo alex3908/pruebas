@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="row">
+      <div class="col-sm-12 col-md-6">
+          <h1 class="banner-title vertical-align p-0 m-0">Permisos</h1>
+      </div>
+      <div class="col-sm-12 col-md-6 flex-middle-right">
+          <%= link_to "Regresar", roles_path, class: "btn btn-outline-secondary mr-2" %>
+          <% if can?(:create, Permission) %>
+            <%= link_to("Nuevo permiso", new_permission_path, class: "btn btn-primary") %>
+          <% end %>
+      </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<div class="container">
+  <%= render "filters" %>
+</div>
+<% if @permissions.empty? %>
+  <div class="container">
+    <div class="py-5">
+        <p class="text-centre h5 leyend mb-5">
+            No se ha encontrado ningún permiso
+        </p>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-hover tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Nombre</th>
+          <th>Acción</th>
+          <th>Descripción</th>
+          <% if can?(:view_hidden, Permission) %>
+          <th>Visibilidad</th>
+          <% end %>
+          <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @permissions.each do |permission| %>
+          <tr>
+            <td><%= permission_group_name(permission.subject_class) %></td>
+            <td><%= permission.name %></td>
+            <td><%= permission.action %></td>
+            <td><%= permission.description %></td>
+            <% if can?(:view_hidden, Permission) %>
+              <% if permission.hidden? %>
+                <td class="text-center"><%= fa_icon("eye-slash") %></td>
+              <% else %>
+                <td class="text-center"><%= fa_icon("eye") %></td>
+              <% end %>
+            <% end %>
+            <td class="text-right">
+                <% if permission.role_permissions.count == 0 %>
+                  <%= link_to(fa_icon("trash-o"), permission_path(permission), method: :delete, class: "table-link", data: { confirm: "¿Desea eliminar el permiso?" }, title: "Eliminar") %>
+                <% end %>
+                <%= link_to edit_permission_path(permission), class: "table-link", title: "Editar", rel: "tooltip" do %>
+                  <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= will_paginate(@permissions, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page), onchange: "if(this.value){window.location='?per_page='+this.value;}" %>
+        por página
+      </div>
+    </div>
+  </div>
+<% end %>

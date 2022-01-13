@@ -1,0 +1,13 @@
+
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <span>
+      Apreciable <b><%= @client.label %></b>,
+    </span>
+  </p>
+  <p>
+    <span>
+      adjunto a este correo encontras el estado de cuenta solicitado de tu <%= @lot_singular %> <%= @lot.name %> en el <%= @project_singular %> <%= @project.name %> <%= @phase_singular %> <%= @phase.name %> <%= @stage_singular %> <%= @stage.name %>.
+    </span>
+  </p>
+<% end %>

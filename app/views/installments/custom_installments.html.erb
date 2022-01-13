@@ -1,0 +1,35 @@
+<div class="container">
+  <%= render partial: "components/breadcrumb", locals: {
+      name: "Cuotas personalizadas",
+      last: "Pagos",
+      links: [
+          { name: "Dashboard", path: root_path },
+          { name: "Expediente", path: folder_path(@folder) },
+      ],
+  } %>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-3 text-center">
+      Folio: <b><%= @folder.id %></b>
+    </div>
+    <div class="col-md-3 text-center">
+      <%= @lot_singular %>: <b><%= @folder.lot.name %></b>
+    </div>
+    <div class="col-md-3 text-center">
+      <%= @folder.phase.name %> - <%= @folder.stage.name %>
+    </div>
+
+    <div class="col-md-3 text-center">
+      <span>
+        Estado: <b><%= @folder.status_label %></b>
+        <%= tag.i("", class: "fa fa-info-circle", "aria-hidden": "true", "data-toggle": "tooltip", "data-placement": "top",
+                  "title": time_in_step(@folder)) if @folder.active? && @folder.step.present? && @folder.step_logs.present? %>
+      </span>
+    </div>
+  </div>
+
+<custom-installments url-process-installments="<%= process_custom_installments_folder_installments_path(@folder, :json) %>" url-save-installments="<%= create_custom_installments_folder_installments_path(@folder, :json) %>" url-cancel="<%= folder_url(@folder) %>"></custom-installments>

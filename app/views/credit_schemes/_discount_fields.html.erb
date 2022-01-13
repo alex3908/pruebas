@@ -1,0 +1,14 @@
+<tr class="nested-fields discount-row row py-2">
+  <td class="col-md-3">
+    <%= f.number_field :total_payments, class: "form-control", required: true %>
+  </td>
+  <td class="col-md-3">
+    <%= f.number_field :discount, min: 0, max: 100, step: 0.01, class: "form-control", value: base_discount(f), required: true %>
+  </td>
+  <td class="col-md-3">
+    <%= f.number_field :upper_limit, class: "upper-limit-field", disabled: true %>
+  </td>
+  <td class="col-md-3">
+    <%= link_to_remove_association "Eliminar descuento", f, class: "btn btn-primary" %>
+  </td>
+</tr>

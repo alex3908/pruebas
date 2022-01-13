@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Cuentas bancarias</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to @parent.class == User ? "Usuarios" : "Empresas", parent_bank_account_path %></li>
+        <li class="breadcrumb-item active" aria-current="page">Editar cuenta bancaria</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr class="divider">
+</div>
+<div class="container">
+  <%= render partial: "bank_accounts/form", locals: { bank_account: @bank_account } %>
+</div>

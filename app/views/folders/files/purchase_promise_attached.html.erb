@@ -1,0 +1,62 @@
+<% if project.present? && project.background.attached? %>
+  <% content_for :head do %>
+    <style>
+      .pdf-bg {
+        background-image: url('<%= wicked_blob_path(project.background) %>');
+      }
+    </style>
+  <% end %>
+<% end %>
+
+<div class="container m-0 p-0">
+<% clients.each do |client| %>
+  <%= render partial: "folders/files/partials/purchase_promise_attached_client", locals: { client: client, project: project } %>
+
+<div class="container pdf-bg m-0 p-0">
+  <div class="sign-promise m-5">
+    <h1>GRUPO ORVE</h1>
+    <h1>PRESENTE</h1>
+    <p class="pt-3">En relación con su solicitud respecto de la información de mi conocimiento sobre la existencia de Dueño Beneficiario o Beneficiario Controlador, y en su caso de los datos, documentos o información que permita identificarlo, en términos del Artículo 3 Fracción III de la Ley Federal para la Prevencióne Identificación de Operaciones con Recursos de Procedencia Ilícita que define:</p>
+    <p class="italic">“...Beneficiario Controlador, a la persona o grupo de personas que:</p>
+    <ol type="a">
+      <li class="italic">Por medio de otra o de cualquier acto, obtiene el beneficio derivado de éstos y es quien, en última instancia, ejerce los derechos de uso, goce, disfrute, aprovechamiento o disposición
+        de un bien o servicio, o</li>
+      <li class="italic">Ejerce el control de aquella persona moral que, en su carácter de cliente o usuario, lleve a cabo actos u operaciones con quien realice Actividades Vulnerables, así como las personas por cuenta de quienes celebra alguno de ellos. <br>Se entiende que una persona o grupo de personas controla a una persona moral cuando, a través de la titularidad de valores, por contrato o de cualquier otro acto, puede:
+        <ol type="I">
+          <li class="italic">Imponer,directa o indirectamente, decisiones en las asambleas generales de accionistas, socios u órganos equivalentes, o nombrar o destituir a la mayoría de los consejeros, administradores o sus equivalentes;</li>
+          <li class="italic">Mantener la titularidad de los derechos que permitan, directa o indirectamente, ejercer el voto respecto de más del cincuenta por ciento del capital social, o</li>
+          <li class="italic">Dirigir, directa o indirectamente, la administración, la estrategia o las principales políticas de la misma...”.</li>
+        </ol>
+
+      </li>
+    </ol>
+
+    <p>Así como del Artículo 14 del Reglamento de la Ley Federal para la Prevención e Identificación de Operaciones con Recursos de Procedencia Ilícita que establece: </p>
+
+    <p class="italic">“...Artículo 14.-Para efectos del cumplimiento a lo previsto en la fracción III del artículo 18 de la Ley, se entenderá como dueño beneficiario al Beneficiario Controlador...”.</p>
+
+    <p>Bajo protesta de decir verdad, le hago saber que no tengo conocimiento de la existencia de un Beneficiario Controlador o Dueño Beneficiario, debido a que es el que suscribe quien en última instancia ejerce los derechos de uso, goce, disfrute o disposición del bien o servicio objeto de la presente operación, en los términos de los preceptos arriba mencionados.</p>
+
+    <p>Sin más por el momento, quedo de Usted. </p>
+
+    <h1 class="pt-3">ATENTAMENTE</h1>
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="col-xs-3"><h1>Nombre:</h1></div>
+        <div class="col-xs-8 name-sign">
+          <p><%= client&.label %></p>
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <div class="col-xs-3"><h1>Firma:</h1></div>
+        <div class="col-xs-8 name-sign">
+          <p class="sign-tag-color"><%= client&.sign_tag %></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<% end %>
+</div>

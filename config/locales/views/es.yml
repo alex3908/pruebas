@@ -1,0 +1,52 @@
+es:
+  on_: Activado
+  off_: Desactivado
+  yes_: Si
+  not_: 'No'
+  option: opción
+  not_value: Sin valor
+  filters: Filtros
+  show: Mostrando
+  per_page: por página
+  articles:
+    famale: 
+      a: una
+    male:
+      a: un
+  breadcrumbs:
+    dashboard: Dashboard
+    catalogs: Catálogos
+    new: Nuevo
+    edit: Editar
+  buttons:
+    back: Regresar
+    new: Nuevo
+    options: Opciones
+    edit: Editar
+    destroy: Eliminar
+    cancel: Cancelar
+    save: Guardar
+    export: Exportar
+    import: Importar
+    add: Agregar
+    search: Buscar
+  select: "Selecciona %{article} %{item}"
+  form:
+    not_record_for: "No se pudo guardar por %{errors}:"
+    following_reason: la siguiente razón
+    following_reasons: las siguientes razones
+  table:
+    empty: "No se ha encontrado ningún %{model}."
+    no_records_yet: "Aún no hay %{model}."
+    start: Comienza registrando uno.
+  confirmations:
+    destroy_with_relations?: ¿Estás seguro? Se eliminará las configuraciones asociadas con este registro.
+    destroy?: ¿Estás seguro?
+    active?: "¿Esta seguro de activar esta %{item}?"
+  label:
+    active: "Activar %{item}"
+  controller:
+    messages:
+      created: "%{model} creado correctamente."
+      updated: "%{model} editado correctamente."
+      destroyed: "%{model} eliminado correctamente."

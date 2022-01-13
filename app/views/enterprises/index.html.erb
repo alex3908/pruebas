@@ -1,0 +1,81 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-6">
+      <h1 class="banner-title vertical-align p-0 m-0">Empresas</h1>
+    </div>
+    <div class="col-sm-12 col-md-6 flex-middle-right">
+      <%= link_to "Regresar", catalogs_path, class: "btn btn-outline-secondary mr-2" %>
+      <% if can?(:create, Enterprise) %>
+        <%= link_to "Nueva Empresa", new_enterprise_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<% if @enterprises.empty? %>
+  <div class="container">
+    <div class="py-5">
+      <p class="text-center h5 leyend mb-5">
+        No se ha encontrado ninguna empresa
+        <% if can?(:create, Enterprise) %>
+          <br> Comienza generando una nueva empresa.
+        <% end %>
+      </p>
+      <% if can?(:create, Enterprise) %>
+        <div class="text-center mt-3">
+          <%= link_to "Nueva Empresa", new_enterprise_path, class: "btn btn-primary jumping" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="container">
+    <div class="table-container">
+      <table class="table table-striped tablesaw tablesaw-stack" data-tablesaw-mode="stack">
+        <thead>
+        <tr>
+          <th>Razón Social</th>
+          <th>R.F.C.</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @enterprises.each do |enterprise| %>
+          <tr>
+            <td class="align-middle"><%= enterprise.business_name %></td>
+            <td class="align-middle"><%= enterprise.rfc %></td>
+            <td class="text-right">
+              <% if can?(:read, BankAccount) %>
+                <%= link_to "Cuentas Bancarias", enterprise_bank_accounts_path(enterprise), class: "btn btn-primary" %>
+              <% end %>
+
+              <% if can?(:read, Enterprise) %>
+                <%= link_to enterprise_path(enterprise), class: "table-link" do %>
+                  <i class="fa fa-eye"></i>
+                <% end %>
+              <% end %>
+
+              <% if can?(:update, Enterprise) %>
+                <%= link_to edit_enterprise_path(enterprise), class: "table-link" do %>
+                  <i class="fa fa-pencil-square-o"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= will_paginate(@enterprises, renderer: WillPaginate::ActionView::LinkRenderer, previous_label: "Anterior", next_label: "Siguiente") %>
+    <div class="text-center mt-3">
+      <div class="w-25 d-inline-block">
+        Mostrando <%= select_tag :per_page, options_for_select([5, 10, 20, 50, 100], @per_page),
+                                onchange: "if(this.value){window.location='?per_page='+this.value;}" %> por página
+      </div>
+    </div>
+  </div>
+<% end %>

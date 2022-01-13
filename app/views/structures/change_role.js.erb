@@ -1,0 +1,23 @@
+<% if @error.present?  %>
+  Swal.fire({
+    title: 'Error',
+    text: 'Hubo un error al intentar guardar al reemplazar el rol, por favor comunícate con tu administrador.',
+    type: 'error',
+    confirmButtonText: 'Continuar'
+  })
+<% else %>
+$('#modal-window').modal('hide');
+  Swal.fire({
+    title: '¡Rol actualizado con éxito!',
+    text: 'Ahora podrás hacer uso del nuevo rol en los niveles de ventas',
+    type: 'success',
+    confirmButtonText: 'Continuar',
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false
+  }).then(function() {
+   Turbolinks.visit("<%= level_settings_structures_path(@structure&.id) %>")
+  });
+<% end %>

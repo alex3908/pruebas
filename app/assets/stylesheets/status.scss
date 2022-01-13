@@ -1,0 +1,102 @@
+html,
+body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  background-color: #f7f8fb;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+body.friendly {
+  background: -webkit-linear-gradient(-45deg, #5db349 0%, #f5e842 100%);
+  background: linear-gradient(135deg, #5db349 0%, #f5e842 100%);
+
+  .message {
+    text-align: center;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 20px;
+    max-width: 450px;
+  }
+
+  .message__title {
+    font-size: 22px;
+    font-weight: 100;
+    margin-top: 15px;
+    color: #47494e;
+    margin-bottom: 8px;
+  }
+
+  p {
+    -webkit-margin-after: 0px;
+    -webkit-margin-before: 0px;
+    font-size: 15px;
+    color: #7f828b;
+    line-height: 21px;
+    margin-bottom: 4px;
+  }
+
+  .btn {
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #7f828b;
+    border: 1px solid #7f828b;
+  }
+
+  .hk-logo,
+  .app-icon {
+    fill: #dbe1ec;
+  }
+
+  .info {
+    fill: #9fabbc;
+  }
+
+  .message__title {
+    color: #fff;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .hk-logo,
+  .app-icon {
+    fill: rgba(255, 255, 255, 0.9);
+  }
+
+  .info {
+    fill: rgba(255, 255, 255, 0.9);
+  }
+
+  .btn {
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+  }
+
+  .info_area {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .logo {
+    position: fixed;
+    left: 12px;
+    bottom: 12px;
+  }
+}

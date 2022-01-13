@@ -1,0 +1,177 @@
+<div class="container">
+  <div class="row">
+    <div class="d-flex align-content-center flex-wrap col-sm-12 col-md-6">
+      <div class="project-logo-container">
+        <%= image_tag @project.logo.attached? ? @project.logo.variant(resize: "50x50") : "no-image.png", class: "logo-title" %>
+      </div>
+      <h1 class="project-name vertical-align m-0 p-0"><%= @project.name %></h1>
+    </div>
+    <div class="col-sm-12 col-md-6 d-flex flex-middle-right flex-wrap">
+      <ol class="breadcrumb ol-projects">
+        <li class="breadcrumb-item"><%= link_to "Dashboard", root_path %></li>
+        <li class="breadcrumb-item"><%= link_to @project_plural, projects_path, class: "text-capitalize" %></li>
+        <li class="breadcrumb-item active" aria-current="page"><%= @project.name %></li>
+      </ol>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <hr class="divider">
+</div>
+
+<div class="container">
+  <div class="d-flex flex-wrap justify-content-around text-right">
+
+    <% if can? :update, @project %>
+      <%= check_box_tag "complete", @project.active, @project.active,
+                        data: {
+                            activate: "toggle", onstyle: "success", offstyle: "secondary", on: "Activado", off: "Desactivado",
+                            remote: true, url: status_project_path(@project), method: :put
+                        } %>
+    <% end %>
+  </div>
+</div>
+
+<% if can? :update, @project %>
+  <div class="container">
+    <section class="project">
+      <div class="d-flex flex-wrap justify-content-between pt-3">
+        <h3 class="text-left vertical-align m-0 py-3">Datos del <%= @project_singular %></h3>
+        <div class="clearfix py-2">
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Opciones
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <%= render "modal", title: "Nivelar precios", footer: false do %>
+                <% content_for :opener, flush: true do %>
+                  <button type="button" class="dropdown-item" <%= content_for :opener_attributes %>>
+                    Nivelar precios
+                  </button>
+                <% end %>
+
+                <% content_for :modal_content, flush: true do %>
+                  <%= render "level_price_form", project: @project %>
+                <% end %>
+              <% end %>
+              <%= link_to "Editar", edit_project_path(@project), class: "dropdown-item" %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-4 pr-0">
+          <hr class="marker-bar-green">
+        </div>
+        <div class="col-8 pl-0">
+          <hr class="marker-bar-gray">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <p>
+            <strong>Nombre:</strong>
+            <%= @project.name %>
+          </p>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <p>
+            <strong>Correo Electrónico:</strong>
+            <%= @project.email %>
+          </p>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <p>
+            <strong>Tipo de Moneda:</strong>
+            <%= @project.currency %>
+          </p>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <p>
+            <strong>Número de Teléfono:</strong>
+            <%= @project.phone %>
+          </p>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <p>
+            <strong>Tipo de cotización:</strong>
+            <%= @project.quotation == "new" ? "3 Periodos" : "1 Periodo" %>
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+<% end %>
+
+<div class="container">
+  <section>
+    <%= render partial: "phases/index" %>
+  </section>
+</div>
+
+<% if @project.macroplane.attached? %>
+  <div class="container">
+    <section class="macroplane">
+      <h3 class="text-left vertical-align m-0 py-3">Macroplano</h3>
+      <div class="row mb-3">
+        <div class="col-4 pr-0">
+          <hr class="marker-bar-green">
+        </div>
+        <div class="col-8 pl-0">
+          <hr class="marker-bar-gray">
+        </div>
+      </div>
+      <div class="w-100 text-center"><%= image_tag @project.macroplane_nil, class: "img-fluid" %></div>
+    </section>
+  </div>
+<% end %>
+
+<% if can?(:update, @project) %>
+  <div class="container">
+    <section class="images">
+      <h3 class="text-left vertical-align m-0 py-3">Lista de Archivos</h3>
+      <div class="row mb-3">
+        <div class="col-4 pr-0">
+          <hr class="marker-bar-green">
+        </div>
+        <div class="col-8 pl-0">
+          <hr class="marker-bar-gray">
+        </div>
+      </div>
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th class="align-middle">Elemento</th>
+          <th class="text-right">Opciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="align-middle">Logo</td>
+          <td class="text-right">
+            <%= image_tag @project.logo_nil, class: "thumbnail float-right" %>
+          </td>
+        </tr>
+        <tr>
+          <td class="align-middle">Fondo</td>
+          <td class="text-right">
+            <%= image_tag @project.background_nil, class: "thumbnail float-right" %>
+          </td>
+        </tr>
+        <% if @project.templates.attached? %>
+          <% @project.templates.each do |template| %>
+            <tr>
+              <td class="align-middle">Plantilla: <b><%= template.filename %></b></td>
+              <td class="text-right">
+                <%= link_to "Eliminar", project_remove_file_path(@project, file_id: template.id), class: "btn btn-outline-danger float-right", method: :delete, data: { confirm: "¿Estás seguro de eliminar la plantilla?" } if can?(:remove_file, Project) %>
+                <%= link_to("Descargar", rails_blob_path(template, disposition: :attachment), class: "btn btn-outline-primary float-right mr-1") %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+        </tbody>
+      </table>
+    </section>
+  </div>
+<% end %>

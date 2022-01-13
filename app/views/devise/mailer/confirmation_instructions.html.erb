@@ -1,0 +1,25 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Instrucciones de Confirmación</span></h1>
+  &nbsp;
+  <p>
+    <span>Bienvenido <%= @email %>!:</span></p>
+  <p>
+    <span>
+      Puede confirmar el correo electrónico de su cuenta a través del siguiente enlace:
+    </span>
+  </p>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <%= link_to "Confirmar mi cuenta", confirmation_url(@resource, confirmation_token: @token), class: "mcnButton", style: "font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;", title: "Confirm account" %>
+<% end %>
+
+<%= render layout: "components/mailer_block" do %>
+  <p>
+    <span>
+      Si tiene preguntas puede contactarnos al teléfono <span style="color: #5e5e5e; font-weight: 600;">(999) 944 2525</span>
+      <br>
+      <br> ¡Saludos!
+    </span>
+  </p>
+<% end %>

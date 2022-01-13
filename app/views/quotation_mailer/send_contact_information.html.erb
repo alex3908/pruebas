@@ -1,0 +1,17 @@
+<%= render layout: "components/mailer_block" do %>
+  <h1><span style="font-size:25px">Información de contacto</span></h1>
+  &nbsp;
+  <p>
+    <span>Estimado Asesor
+      :</span></p>
+  <p>
+    <span>
+      Has recibido una solicitud de contacto en la landing page de disponibilidad de <%= @stage.name %> <%= @phase.name %>:
+    </span>
+    <ul>
+      <li>Nombre: <b><%= @client_name %> <%= @client_last_name %></b></li>
+      <li>Teléfono: <b><%= @client_phone %></b></li>
+      <li>Mensaje: <b><%= @message %></b></li>
+    </ul>
+  </p>
+<% end %>

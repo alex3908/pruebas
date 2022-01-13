@@ -1,0 +1,11 @@
+<div class="text-center">
+  <%= image_tag "paypal-full.png", class: "mx-auto d-block" %>
+  <%= form_with(scope: :online_payment_ticket, url: online_payment_tickets_path, local: true, method: "POST") do |form| %>
+    <%= form.hidden_field :token_id, data: { target: "netpay.tokenField" } %>
+    <% @online_payment.each do |k, v| %>
+      <%= form.hidden_field k, value: v %>
+    <% end %>
+    <%= form.submit "Pagar", class: "mt-3 btn btn-info" %>
+  <% end %>
+  <%= content_tag :div, "", id: "netpay-form" %>
+</div>

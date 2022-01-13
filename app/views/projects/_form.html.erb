@@ -1,0 +1,282 @@
+<%= form_with(model: project, local: true) do |form| %>
+  <% if project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(project.errors.count, "error") %> impidió que se guardara la información:</h2>
+
+      <ul>
+        <% project.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <fieldset>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :name, "Nombre" %>
+        <%= form.text_field :name, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :slug, "Clave URL" %>
+        <% if project.persisted? && project.slug.present? %>
+          <div class="font-weight-bold"><%= project.slug %></div>
+        <% else %>
+          <%= form.text_field :slug, class: "form-control", required: true %>
+          <small class="form-text text-muted">Esta elemento no podrá ser editado una vez establecido.</small>
+        <% end %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :reference, "Referencia" %>
+        <%= form.text_field :reference, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :quotation, "Tipo" %> <%= help_tooltip("Este elemento nos servirá para mostrar las multiples actualizaciones en las tablas de amortización y cotizaciones simples") %>
+        <%= form.select :quotation, [["1 Periodo", "conventional"], ["3 Periodos", "new"]], class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :phone, "Teléfono:" %>
+        <%= form.text_field :phone, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :email, "Correo" %>
+        <%= form.text_field :email, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :currency, "Tipo de Moneda" %>
+        <%= form.text_field :currency, class: "form-control" %>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :macroplane, "Macroplano" %>
+        <div class="col-sm-6">
+          <%= form.file_field :macroplane %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :logo, "Logo" %>
+        <div class="col-sm-6">
+          <%= form.file_field :logo %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :background, "Fondo" %>
+        <div class="col-sm-6">
+          <%= form.file_field :background %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :templates, "Plantillas" %>
+        <div class="col-sm-6">
+          <%= form.file_field :templates, multiple: true %>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>Configuración de estilos</legend>
+
+    <div class="row">
+      <div class="col-12 col-md-3">
+        <div class="form-group row">
+          <%= form.label :color, "Color general", class: "col-6 col-form-label" %>
+          <div class="col-6">
+            <div data-color class="input-group" title="Color">
+              <%= form.text_field :color, class: "form-control form-block", value: project.color, required: true %>
+              <span class="input-group-append">
+                <span class="input-group-text colorpicker-input-addon"><i></i></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+        <div class="form-group row">
+          <%= form.label :subtitle_color, "Encabezados", class: "col-6 col-form-label" %>
+          <div class="col-6">
+            <div data-color class="input-group" title="Color">
+              <%= form.text_field :subtitle_color, class: "form-control form-block", value: project.subtitle_color, required: true %>
+              <span class="input-group-append">
+                <span class="input-group-text colorpicker-input-addon"><i></i></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+        <div class="form-group row">
+          <%= form.label :divider_color, "Línea divisora", class: "col-6 col-form-label" %>
+          <div class="col-6">
+            <div data-color class="input-group" title="Color">
+              <%= form.text_field :divider_color, class: "form-control form-block", value: project.divider_color, required: true %>
+              <span class="input-group-append">
+                <span class="input-group-text colorpicker-input-addon"><i></i></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+        <div class="form-group row">
+          <%= form.label :font_color, "Fuente", class: "col-6 col-form-label" %>
+          <div class="col-6">
+            <div data-color class="input-group" title="Color">
+              <%= form.text_field :font_color, class: "form-control form-block", value: project.font_color, required: true %>
+              <span class="input-group-append">
+                <span class="input-group-text colorpicker-input-addon"><i></i></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>Nombres de entidades de venta del proyecto</legend>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :project_entity_name, "Primer Nivel" %>
+        <%= form.text_field :project_entity_name, class: "form-control", required: true %>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :phase_entity_name, "Segundo Nivel" %>
+        <%= form.text_field :phase_entity_name, class: "form-control", required: true %>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :stage_entity_name, "Tercer Nivel" %>
+        <%= form.text_field :stage_entity_name, class: "form-control", required: true %>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :lot_entity_name, "Cuarto Nivel" %>
+        <%= form.text_field :lot_entity_name, class: "form-control", required: true %>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>Redes sociales</legend>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-4">
+        <%= form.label :facebook, "Facebook" %>
+        <%= form.url_field :facebook, class: "form-control", placeholder: "https://example.com" %>
+      </div>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= form.label :instagram, "Instagram" %>
+        <%= form.url_field :instagram, class: "form-control", placeholder: "https://example.com" %>
+      </div>
+      <div class="form-group col-sm-12 col-md-4">
+        <%= form.label :website, "Sitio web" %>
+        <%= form.url_field :website, class: "form-control", placeholder: "https://example.com" %>
+      </div>
+    </div>
+  </fieldset>
+  <hr>
+  <fieldset>
+    <legend>PDF de cotización</legend>
+    <div class="row">
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :show_amortization_table, "Mostrar tabla de amortización" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Aplica en los datos generales de la cotización"></i>
+        <div>
+          <%= form.check_box :show_amortization_table,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :show_rate, "Mostrar tasa de interés" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Aplica en los datos generales de la cotización"></i>
+        <div>
+          <%= form.check_box :show_rate,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :show_price, "Mostrar precio por metro cuadrado" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Aplica en los datos generales de la cotización"></i>
+        <div>
+          <%= form.check_box :show_price,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :show_bank_account, "Mostrar cuentas bancarias" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Aplica en los datos generales de la cotización"></i>
+        <div>
+          <%= form.check_box :show_bank_account,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :show_final_price, "Mostrar precio final" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Mostrar precio final"></i>
+        <div>
+          <%= form.check_box :show_final_price,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+
+      <div class="form-group col-sm-12 col-md-6">
+        <%= form.label :show_payment_dates, "Mostrar fechas de pago en la carátula" %>
+        <i class="fa fa-info-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Mostrar fechas de pago en la carátula"></i>
+        <div>
+          <%= form.check_box :show_payment_dates,
+                             data: {
+                                 activate: "toggle",
+                                 onstyle: "success",
+                                 offstyle: "secondary",
+                                 on: "Si",
+                                 off: "No",
+                             } %>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+  <div class="actions py-3">
+        <% if project.persisted? %>
+          <%= link_to "Cancelar", project_path(@project), class: "btn btn-secondary" %>
+        <% else %>
+          <%= link_to "Cancelar", projects_path, class: "btn btn-secondary" %>
+        <% end %>
+        <%= form.submit "Guardar", class: "btn btn-primary" %>
+  </div>
+<% end %>

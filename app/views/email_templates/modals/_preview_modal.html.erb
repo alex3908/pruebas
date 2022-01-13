@@ -1,0 +1,21 @@
+<div class="modal-header">
+  <h5 class="modal-title">Previsualización: <%= @email_template.title %></h5>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<%= form_with(url: send_preview_template_email_template_path(@email_template), method: "POST", local: true, data: { remote: true }) do |form| %>
+<div class="modal-body">
+  <div class="row">
+    <div class="form-group col-sm-12 col-md-12">
+      <%= form.label :emails, "Correos" %>
+      <%= form.text_field :emails, class: "form-control", required: true %>
+    </div>
+  </div>
+
+</div>
+<div class="modal-footer pt-2">
+  <%= form.submit "Enviar", class: "btn btn-primary" %>
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+</div>
+<% end %>

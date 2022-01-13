@@ -1,0 +1,47 @@
+
+<table class="mt-2 mb-2" style="width:100%">
+    <tr>
+        <th>
+            <div class="bg-date-green text-center m-0 pt-2 pb-1">
+                <p class="text-bold">INFORMACIÓN BANCARIA</p>
+            </div>
+        </th>
+    </tr>
+</table>
+<% if @stage.enterprise.online_payment_services.stp.any? %>
+  <div class="payments-table">
+    <table class="table general-info table-striped table-payments">
+      <tbody class="account-status-table">
+      <tr>
+        <th class="green-row w-33">Banco</th>
+        <th class="green-row w-33">Titular</th>
+        <th class="green-row w-33">Clabe</th>
+      </tr>
+      <tr class="no-border">
+        <td>STP</td>
+        <td><%= @stage.enterprise.business_name %></td>
+        <td><%= @folder.stp_clabe %></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+<% elsif @bank_accounts.count > 0 %>
+  <div class="payments-table">
+  <table class="table general-info table-striped table-payments">
+    <tbody class="account-status-table">
+    <tr>
+      <td class="green-row w-25">Banco</td>
+      <td class="green-row w-25">Cuenta</td>
+      <td class="green-row w-25">Clabe</td>
+    </tr>
+    <% @bank_accounts.each do |bank_account| %>
+      <tr class="no-border">
+        <td><%= bank_account.bank %></td>
+        <td><%= bank_account.account_number %></td>
+        <td><%= bank_account.clabe %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  </div>
+<% end %>

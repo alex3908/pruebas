@@ -1,0 +1,7 @@
+es:
+  commission_schemes:
+    form:
+      percentage_for_referral: Porcentaje de comisión por venta de un usuario referido.
+      commission_for: "Comisiones para %{for}"
+      others: Administrativos
+      

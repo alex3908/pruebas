@@ -1,0 +1,203 @@
+.outside {
+  height: 100vh;
+
+  .devise-container {
+    background-color: #63656a;
+    color: #63656a;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+
+    .logo {
+      font-size: 50px;
+      color: #193653;
+      @include hover-focus-active() {
+        color: darken(#193653, 10%);
+      }
+      @include media-breakpoint-down(sm) {
+        font-size: 30px;
+      }
+    }
+
+    .form-container {
+      margin: 0 auto;
+      height: 640px;
+      border-radius: 10px;
+      padding: 70px;
+      position: relative;
+      z-index: 99;
+
+      @include media-breakpoint-up(md) {
+        width: 665px;
+      }
+      @include media-breakpoint-down(sm) {
+        max-width: 95%;
+      }
+
+      .privacy-policy {
+        color: #63656a;
+      }
+
+      @include media-breakpoint-down(xs) {
+        padding: 60px 20px;
+        width: 100%;
+      }
+
+      form {
+        z-index: 99;
+        position: relative;
+      }
+
+      &:before {
+        content: ' ';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        box-shadow: -3px 0px 7px 0 rgba(0, 0, 0, 0.14);
+        top: 0;
+        left: 0;
+        z-index: 1;
+        border-radius: 9px;
+      }
+
+      &:after {
+        content: ' ';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: $primary;
+        top: 0;
+        left: -12px;
+        z-index: 0;
+        border-radius: 9px;
+        @include media-breakpoint-down(xs) {
+          top: 12px;
+          left: 0;
+        }
+      }
+
+      input[type='email'],
+      input[type='password'],
+      select.form-control {
+        background-color: #ececec;
+        border: solid 1px #ececec;
+        border-radius: 10px;
+        width: 100%;
+        height: calc(2.25rem + 2px);
+        text-align: center;
+
+        &:focus {
+          -webkit-box-shadow: none;
+          box-shadow: none;
+          background-color: #ececec;
+        }
+      }
+
+      input[type='email'],
+      input[type='password'] {
+        padding-left: 30px;
+        background-repeat: no-repeat;
+        border: none;
+        border-bottom: 1px solid #63656a;
+        border-radius: 0;
+        background-color: #fff;
+      }
+
+      input[type='email'] {
+        background-position-y: 11px;
+        background-image: image-url('icons/email-icon.png');
+      }
+
+      input[type='password'] {
+        background-position-y: 6px;
+        background-image: image-url('icons/password-icon.png');
+      }
+    }
+  }
+
+  .privacy-policy {
+    color: #fff;
+    a {
+      color: $primary;
+      @include hover-focus-active() {
+        color: lighten($primary, 10%);
+      }
+    }
+  }
+}
+
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.inputfile + label {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: transparent;
+  display: inline-block;
+  width: 165px;
+  height: 165px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+  border: 2px solid $secondary;
+  position: relative;
+  transform: translateX(-50%);
+  left: 50%;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+  .child-image {
+    filter: blur(1px);
+    -webkit-filter: blur(8px);
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover, cover, cover;
+    transition-property: filter;
+    transition-duration: 0.3s;
+  }
+  .child-icon {
+    background-image: url('icons/edit_gray.png');
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    transition-property: background-image;
+    transition-duration: 1s;
+  }
+}
+
+.edit-avatar {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+.input-container {
+  background-color: #ececec;
+  border: solid 1px #ececec;
+  border-radius: 10px;
+  width: 100%;
+  height: calc(2.25rem + 2px);
+}
